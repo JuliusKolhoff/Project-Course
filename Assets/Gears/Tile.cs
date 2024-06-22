@@ -11,7 +11,7 @@ public class Tile : MonoBehaviour
 	public void Init(bool isOffset)
 	{
 		_renderer.color = isOffset ? _offsetColor : _baseColor;
-	}
+	} 
 
 	void OnMouseEnter()
 	{
