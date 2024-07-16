@@ -2,17 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Icon : MonoBehaviour
+public class BackgroundIcon : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void Init(Sprite sprite,Color color)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        GetComponent<SpriteRenderer>().sprite = sprite;
+        GetComponent<SpriteRenderer>().color = color;
     }
 }
