@@ -9,12 +9,13 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-    [SerializeField] private Animator transition;
+	[SerializeField] private Animator transition;
     [SerializeField] private float transitionDuration = 1f;
     public void LoadNextScene(string sceneName)
     {
-        DontDestroyOnLoad(this);
+		Debug.Log(sceneName);
 		StartCoroutine(LoadScene(sceneName));
+		DontDestroyOnLoad(this);
 	}
     IEnumerator LoadScene(string sceneName)
     {
