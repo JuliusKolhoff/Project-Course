@@ -31,6 +31,8 @@ public class BackgroundManger : MonoBehaviour
 					continue;
                 }
 				var spawnedIcon = Instantiate(_iconPrefab, new Vector3(x * _distance, y * _distance), Quaternion.identity);
+				spawnedIcon.transform.localScale = transform.localScale;
+				spawnedIcon.transform.parent = transform;
 				spawnedIcon.name = $"Tile {x} {y}";
 				spawnedIcon.Init(_iconSprite, _iconColor);
 			}
