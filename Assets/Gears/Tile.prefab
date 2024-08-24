@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6c1d5472e90ca6949a72fe1b00575bf7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -104,6 +104,7 @@ MonoBehaviour:
   _renderer: {fileID: 7797719239272159621}
   _highlight: {fileID: 7181028933762161093}
   _gearPrefab: {fileID: 8771672755558601099, guid: 94b9954d9821d1b4f9729b5465967569, type: 3}
+  _smallGearPrefab: {fileID: 8771672755558601099, guid: 56e0784d3eadf3540ad0bdfcfcaf115e, type: 3}
 --- !u!61 &8399478509942410959
 BoxCollider2D:
   m_ObjectHideFlags: 0
