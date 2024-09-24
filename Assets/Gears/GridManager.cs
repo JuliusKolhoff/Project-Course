@@ -18,8 +18,15 @@ public class GridManager : MonoBehaviour
 	void Start()
 	{
 		GenerateGrid();
+		GetTileAtPosition(new(0, 0)).NewGear();
 	}
-
+	private void Update()
+	{
+		if (Input.GetKey(KeyCode.R))
+		{
+			GetTileAtPosition(new(0, 0)).Rotate(5);
+		}
+	}
 	void GenerateGrid()
 	{
 		_tiles = new Dictionary<Vector2, Tile>();

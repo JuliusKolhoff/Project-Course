@@ -1,11 +1,14 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
 	public static float GearSize = 1.5f;
+	public static Tile connectedGear;
 	[SerializeField] private Color _baseColor, _offsetColor;
 	[SerializeField] private SpriteRenderer _renderer;
 	[SerializeField] private GameObject _highlight;
@@ -13,6 +16,8 @@ public class Tile : MonoBehaviour
 	[SerializeField] private GameObject _smallGearPrefab;
 	private bool _isOffset;
 	private GameObject _gear;
+	public List<Tile> AdjacentGears = new();
+	public float teeth;
 
 	public void Init(bool isOffset)
 	{
@@ -29,25 +34,72 @@ public class Tile : MonoBehaviour
 	{
 		_highlight.SetActive(false);
 	}
+	public void NewGear()
+	{
+		_gear = Instantiate(_gearPrefab, transform.position, Quaternion.identity, transform);
+		_gear.transform.localScale = new(GearSize, GearSize, 1);
+		teeth = 8f;
+	}
+	public void Rotate(float degrees)
+	{
+		if(_gear != null)
+		{
+			_gear.transform.Rotate(new Vector3(0, 0, degrees));
+			foreach (Tile tile in AdjacentGears)
+			{
+				Debug.Log(teeth);
+				Debug.Log("Tile:" + tile.teeth);
+				float gearRatio = teeth / tile.teeth;
+				Debug.Log("Gear Ratio:" + gearRatio);
+				tile.Rotate(-degrees * gearRatio);
+			}
+		}
+		
+	}
 	private void OnMouseOver()
 	{
-		if (Input.GetMouseButtonDown(0) && _gear == null)
+		if (Input.GetMouseButtonDown(0))
 		{
-			if(_isOffset)
-            {
-				_gear = Instantiate(_gearPrefab, transform.position, Quaternion.identity, transform);
-				_gear.transform.localScale = new(GearSize, GearSize, 1);
-			} else
-            {
-				_gear = Instantiate(_smallGearPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
-				_gear.transform.localScale = new(GearSize / 2, GearSize / 2, 1);
+			Debug.Log(_gear);
+			if (_gear == null)
+			{
+				if (connectedGear != null && Vector3.Distance(transform.position,connectedGear.transform.position) < 1.5)
+				{
+					if (_isOffset)
+					{
+						_gear = Instantiate(_gearPrefab, transform.position, Quaternion.identity, transform);
+						teeth = 8f;
+						_gear.transform.localScale = new(GearSize, GearSize, 1);
+						connectedGear.AdjacentGears.Add(this);
+					}
+					else
+					{
+						_gear = Instantiate(_smallGearPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
+						teeth = 4f;
+						_gear.transform.localScale = new(GearSize, GearSize, 1);
+						connectedGear.AdjacentGears.Add(this);
+					}
+				}
+				
+			}
+			else
+			{
+				connectedGear = this;
+				Debug.Log(connectedGear);
+			}
+		}
+		else if (Input.GetMouseButtonDown(1))
+		{
+			if( _gear != null)
+			{
+				Destroy(_gear);
+				_gear = null;
+			}
+			if(connectedGear != null)
+			{
+				connectedGear = null;
 			}
 			
-		}
-		else if (Input.GetMouseButtonDown(1) && _gear != null)
-		{
-			Destroy(_gear);
-			_gear = null;
 		}
 	}
 }
