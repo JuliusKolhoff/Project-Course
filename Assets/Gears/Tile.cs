@@ -36,9 +36,9 @@ public class Tile : MonoBehaviour
 	}
 	public void NewGear()
 	{
-		_gear = Instantiate(_gearPrefab, transform.position, Quaternion.identity, transform);
+		_gear = Instantiate(_smallGearPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
+		teeth = 4f;
 		_gear.transform.localScale = new(GearSize, GearSize, 1);
-		teeth = 8f;
 	}
 	public void Rotate(float degrees)
 	{
