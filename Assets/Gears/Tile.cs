@@ -47,10 +47,7 @@ public class Tile : MonoBehaviour
 			_gear.transform.Rotate(new Vector3(0, 0, degrees));
 			foreach (Tile tile in AdjacentGears)
 			{
-				Debug.Log(teeth);
-				Debug.Log("Tile:" + tile.teeth);
 				float gearRatio = teeth / tile.teeth;
-				Debug.Log("Gear Ratio:" + gearRatio);
 				tile.Rotate(-degrees * gearRatio);
 			}
 		}
@@ -85,7 +82,6 @@ public class Tile : MonoBehaviour
 			else
 			{
 				connectedGear = this;
-				Debug.Log(connectedGear);
 			}
 		}
 		else if (Input.GetMouseButtonDown(1))
