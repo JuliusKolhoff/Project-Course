@@ -8,16 +8,22 @@ using UnityEngine;
 public class Tile : MonoBehaviour
 {
 	public static float GearSize = 1.5f;
-	public static Tile connectedGear;
+	public static List<Tile> RotatedTiles = new ();
+
+	public List<Tile> AdjacentTiles = new();
+	public float Teeth { get; private set; }
+	public float CurrentRotation { get; private set; }
+	[SerializeField] private float CurrentTorque;
+
 	[SerializeField] private Color _baseColor, _offsetColor;
 	[SerializeField] private SpriteRenderer _renderer;
 	[SerializeField] private GameObject _highlight;
 	[SerializeField] private GameObject _gearPrefab;
 	[SerializeField] private GameObject _smallGearPrefab;
+
 	private bool _isOffset;
 	private GameObject _gear;
-	public List<Tile> AdjacentGears = new();
-	public float teeth;
+	
 
 	public void Init(bool isOffset)
 	{
@@ -37,55 +43,62 @@ public class Tile : MonoBehaviour
 	public void NewGear()
 	{
 		_gear = Instantiate(_smallGearPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
-		teeth = 4f;
+		Teeth = 4f;
 		_gear.transform.localScale = new(GearSize, GearSize, 1);
 	}
-	public void Rotate(float degrees)
+	public void Rotate(float degrees, float torque)
 	{
-		if(_gear != null)
+		if(HasGear())
 		{
+			RotatedTiles.Add(this);
 			_gear.transform.Rotate(new Vector3(0, 0, degrees));
-			foreach (Tile tile in AdjacentGears)
+			CurrentRotation = degrees;
+			CurrentTorque = torque;
+			foreach (Tile tile in AdjacentTiles)
 			{
-				Debug.Log(teeth);
-				Debug.Log("Tile:" + tile.teeth);
-				float gearRatio = teeth / tile.teeth;
-				Debug.Log("Gear Ratio:" + gearRatio);
-				tile.Rotate(-degrees * gearRatio);
+				if (tile.HasGear() )
+				{
+					float gearRatio = Teeth / tile.Teeth;
+					float appliedRotation = -degrees * gearRatio;
+					float appliedTorque = torque / gearRatio;
+					if (RotatedTiles.Contains(tile))
+					{
+						if (appliedRotation != tile.CurrentRotation)
+						{
+							Debug.Log("Gears Break");
+						}
+					}
+					else
+					{
+						tile.Rotate(appliedRotation,appliedTorque * .99f);
+					}
+					
+				}
 			}
 		}
 		
+	}
+	public bool HasGear()
+	{
+		return _gear != null;
 	}
 	private void OnMouseOver()
 	{
 		if (Input.GetMouseButtonDown(0))
 		{
-			Debug.Log(_gear);
 			if (_gear == null)
 			{
-				if (connectedGear != null && Vector3.Distance(transform.position,connectedGear.transform.position) < 1.5)
-				{
 					if (_isOffset)
 					{
 						_gear = Instantiate(_gearPrefab, transform.position, Quaternion.identity, transform);
-						teeth = 8f;
-						_gear.transform.localScale = new(GearSize, GearSize, 1);
-						connectedGear.AdjacentGears.Add(this);
+						Teeth = 8f;
 					}
 					else
 					{
 						_gear = Instantiate(_smallGearPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
-						teeth = 4f;
-						_gear.transform.localScale = new(GearSize, GearSize, 1);
-						connectedGear.AdjacentGears.Add(this);
+						Teeth = 4f;
 					}
-				}
-				
-			}
-			else
-			{
-				connectedGear = this;
-				Debug.Log(connectedGear);
+				_gear.transform.localScale = new(GearSize, GearSize, 1);
 			}
 		}
 		else if (Input.GetMouseButtonDown(1))
@@ -95,11 +108,8 @@ public class Tile : MonoBehaviour
 				Destroy(_gear);
 				_gear = null;
 			}
-			if(connectedGear != null)
-			{
-				connectedGear = null;
-			}
 			
 		}
 	}
+	
 }
