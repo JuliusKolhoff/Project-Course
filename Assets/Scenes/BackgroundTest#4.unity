@@ -324,6 +324,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneToLoad: Gears
+  menuValue: 2
 --- !u!222 &267182302
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -841,6 +842,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneToLoad: Main Menu
+  menuValue: 0
 --- !u!1 &1834855144
 GameObject:
   m_ObjectHideFlags: 0
@@ -1172,6 +1174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneToLoad: Gears
+  menuValue: 2
 --- !u!222 &1970895332
 CanvasRenderer:
   m_ObjectHideFlags: 0

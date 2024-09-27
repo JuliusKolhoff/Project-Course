@@ -11,12 +11,24 @@ public class SceneLoader : MonoBehaviour
 {
 	[SerializeField] private Animator transition;
     [SerializeField] private float transitionDuration = 1f;
-    public void LoadNextScene(string sceneName)
+
+	public void Awake()
     {
-		Debug.Log(sceneName);
+        GameObject[] objs = GameObject.FindGameObjectsWithTag("SceneLoader");
+
+        if (objs.Length > 1)
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    public void LoadNextScene(string sceneName, float menuValue)
+    {
 		StartCoroutine(LoadScene(sceneName));
-		DontDestroyOnLoad(this);
+        StartCoroutine(ChangeValue(menuValue));
+        DontDestroyOnLoad(this);
 	}
+
     IEnumerator LoadScene(string sceneName)
     {
         transition.SetTrigger("Start");
@@ -26,7 +38,24 @@ public class SceneLoader : MonoBehaviour
 		transition.SetTrigger("End");
 
 		SceneManager.LoadScene(sceneName);
-
-		
 	}
+
+    IEnumerator ChangeValue(float menuValue)
+    {
+        while (true)
+        {
+            float temp;
+            var result = FMODUnity.RuntimeManager.StudioSystem.getParameterByName("Menu", out temp);
+            if (temp != menuValue)
+            {
+                temp = Mathf.MoveTowards(temp, menuValue, 0.5f * Time.fixedDeltaTime);
+            }
+            else
+            {
+                yield break;
+            }
+            FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Menu", temp);
+            yield return null;
+        }
+    }
 }
