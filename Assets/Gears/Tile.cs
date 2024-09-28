@@ -14,7 +14,8 @@ public class Tile : MonoBehaviour
 	public float Teeth { get; private set; }
 	public float CurrentRotation { get; private set; }
 	public float CurrentTorque { get; private set; }
-	public int Level { get; set; }
+	public float MinTorque { get; private set; }
+	public int Layer { get; set; }
 
 
 	[SerializeField] private Color _baseColor, _offsetColor;
@@ -25,12 +26,14 @@ public class Tile : MonoBehaviour
 
 	private bool _isOffset;
 	private GameObject _gear;
-	
+	private GridManager _manager;
 
-	public void Init(bool isOffset)
+
+	public void Init(bool IsOffset, GridManager Manager)
 	{
-		_isOffset = isOffset;
-		_renderer.color = isOffset ? _offsetColor : _baseColor;
+		_isOffset = IsOffset;
+		_manager = Manager;
+		_renderer.color = IsOffset ? _offsetColor : _baseColor;
 	} 
 
 	void OnMouseEnter()
@@ -42,7 +45,7 @@ public class Tile : MonoBehaviour
 	{
 		_highlight.SetActive(false);
 	}
-	public void NewGear(float teeth)
+	public void NewGear(float teeth, float minTorque)
 	{
 		if (teeth != 4 && teeth != 8)
 		{
@@ -60,10 +63,22 @@ public class Tile : MonoBehaviour
 		}
 		_gear.transform.localScale = new(GearSize, GearSize, 1);
 		Teeth = teeth;
+		MinTorque = minTorque;
 
 	}	
-	public void Rotate(float degrees, float torque)
+	public bool Rotate(float degrees, float torque)
 	{
+		if(degrees == 0)
+		{
+			CurrentRotation = 0;
+			return false;
+		}
+		if(torque < MinTorque)
+		{
+			CurrentTorque = 0;
+			_manager.StopRotation($"Not Enough torque at gear: {this.gameObject.name} in layer {Layer};	   Only {torque}/{MinTorque} of required Torque");
+			return false;
+		}
 		if(HasGear())
 		{
 			RotatedTiles.Add(this);
@@ -78,27 +93,36 @@ public class Tile : MonoBehaviour
 					float gearRatio = Teeth / tile.Teeth;
 					float appliedRotation = -degrees * gearRatio;
 					float appliedTorque = torque / gearRatio;
-					if(tile.Level != Level)
+					if (_manager.IncludeMachineEfficiency())
+					{
+						appliedTorque *= .99f;
+					}
+					if(tile.Layer != Layer)
 					{
 						appliedRotation = degrees;
 						appliedTorque = torque;
 					}
+					
 					if (RotatedTiles.Contains(tile))
 					{
 						if (appliedRotation != tile.CurrentRotation)
 						{
-							Debug.Log("Gears Break");
+							_manager.StopRotation($"Breaking on Gear: {this.gameObject.name} in layer {Layer}");
+							return false;
 						}
 					}
 					else
 					{
-						tile.Rotate(appliedRotation,appliedTorque * .99f);
+						if(!tile.Rotate(appliedRotation,appliedTorque))
+						{
+							return false;
+						}
 					}
 					
 				}
 			}
 		}
-		
+		return true;
 	}
 	public bool HasGear()
 	{
@@ -112,11 +136,11 @@ public class Tile : MonoBehaviour
 			{
 				if (_isOffset)
 				{
-					NewGear(8);
+					NewGear(8, 0);
 				}
 				else
 				{
-					NewGear(4);
+					NewGear(4, 0);
 				}
 			}
 		}
