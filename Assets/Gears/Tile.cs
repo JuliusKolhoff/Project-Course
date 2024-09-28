@@ -13,7 +13,9 @@ public class Tile : MonoBehaviour
 	public List<Tile> AdjacentTiles = new();
 	public float Teeth { get; private set; }
 	public float CurrentRotation { get; private set; }
-	[SerializeField] private float CurrentTorque;
+	public float CurrentTorque { get; private set; }
+	public int Level { get; set; }
+
 
 	[SerializeField] private Color _baseColor, _offsetColor;
 	[SerializeField] private SpriteRenderer _renderer;
@@ -40,12 +42,26 @@ public class Tile : MonoBehaviour
 	{
 		_highlight.SetActive(false);
 	}
-	public void NewGear()
+	public void NewGear(float teeth)
 	{
-		_gear = Instantiate(_smallGearPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
-		Teeth = 4f;
+		if (teeth != 4 && teeth != 8)
+		{
+			Debug.Log("Only 4 and 8 teeth gears are supported");
+			return;
+		}
+		if (teeth == 4)
+		{
+			_gear = Instantiate(_smallGearPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
+			_gear.name = "SmallGear";
+		}else
+		{
+			_gear = Instantiate(_gearPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
+			_gear.name = "Gear";
+		}
 		_gear.transform.localScale = new(GearSize, GearSize, 1);
-	}
+		Teeth = teeth;
+
+	}	
 	public void Rotate(float degrees, float torque)
 	{
 		if(HasGear())
@@ -56,11 +72,17 @@ public class Tile : MonoBehaviour
 			CurrentTorque = torque;
 			foreach (Tile tile in AdjacentTiles)
 			{
-				if (tile.HasGear() )
+				if (tile.HasGear())
 				{
+				
 					float gearRatio = Teeth / tile.Teeth;
 					float appliedRotation = -degrees * gearRatio;
 					float appliedTorque = torque / gearRatio;
+					if(tile.Level != Level)
+					{
+						appliedRotation = degrees;
+						appliedTorque = torque;
+					}
 					if (RotatedTiles.Contains(tile))
 					{
 						if (appliedRotation != tile.CurrentRotation)
@@ -88,17 +110,14 @@ public class Tile : MonoBehaviour
 		{
 			if (_gear == null)
 			{
-					if (_isOffset)
-					{
-						_gear = Instantiate(_gearPrefab, transform.position, Quaternion.identity, transform);
-						Teeth = 8f;
-					}
-					else
-					{
-						_gear = Instantiate(_smallGearPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
-						Teeth = 4f;
-					}
-				_gear.transform.localScale = new(GearSize, GearSize, 1);
+				if (_isOffset)
+				{
+					NewGear(8);
+				}
+				else
+				{
+					NewGear(4);
+				}
 			}
 		}
 		else if (Input.GetMouseButtonDown(1))

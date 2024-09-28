@@ -19,7 +19,7 @@ MonoBehaviour:
     Data3: -2026029379
     Data4: -768789874
   Banks:
-  - {fileID: 6196826111261554188}
+  - {fileID: 8337646839888142485}
   IsStream: 1
   Is3D: 0
   IsOneShot: 0
@@ -65,19 +65,19 @@ MonoBehaviour:
   m_Name: FMODStudioCache
   m_EditorClassIdentifier: 
   EditorBanks:
-  - {fileID: 1271072870830315274}
-  - {fileID: 6196826111261554188}
+  - {fileID: 3405450018784256453}
+  - {fileID: 8337646839888142485}
   EditorEvents:
   - {fileID: -7433905864160830105}
   EditorParameters:
   - {fileID: -203007784405813733}
   MasterBanks:
-  - {fileID: 6196826111261554188}
+  - {fileID: 8337646839888142485}
   StringsBanks:
-  - {fileID: 1271072870830315274}
-  cacheTime: 638629348381461513
+  - {fileID: 3405450018784256453}
+  cacheTime: 638631218937266542
   cacheVersion: 131619
---- !u!114 &1271072870830315274
+--- !u!114 &3405450018784256453
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -89,15 +89,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
   m_Name: bank:/Master.strings.bank
   m_EditorClassIdentifier: 
-  Path: ../../FMOD Studio/projektkurs/main/Build/Desktop/Master.strings.bank
+  Path: FMOData/main/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638629348381461513
+  lastModified: 638631218937266542
   FileSizes:
   - Name: Desktop
     Value: 804
   Exists: 1
---- !u!114 &6196826111261554188
+--- !u!114 &8337646839888142485
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,10 +109,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
   m_Name: bank:/Master.bank
   m_EditorClassIdentifier: 
-  Path: ../../FMOD Studio/projektkurs/main/Build/Desktop/Master.bank
+  Path: FMOData/main/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638629348381411502
+  lastModified: 638631218937226551
   FileSizes:
   - Name: Desktop
     Value: 873664
