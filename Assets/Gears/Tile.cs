@@ -23,6 +23,8 @@ public class Tile : MonoBehaviour
 	[SerializeField] private GameObject _highlight;
 	[SerializeField] private GameObject _gearPrefab;
 	[SerializeField] private GameObject _smallGearPrefab;
+	[SerializeField] private GameObject _enginePrefab;
+	[SerializeField] private GameObject _smallEnginePrefab;
 
 	private bool _isOffset;
 	private GameObject _gear;
@@ -34,8 +36,7 @@ public class Tile : MonoBehaviour
 		_isOffset = IsOffset;
 		_manager = Manager;
 		_renderer.color = IsOffset ? _offsetColor : _baseColor;
-	} 
-
+	}
 	void OnMouseEnter()
 	{
 		_highlight.SetActive(true);
@@ -44,6 +45,13 @@ public class Tile : MonoBehaviour
 	void OnMouseExit()
 	{
 		_highlight.SetActive(false);
+	}
+	public void DeleteGear()
+	{
+		Teeth = 0;
+		MinTorque = 0;
+		Destroy(_gear);
+		_gear = null;
 	}
 	public void NewGear(float teeth, float minTorque)
 	{
@@ -148,8 +156,7 @@ public class Tile : MonoBehaviour
 		{
 			if( _gear != null)
 			{
-				Destroy(_gear);
-				_gear = null;
+				DeleteGear();
 			}
 			
 		}

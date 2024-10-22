@@ -1,13 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
+using static Level;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class GridManager : MonoBehaviour
 {
-	[SerializeField] private int _width, _height;
+	[SerializeField] public static int Width = 16, Height = 9;
 	[SerializeField] private Tile _tilePrefab;
 	[SerializeField] private Transform _cam;
 	[SerializeField] private GameObject _level1Partent;
@@ -26,8 +30,63 @@ public class GridManager : MonoBehaviour
 		LinkAdjacentTiles(1);
 		EnableLayer(0);
 		GetTileAtPosition(new(0, 0),0).NewGear(4,0);
-		GetTileAtIndex(_width-1,_height-1,0).NewGear(8,5);
+		GetTileAtIndex(Width-1,Height-1,0).NewGear(8,5);
 	}
+	public void SaveState(string name)
+	{
+		Level level = ScriptableObject.CreateInstance<Level>();
+		for (int x = 0; x < Width; x++)
+		{
+			for (int y = 0; y < Height; y++)
+			{
+				if(GetTileAtIndex(x, y, 0).HasGear())
+				{
+					level.Layer1Teeth[x + Width * y] = GetTileAtIndex(x, y, 0).Teeth;
+					level.Layer1Torque[x + Width * y] = GetTileAtIndex(x, y, 0).MinTorque;
+				}
+				else
+				{
+					level.Layer1Teeth[x+Width * y] = 0;
+					level.Layer1Torque[x + Width * y] = 0;
+				}
+				if (GetTileAtIndex(x, y, 1).HasGear())
+				{
+					level.Layer2Teeth[x + Width * y] = GetTileAtIndex(x, y, 1).Teeth;
+					level.Layer2Torque[x + Width * y] = GetTileAtIndex(x, y, 1).MinTorque;
+				}
+				else
+				{
+					level.Layer2Teeth[x + Width * y] = 0;
+					level.Layer2Torque[x + Width * y] = 0;
+				}
+
+
+			}
+		}
+		AssetDatabase.CreateAsset(level , $"Assets/Gears/Levels/{name}.asset");
+	}
+
+	public void LoadState(string name)
+	{
+		Level level = AssetDatabase.LoadAssetAtPath<Level>($"Assets/Gears/Levels/{name}.asset");
+		for (int x = 0; x < Width; x++)
+		{
+			for (int y = 0; y < Height; y++)
+			{
+				GetTileAtIndex(x, y, 0).DeleteGear();
+				if (level.Layer1Teeth[x+Width * y] != 0)
+				{
+					GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x+Width * y], level.Layer1Torque[x + Width * y]);
+				}
+				GetTileAtIndex(x, y, 1).DeleteGear();
+				if (level.Layer2Teeth[x + Width * y] != 0)
+				{
+					GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x+Width * y], level.Layer2Torque[x + Width * y]);
+				}
+			}
+		}
+	}
+	
 	public bool IncludeMachineEfficiency()
 	{
 		return applyMachineEfficiency;
@@ -49,7 +108,7 @@ public class GridManager : MonoBehaviour
 			Tile.RotatedTiles.Clear();
 			GetTileAtPosition(new(0, 0),0).Rotate(startRotationSpeed, startTorque);
 		}
-		if(GetTileAtIndex(_width - 1, _height - 1,0).CurrentRotation != 0)
+		if(GetTileAtIndex(Width - 1, Height - 1,0).CurrentRotation != 0)
 		{
 			Debug.Log("Won");
 		}
@@ -125,9 +184,9 @@ public class GridManager : MonoBehaviour
 		{
 			parent = _level2Partent.transform;
 		}
-		for (int x = 0; x < _width; x++)
+		for (int x = 0; x < Width; x++)
 		{
-			for (int y = 0; y < _height; y++)
+			for (int y = 0; y < Height; y++)
 			{
 				var spawnedTile = Instantiate(_tilePrefab, new Vector3(x, y), Quaternion.identity,parent);
 				spawnedTile.name = $"Tile {x} {y}";
@@ -145,7 +204,7 @@ public class GridManager : MonoBehaviour
 			}
 		}
 
-		_cam.transform.position = new Vector3((float)_width / 2 - 0.5f, (float)_height / 2 - 0.5f, -10);
+		_cam.transform.position = new Vector3((float)Width / 2 - 0.5f, (float)Height / 2 - 0.5f, -10);
 	}
 	void LinkAdjacentTiles(int layer)
 	{
@@ -176,11 +235,11 @@ public class GridManager : MonoBehaviour
 		tile.Add(GetTileAtIndex(i, j, otherLevel));
 		if (i > 0)
 			tile.Add(GetTileAtIndex(i - 1, j,layer));
-		if(i < _width - 1)
+		if(i < Width - 1)
 			tile.Add(GetTileAtIndex(i + 1, j, layer));
 		if (j > 0)
 			tile.Add(GetTileAtIndex(i, j - 1, layer));
-		if(j < _height - 1)
+		if(j < Height - 1)
 			tile.Add(GetTileAtIndex(i, j + 1, layer));
 		return tile;
 	}
