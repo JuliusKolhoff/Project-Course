@@ -1,8 +1,4 @@
-using JetBrains.Annotations;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -52,6 +48,27 @@ public class Tile : MonoBehaviour
 		MinTorque = 0;
 		Destroy(_gear);
 		_gear = null;
+	}
+	public void NewMotor(float teeth)
+	{
+		if (teeth != 4 && teeth != 8)
+		{
+			Debug.Log("Only 4 and 8 teeth motors are supported");
+			return;
+		}
+		if (teeth == 4)
+		{
+			_gear = Instantiate(_smallEnginePrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
+			_gear.name = "SmallMotor";
+		}
+		else
+		{
+			_gear = Instantiate(_enginePrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
+			_gear.name = "Motor";
+		}
+		_gear.transform.localScale = new(GearSize, GearSize, 1);
+		Teeth = teeth;
+		_manager.MotorPosition = transform.position;
 	}
 	public void NewGear(float teeth, float minTorque)
 	{
@@ -144,11 +161,27 @@ public class Tile : MonoBehaviour
 			{
 				if (_isOffset)
 				{
-					NewGear(8, 0);
+					if (!_manager.placeMotor)
+					{
+						NewGear(8, 0);
+					}
+					else
+					{
+						NewMotor(8);
+						_manager.SetPlaceMotor(false);
+					}
 				}
 				else
 				{
-					NewGear(4, 0);
+					if (!_manager.placeMotor)
+					{
+						NewGear(4, 0);
+					}
+					else
+					{
+						NewMotor(4);
+						_manager.SetPlaceMotor(false);
+					}
 				}
 			}
 		}

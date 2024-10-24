@@ -1,13 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.VersionControl;
 using UnityEngine;
-using static Level;
-using static UnityEditor.Experimental.GraphView.GraphView;
+
 
 public class GridManager : MonoBehaviour
 {
@@ -20,6 +14,11 @@ public class GridManager : MonoBehaviour
 	[SerializeField] private float startTorque = 10f;
 	[SerializeField] private bool applyMachineEfficiency = false;
 
+	public bool placeMotor = false;
+
+	public Vector2 MotorPosition { get; set; }
+	private Vector2 _goalPosition;
+
 	private Dictionary<Vector2, Tile>[] _tiles = new Dictionary<Vector2, Tile>[2];
 
 	void Start()
@@ -30,7 +29,9 @@ public class GridManager : MonoBehaviour
 		LinkAdjacentTiles(1);
 		EnableLayer(0);
 		GetTileAtPosition(new(0, 0),0).NewGear(4,0);
+		MotorPosition = new(0, 0);
 		GetTileAtIndex(Width-1,Height-1,0).NewGear(8,5);
+		_goalPosition = new(Width - 1, Height - 1);
 	}
 	public void SaveState(string name)
 	{
@@ -63,6 +64,9 @@ public class GridManager : MonoBehaviour
 
 			}
 		}
+		level.MotorPosition = MotorPosition;
+		level.MotorTeeth = GetTileAtPosition(MotorPosition, 0).Teeth;
+		level.GoalPosition = _goalPosition;
 		AssetDatabase.CreateAsset(level , $"Assets/Gears/Levels/{name}.asset");
 	}
 
@@ -74,17 +78,27 @@ public class GridManager : MonoBehaviour
 			for (int y = 0; y < Height; y++)
 			{
 				GetTileAtIndex(x, y, 0).DeleteGear();
-				if (level.Layer1Teeth[x+Width * y] != 0)
-				{
-					GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x+Width * y], level.Layer1Torque[x + Width * y]);
-				}
 				GetTileAtIndex(x, y, 1).DeleteGear();
-				if (level.Layer2Teeth[x + Width * y] != 0)
+				if (new Vector2(x, y).Equals(level.MotorPosition))
 				{
-					GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x+Width * y], level.Layer2Torque[x + Width * y]);
+					GetTileAtIndex(x, y, 0).NewMotor(level.MotorTeeth);
 				}
+				else
+				{
+					if (level.Layer1Teeth[x + Width * y] != 0)
+					{
+						GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y]);
+					}
+					if (level.Layer2Teeth[x + Width * y] != 0)
+					{
+						GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y]);
+					}
+				}
+				
 			}
 		}
+		MotorPosition = level.MotorPosition;
+		_goalPosition = level.GoalPosition;
 	}
 	
 	public bool IncludeMachineEfficiency()
@@ -106,9 +120,9 @@ public class GridManager : MonoBehaviour
 		if (Input.GetKey(KeyCode.R))
 		{
 			Tile.RotatedTiles.Clear();
-			GetTileAtPosition(new(0, 0),0).Rotate(startRotationSpeed, startTorque);
+			GetTileAtPosition(MotorPosition,0).Rotate(startRotationSpeed, startTorque);
 		}
-		if(GetTileAtIndex(Width - 1, Height - 1,0).CurrentRotation != 0)
+		if(GetTileAtPosition(_goalPosition,0).CurrentRotation != 0)
 		{
 			Debug.Log("Won");
 		}
@@ -218,7 +232,10 @@ public class GridManager : MonoBehaviour
 		}
 	}
 
-
+	public void SetPlaceMotor(bool value)
+	{
+		placeMotor = value;
+	}
 	public Tile GetTileAtPosition(Vector2 pos,int layer)
 	{
 		if (_tiles[layer].TryGetValue(pos, out var tile)) return tile;
