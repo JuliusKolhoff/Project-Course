@@ -81,6 +81,7 @@ public class GridManager : MonoBehaviour
 				GetTileAtIndex(x, y, 1).DeleteGear();
 				if (new Vector2(x, y).Equals(level.MotorPosition))
 				{
+					GetTileAtIndex(x, y, 0).DeleteMotor();
 					GetTileAtIndex(x, y, 0).NewMotor(level.MotorTeeth);
 				}
 				else

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -24,6 +25,7 @@ public class Tile : MonoBehaviour
 
 	private bool _isOffset;
 	private GameObject _gear;
+	private GameObject _motor;
 	private GridManager _manager;
 
 
@@ -58,17 +60,23 @@ public class Tile : MonoBehaviour
 		}
 		if (teeth == 4)
 		{
-			_gear = Instantiate(_smallEnginePrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
-			_gear.name = "SmallMotor";
+			_motor = Instantiate(_smallEnginePrefab, transform.position, Quaternion.identity, transform);
+			_motor.name = "SmallMotor";
 		}
 		else
 		{
-			_gear = Instantiate(_enginePrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, 45)), transform);
-			_gear.name = "Motor";
+			_motor = Instantiate(_enginePrefab, transform.position, Quaternion.identity, transform);
+			_motor.name = "Motor";
 		}
-		_gear.transform.localScale = new(GearSize, GearSize, 1);
-		Teeth = teeth;
+		_motor.transform.localScale = new(GearSize, GearSize, 1);
 		_manager.MotorPosition = transform.position;
+		NewGear(teeth, 0);
+	}
+	public void DeleteMotor()
+	{
+		_manager.MotorPosition = new(-1, -1);
+		Destroy(_motor);
+		_motor = null;
 	}
 	public void NewGear(float teeth, float minTorque)
 	{
@@ -159,30 +167,32 @@ public class Tile : MonoBehaviour
 		{
 			if (_gear == null)
 			{
-				if (_isOffset)
+				if (_manager.placeMotor && _manager.MotorPosition.Equals(new(-1, -1)))
 				{
-					if (!_manager.placeMotor)
+					_manager.SetPlaceMotor(false);
+					
+					if (_isOffset)
+					{
+						NewMotor(8);
+					}
+					else
+					{
+						NewMotor(4);
+					}
+				}
+				else
+				{
+					if (_isOffset)
 					{
 						NewGear(8, 0);
 					}
 					else
 					{
-						NewMotor(8);
-						_manager.SetPlaceMotor(false);
-					}
-				}
-				else
-				{
-					if (!_manager.placeMotor)
-					{
 						NewGear(4, 0);
 					}
-					else
-					{
-						NewMotor(4);
-						_manager.SetPlaceMotor(false);
-					}
 				}
+				
+				
 			}
 		}
 		else if (Input.GetMouseButtonDown(1))
@@ -190,6 +200,10 @@ public class Tile : MonoBehaviour
 			if( _gear != null)
 			{
 				DeleteGear();
+				if (_manager.MotorPosition.Equals(transform.position))
+				{
+					DeleteMotor();
+				}
 			}
 			
 		}

@@ -656,6 +656,6 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  MotorPosition: {x: 3, y: 2}
+  MotorPosition: {x: 7, y: 2}
   MotorTeeth: 8
   GoalPosition: {x: 15, y: 8}
