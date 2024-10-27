@@ -5799,6 +5799,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6990b545239f99a41bdeb0592911cec2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Width: 12
+  Height: 9
   _tilePrefab: {fileID: 3529793799126067392, guid: 29daf92ecc4d04a4f9b8723b2df76212, type: 3}
   _cam: {fileID: 142951841}
   _level1Partent: {fileID: 897501577}

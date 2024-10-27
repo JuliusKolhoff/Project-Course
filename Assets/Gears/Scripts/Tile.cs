@@ -23,7 +23,7 @@ public class Tile : MonoBehaviour
 	[SerializeField] private GameObject _enginePrefab;
 	[SerializeField] private GameObject _smallEnginePrefab;
 
-	private bool _isOffset;
+	public bool _isOffset;
 	private GameObject _gear;
 	private GameObject _motor;
 	private GridManager _manager;
@@ -33,6 +33,10 @@ public class Tile : MonoBehaviour
 	{
 		_isOffset = IsOffset;
 		_manager = Manager;
+		if(Layer == 1)
+		{
+			_renderer.enabled = false;
+		}
 		_renderer.color = IsOffset ? _offsetColor : _baseColor;
 	}
 	void OnMouseEnter()
@@ -46,6 +50,10 @@ public class Tile : MonoBehaviour
 	}
 	public void DeleteGear()
 	{
+		if (transform.position.Equals(_manager.GoalPosition))
+		{
+			_manager.GoalPosition = new(0, 0);
+		}
 		Teeth = 0;
 		MinTorque = 0;
 		Destroy(_gear);

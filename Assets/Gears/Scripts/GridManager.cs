@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-	[SerializeField] public static int Width = 16, Height = 9;
+	[SerializeField] public int Width = 16, Height = 9;
 	[SerializeField] private Tile _tilePrefab;
 	[SerializeField] private Transform _cam;
 	[SerializeField] private GameObject _level1Partent;
@@ -17,7 +17,7 @@ public class GridManager : MonoBehaviour
 	public bool placeMotor = false;
 
 	public Vector2 MotorPosition { get; set; }
-	private Vector2 _goalPosition;
+	public Vector2 GoalPosition { get; set; }
 
 	private Dictionary<Vector2, Tile>[] _tiles = new Dictionary<Vector2, Tile>[2];
 
@@ -31,15 +31,20 @@ public class GridManager : MonoBehaviour
 		GetTileAtPosition(new(0, 0),0).NewGear(4,0);
 		MotorPosition = new(0, 0);
 		GetTileAtIndex(Width-1,Height-1,0).NewGear(8,5);
-		_goalPosition = new(Width - 1, Height - 1);
+		GoalPosition = new(Width - 1, Height - 1);
 	}
 	public void SaveState(string name)
 	{
 		Level level = ScriptableObject.CreateInstance<Level>();
+		level.Init(this);
 		for (int x = 0; x < Width; x++)
 		{
 			for (int y = 0; y < Height; y++)
 			{
+				if (GetTileAtIndex(x, y, 0) == null)
+				{
+					continue;
+				}
 				if(GetTileAtIndex(x, y, 0).HasGear())
 				{
 					level.Layer1Teeth[x + Width * y] = GetTileAtIndex(x, y, 0).Teeth;
@@ -66,22 +71,22 @@ public class GridManager : MonoBehaviour
 		}
 		level.MotorPosition = MotorPosition;
 		level.MotorTeeth = GetTileAtPosition(MotorPosition, 0).Teeth;
-		level.GoalPosition = _goalPosition;
+		level.GoalPosition = GoalPosition;
+		level.Width = Width;
+		level.Height = Height;
 		AssetDatabase.CreateAsset(level , $"Assets/Gears/Levels/{name}.asset");
 	}
 
 	public void LoadState(string name)
 	{
 		Level level = AssetDatabase.LoadAssetAtPath<Level>($"Assets/Gears/Levels/{name}.asset");
+		ResizeGrid(level.Width,level.Height);
 		for (int x = 0; x < Width; x++)
 		{
 			for (int y = 0; y < Height; y++)
 			{
-				GetTileAtIndex(x, y, 0).DeleteGear();
-				GetTileAtIndex(x, y, 1).DeleteGear();
 				if (new Vector2(x, y).Equals(level.MotorPosition))
 				{
-					GetTileAtIndex(x, y, 0).DeleteMotor();
 					GetTileAtIndex(x, y, 0).NewMotor(level.MotorTeeth);
 				}
 				else
@@ -95,13 +100,26 @@ public class GridManager : MonoBehaviour
 						GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y]);
 					}
 				}
-				
+
 			}
 		}
 		MotorPosition = level.MotorPosition;
-		_goalPosition = level.GoalPosition;
+		GoalPosition = level.GoalPosition;
 	}
-	
+	private void ResizeGrid(int width, int height)
+	{
+		Destroy(_level1Partent);
+		Destroy(_level2Partent);
+		_level1Partent = new GameObject("TilesLevel1");
+		_level2Partent = new GameObject("TilesLevel2");
+		Width = width;
+		Height = height;
+		GenerateGrid(0);
+		GenerateGrid(1);
+		LinkAdjacentTiles(0);
+		LinkAdjacentTiles(1);
+		EnableLayer(0);
+	}
 	public bool IncludeMachineEfficiency()
 	{
 		return applyMachineEfficiency;
@@ -123,7 +141,7 @@ public class GridManager : MonoBehaviour
 			Tile.RotatedTiles.Clear();
 			GetTileAtPosition(MotorPosition,0).Rotate(startRotationSpeed, startTorque);
 		}
-		if(GetTileAtPosition(_goalPosition,0).CurrentRotation != 0)
+		if(GetTileAtPosition(GoalPosition,0).CurrentRotation != 0)
 		{
 			Debug.Log("Won");
 		}
@@ -206,9 +224,9 @@ public class GridManager : MonoBehaviour
 				var spawnedTile = Instantiate(_tilePrefab, new Vector3(x, y), Quaternion.identity,parent);
 				spawnedTile.name = $"Tile {x} {y}";
 				spawnedTile.Layer = layer;
-
+				
 				var isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
-				if(layer == 1)
+				if (layer == 1)
 				{
 					isOffset = !isOffset;
 				}
@@ -218,7 +236,7 @@ public class GridManager : MonoBehaviour
 				_tiles[layer][new Vector2(x, y)] = spawnedTile;
 			}
 		}
-
+		
 		_cam.transform.position = new Vector3((float)Width / 2 - 0.5f, (float)Height / 2 - 0.5f, -10);
 	}
 	void LinkAdjacentTiles(int layer)
