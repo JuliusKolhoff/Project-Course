@@ -50,9 +50,13 @@ public class Tile : MonoBehaviour
 	}
 	public void DeleteGear()
 	{
-		if (transform.position.Equals(_manager.GoalPosition))
-		{
-			_manager.GoalPosition = new(0, 0);
+        foreach (Vector2 position in _manager.GoalPositions)
+        {
+			if (transform.position.Equals(position))
+			{
+				_manager.GoalPositions.Remove(position);
+				break;
+			}
 		}
 		Teeth = 0;
 		MinTorque = 0;
@@ -197,6 +201,10 @@ public class Tile : MonoBehaviour
 					else
 					{
 						NewGear(4, 0);
+					}
+					if (_manager.placeGoal)
+					{
+						_manager.NewGoalPosition(transform.position);
 					}
 				}
 				

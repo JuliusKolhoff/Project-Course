@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Level1
   m_EditorClassIdentifier: 
   Layer1Teeth:
-  - 4
   - 0
   - 0
   - 0
@@ -152,7 +151,8 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  - 8
+  - 0
+  - 0
   - 0
   - 0
   - 0
@@ -313,7 +313,7 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  - 5
+  - 0
   - 0
   - 0
   - 0
@@ -657,7 +657,7 @@ MonoBehaviour:
   - 0
   - 0
   MotorPosition: {x: 0, y: 0}
-  MotorTeeth: 4
-  GoalPosition: {x: 11, y: 8}
+  MotorTeeth: 0
+  GoalPosition: {x: -1, y: -1}
   Width: 16
   Height: 9

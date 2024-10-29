@@ -16,6 +16,6 @@ public class Level : ScriptableObject
 	public float[] Layer2Torque;
 	public Vector2 MotorPosition;
 	public float MotorTeeth;
-	public Vector2 GoalPosition;
+	public Vector2[] GoalPositions;
 	public int Width, Height;
 }

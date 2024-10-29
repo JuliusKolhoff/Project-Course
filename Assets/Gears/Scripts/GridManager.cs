@@ -1,11 +1,17 @@
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class GridManager : MonoBehaviour
 {
-	[SerializeField] public int Width = 16, Height = 9;
+	//public int Width { get { return Width; } set { ResizeGrid(value, Height); } }		//16
+	//public int Height { get { return Height; } set { ResizeGrid(value, Height); } }   //9
+	public int Width, Height;
+	[SerializeField] private TMP_Text WidthSliderText, HeightSliderText;
 	[SerializeField] private Tile _tilePrefab;
 	[SerializeField] private Transform _cam;
 	[SerializeField] private GameObject _level1Partent;
@@ -15,14 +21,18 @@ public class GridManager : MonoBehaviour
 	[SerializeField] private bool applyMachineEfficiency = false;
 
 	public bool placeMotor = false;
+	public bool placeGoal = false;
+
 
 	public Vector2 MotorPosition { get; set; }
-	public Vector2 GoalPosition { get; set; }
+	public List<Vector2> GoalPositions = new();
 
 	private Dictionary<Vector2, Tile>[] _tiles = new Dictionary<Vector2, Tile>[2];
 
 	void Start()
 	{
+		Width = 16;
+		Height = 9;
 		GenerateGrid(0);
 		GenerateGrid(1);
 		LinkAdjacentTiles(0);
@@ -31,7 +41,28 @@ public class GridManager : MonoBehaviour
 		GetTileAtPosition(new(0, 0),0).NewGear(4,0);
 		MotorPosition = new(0, 0);
 		GetTileAtIndex(Width-1,Height-1,0).NewGear(8,5);
-		GoalPosition = new(Width - 1, Height - 1);
+		GoalPositions.Add( new(Width - 1, Height - 1));
+	}
+	public void SetWidthFromSlider(Slider slider)
+	{
+		Width = (int)slider.value;
+		WidthSliderText.text = $"Width: {Width}";
+		ResizeGrid(Width, Height);
+	}
+	public void SetHeightFromSlider(Slider slider)
+	{
+		Height = (int)slider.value;
+		HeightSliderText.text = $"Height: {Height}";
+		ResizeGrid(Width, Height);
+	}
+	public void SetPlaceGoal(bool value)
+	{
+		placeGoal = value;
+	}
+	public void NewGoalPosition(Vector2 position)
+	{
+		GoalPositions.Add(position);
+		placeGoal = false;
 	}
 	public void SaveState(string name)
 	{
@@ -71,7 +102,7 @@ public class GridManager : MonoBehaviour
 		}
 		level.MotorPosition = MotorPosition;
 		level.MotorTeeth = GetTileAtPosition(MotorPosition, 0).Teeth;
-		level.GoalPosition = GoalPosition;
+		level.GoalPositions = GoalPositions.ToArray();
 		level.Width = Width;
 		level.Height = Height;
 		AssetDatabase.CreateAsset(level , $"Assets/Gears/Levels/{name}.asset");
@@ -104,7 +135,7 @@ public class GridManager : MonoBehaviour
 			}
 		}
 		MotorPosition = level.MotorPosition;
-		GoalPosition = level.GoalPosition;
+		GoalPositions = level.GoalPositions.ToList();
 	}
 	private void ResizeGrid(int width, int height)
 	{
@@ -114,6 +145,14 @@ public class GridManager : MonoBehaviour
 		_level2Partent = new GameObject("TilesLevel2");
 		Width = width;
 		Height = height;
+        foreach (Vector2 position in GoalPositions)
+        {
+			if (position.x > Width || position.y > Height)
+			{
+				GoalPositions.Remove(position);
+			}
+		}
+        
 		GenerateGrid(0);
 		GenerateGrid(1);
 		LinkAdjacentTiles(0);
@@ -141,10 +180,22 @@ public class GridManager : MonoBehaviour
 			Tile.RotatedTiles.Clear();
 			GetTileAtPosition(MotorPosition,0).Rotate(startRotationSpeed, startTorque);
 		}
-		if(GetTileAtPosition(GoalPosition,0).CurrentRotation != 0)
+		if (GoalPositions.Count != 0)
 		{
-			Debug.Log("Won");
+			bool allGoalsRotating = true;
+			foreach (Vector2 position in GoalPositions)
+			{
+				if (GetTileAtPosition(position, 0).CurrentRotation == 0)
+				{
+					allGoalsRotating = false;
+				}
+			}
+			if (allGoalsRotating)
+			{
+				Debug.Log("Won");
+			}
 		}
+		
 	}
 	public void StopRotation(string Message)
 	{
