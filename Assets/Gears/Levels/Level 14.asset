@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d539ff9171167f047a80b1784a7780e7, type: 3}
-  m_Name: temp
+  m_Name: Level 14
   m_EditorClassIdentifier: 
   Layer1Teeth:
-  - 4
+  - 0
   - 0
   - 0
   - 0
@@ -657,7 +657,7 @@ MonoBehaviour:
   - 0
   - 0
   MotorPosition: {x: 0, y: 0}
-  MotorTeeth: 4
-  GoalPosition: {x: 15, y: 8}
+  MotorTeeth: 0
+  GoalPosition: {x: -1, y: -1}
   Width: 16
   Height: 9

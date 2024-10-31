@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 public class ButtonHandler : MonoBehaviour, IPointerClickHandler
 {
 
-    [SerializeField] private string sceneToLoad;
+    [SerializeField] public string sceneToLoad;
     [SerializeField] private float menuValue;
     public void OnPointerClick(PointerEventData pointerEventData)
     {
