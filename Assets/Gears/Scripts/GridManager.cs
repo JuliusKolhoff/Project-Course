@@ -124,11 +124,11 @@ public class GridManager : MonoBehaviour
 				{
 					if (level.Layer1Teeth[x + Width * y] != 0)
 					{
-						GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y]);
+						GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y],true);
 					}
 					if (level.Layer2Teeth[x + Width * y] != 0)
 					{
-						GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y]);
+						GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y],true);
 					}
 				}
 
@@ -145,7 +145,8 @@ public class GridManager : MonoBehaviour
 		_level2Partent = new GameObject("TilesLevel2");
 		Width = width;
 		Height = height;
-        foreach (Vector2 position in GoalPositions)
+		List<Vector2> tempList = new List<Vector2>(GoalPositions);
+		foreach (Vector2 position in tempList)
         {
 			if (position.x > Width || position.y > Height)
 			{
@@ -185,6 +186,10 @@ public class GridManager : MonoBehaviour
 			bool allGoalsRotating = true;
 			foreach (Vector2 position in GoalPositions)
 			{
+				if (GetTileAtPosition(position, 0) == null)
+                {
+					continue;
+                }
 				if (GetTileAtPosition(position, 0).CurrentRotation == 0)
 				{
 					allGoalsRotating = false;

@@ -15,7 +15,7 @@ public class Tile : MonoBehaviour
 	public int Layer { get; set; }
 
 
-	[SerializeField] private Color _baseColor, _offsetColor;
+	[SerializeField] private Color _baseColor, _offsetColor, _permanentColor;
 	[SerializeField] private SpriteRenderer _renderer;
 	[SerializeField] private GameObject _highlight;
 	[SerializeField] private GameObject _gearPrefab;
@@ -24,10 +24,10 @@ public class Tile : MonoBehaviour
 	[SerializeField] private GameObject _smallEnginePrefab;
 
 	public bool _isOffset;
+	private bool _permanent = false;
 	private GameObject _gear;
 	private GameObject _motor;
 	private GridManager _manager;
-
 
 	public void Init(bool IsOffset, GridManager Manager)
 	{
@@ -50,6 +50,10 @@ public class Tile : MonoBehaviour
 	}
 	public void DeleteGear()
 	{
+		if (_permanent)
+        {
+			return;
+        }
         foreach (Vector2 position in _manager.GoalPositions)
         {
 			if (transform.position.Equals(position))
@@ -65,6 +69,7 @@ public class Tile : MonoBehaviour
 	}
 	public void NewMotor(float teeth)
 	{
+		_permanent = true;
 		if (teeth != 4 && teeth != 8)
 		{
 			Debug.Log("Only 4 and 8 teeth motors are supported");
@@ -86,12 +91,24 @@ public class Tile : MonoBehaviour
 	}
 	public void DeleteMotor()
 	{
+		if (_permanent)
+        {
+			return;
+        }
 		_manager.MotorPosition = new(-1, -1);
 		Destroy(_motor);
 		_motor = null;
 	}
 	public void NewGear(float teeth, float minTorque)
+    {
+		NewGear(teeth, minTorque, false);
+    }
+	public void NewGear(float teeth, float minTorque, bool isPermanent)
 	{
+		if (isPermanent)
+        {
+			_permanent = true;
+        }
 		if (teeth != 4 && teeth != 8)
 		{
 			Debug.Log("Only 4 and 8 teeth gears are supported");
@@ -107,6 +124,10 @@ public class Tile : MonoBehaviour
 			_gear.name = "Gear";
 		}
 		_gear.transform.localScale = new(GearSize, GearSize, 1);
+		if (_permanent)
+        {
+			_gear.GetComponent<SpriteRenderer>().color = _permanentColor;
+        }
 		Teeth = teeth;
 		MinTorque = minTorque;
 
