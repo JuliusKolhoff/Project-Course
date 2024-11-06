@@ -39,7 +39,7 @@ public class GridManager : MonoBehaviour
 		LinkAdjacentTiles(1);
 		EnableLayer(0);
 		GetTileAtPosition(new(0, 0),0).NewGear(4,0);
-		MotorPosition = new(0, 0);
+		MotorPosition = new(-1, -1);
 		GetTileAtIndex(Width-1,Height-1,0).NewGear(8,5);
 		GoalPositions.Add( new(Width - 1, Height - 1));
 	}
@@ -111,6 +111,8 @@ public class GridManager : MonoBehaviour
 	public void LoadState(string name)
 	{
 		Level level = AssetDatabase.LoadAssetAtPath<Level>($"Assets/Gears/Levels/{name}.asset");
+		MotorPosition = level.MotorPosition;
+		GoalPositions = level.GoalPositions.ToList();
 		ResizeGrid(level.Width,level.Height);
 		for (int x = 0; x < Width; x++)
 		{
@@ -134,13 +136,12 @@ public class GridManager : MonoBehaviour
 
 			}
 		}
-		MotorPosition = level.MotorPosition;
-		GoalPositions = level.GoalPositions.ToList();
 	}
 	private void ResizeGrid(int width, int height)
 	{
 		Destroy(_level1Partent);
 		Destroy(_level2Partent);
+		MotorPosition = new(-1, -1);
 		_level1Partent = new GameObject("TilesLevel1");
 		_level2Partent = new GameObject("TilesLevel2");
 		Width = width;

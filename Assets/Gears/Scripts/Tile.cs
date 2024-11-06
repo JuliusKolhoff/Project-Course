@@ -15,7 +15,7 @@ public class Tile : MonoBehaviour
 	public int Layer { get; set; }
 
 
-	[SerializeField] private Color _baseColor, _offsetColor, _permanentColor;
+	[SerializeField] private Color _baseColor, _offsetColor, _permanentColor, _goalColor;
 	[SerializeField] private SpriteRenderer _renderer;
 	[SerializeField] private GameObject _highlight;
 	[SerializeField] private GameObject _gearPrefab;
@@ -128,6 +128,14 @@ public class Tile : MonoBehaviour
         {
 			_gear.GetComponent<SpriteRenderer>().color = _permanentColor;
         }
+		foreach (Vector2 position in _manager.GoalPositions)
+		{
+			if (transform.position.Equals(position))
+			{
+				_gear.GetComponent<SpriteRenderer>().color = _goalColor;
+				break;
+			}
+		}
 		Teeth = teeth;
 		MinTorque = minTorque;
 

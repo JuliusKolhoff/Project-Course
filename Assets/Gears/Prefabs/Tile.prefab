@@ -103,6 +103,7 @@ MonoBehaviour:
   _baseColor: {r: 0.3018868, g: 0.3018868, b: 0.3018868, a: 1}
   _offsetColor: {r: 0.14150941, g: 0.14084192, b: 0.14084192, a: 1}
   _permanentColor: {r: 0.8679245, g: 0.7542765, b: 0.6918832, a: 1}
+  _goalColor: {r: 0.9811321, g: 0.9025509, b: 0.5322179, a: 1}
   _renderer: {fileID: 7797719239272159621}
   _highlight: {fileID: 7181028933762161093}
   _gearPrefab: {fileID: 8771672755558601099, guid: 94b9954d9821d1b4f9729b5465967569, type: 3}
