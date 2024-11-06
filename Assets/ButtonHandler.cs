@@ -12,6 +12,7 @@ public class ButtonHandler : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         SceneLoader sceneLoader = FindFirstObjectByType<SceneLoader>();
+        SceneLoader.LoadParameter = gameObject.name;
         sceneLoader.LoadNextScene(sceneToLoad,menuValue);
     }
 }

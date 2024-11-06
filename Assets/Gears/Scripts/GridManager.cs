@@ -31,6 +31,7 @@ public class GridManager : MonoBehaviour
 
 	void Start()
 	{
+<<<<<<< Updated upstream
 		Width = 16;
 		Height = 9;
 		GenerateGrid(0);
@@ -42,6 +43,20 @@ public class GridManager : MonoBehaviour
 		MotorPosition = new(-1, -1);
 		GetTileAtIndex(Width-1,Height-1,0).NewGear(8,5);
 		GoalPositions.Add( new(Width - 1, Height - 1));
+=======
+		LoadState(SceneLoader.LoadParameter);
+		//Width = 16;
+		//Height = 9;
+		//GenerateGrid(0);
+		//GenerateGrid(1);
+		//LinkAdjacentTiles(0);
+		//LinkAdjacentTiles(1);
+		//EnableLayer(0);
+		//GetTileAtPosition(new(0, 0),0).NewGear(4,0);
+		//MotorPosition = new(0, 0);
+		//GetTileAtIndex(Width-1,Height-1,0).NewGear(8,5);
+		//GoalPositions.Add( new(Width - 1, Height - 1));
+>>>>>>> Stashed changes
 	}
 	public void SetWidthFromSlider(Slider slider)
 	{
@@ -111,9 +126,13 @@ public class GridManager : MonoBehaviour
 	public void LoadState(string name)
 	{
 		Level level = AssetDatabase.LoadAssetAtPath<Level>($"Assets/Gears/Levels/{name}.asset");
+<<<<<<< Updated upstream
 		MotorPosition = level.MotorPosition;
 		GoalPositions = level.GoalPositions.ToList();
 		ResizeGrid(level.Width,level.Height);
+=======
+		ResizeGrid(level.Width, level.Height);
+>>>>>>> Stashed changes
 		for (int x = 0; x < Width; x++)
 		{
 			for (int y = 0; y < Height; y++)
@@ -126,16 +145,22 @@ public class GridManager : MonoBehaviour
 				{
 					if (level.Layer1Teeth[x + Width * y] != 0)
 					{
-						GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y],true);
+						GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], true);
 					}
 					if (level.Layer2Teeth[x + Width * y] != 0)
 					{
-						GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y],true);
+						GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], true);
 					}
 				}
 
 			}
 		}
+<<<<<<< Updated upstream
+=======
+		MotorPosition = level.MotorPosition;
+		GoalPositions = level.GoalPositions?.ToList();
+		EnableLayer(0);
+>>>>>>> Stashed changes
 	}
 	private void ResizeGrid(int width, int height)
 	{
@@ -182,7 +207,7 @@ public class GridManager : MonoBehaviour
 			Tile.RotatedTiles.Clear();
 			GetTileAtPosition(MotorPosition,0).Rotate(startRotationSpeed, startTorque);
 		}
-		if (GoalPositions.Count != 0)
+		if (GoalPositions?.Count != 0)
 		{
 			bool allGoalsRotating = true;
 			foreach (Vector2 position in GoalPositions)

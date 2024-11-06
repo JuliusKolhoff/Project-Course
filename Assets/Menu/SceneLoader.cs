@@ -9,9 +9,9 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-	[SerializeField] private Animator transition;
+    [SerializeField] private Animator transition;
     [SerializeField] private float transitionDuration = 1f;
-
+    public static string LoadParameter = "Level 1";
 	public void Awake()
     {
         GameObject[] objs = GameObject.FindGameObjectsWithTag("SceneLoader");
