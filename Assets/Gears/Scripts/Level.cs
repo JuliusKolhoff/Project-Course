@@ -9,6 +9,7 @@ public class Level : ScriptableObject
 		Layer1Torque = new float[manager.Width + manager.Width * manager.Height];
 		Layer2Teeth = new float[manager.Width + manager.Width * manager.Height];
 		Layer2Torque = new float[manager.Width + manager.Width * manager.Height];
+		MotorPosition = new();
 	}
 	public float[] Layer1Teeth;
 	public float[] Layer1Torque;
