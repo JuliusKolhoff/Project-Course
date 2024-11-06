@@ -116,7 +116,6 @@ public class GridManager : MonoBehaviour
 		MotorPosition = level.MotorPosition;
 		GoalPositions = level.GoalPositions.ToList();
 		ResizeGrid(level.Width,level.Height);
-
 		for (int x = 0; x < Width; x++)
 		{
 			for (int y = 0; y < Height; y++)
