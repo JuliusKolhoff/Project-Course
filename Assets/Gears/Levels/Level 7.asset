@@ -69,14 +69,14 @@ MonoBehaviour:
   Layer2Teeth:
   - 0
   - 0
+  - 8
+  - 4
+  - 8
   - 0
   - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
+  - 4
+  - 8
+  - 4
   - 0
   - 0
   - 0
@@ -123,7 +123,6 @@ MonoBehaviour:
   MotorPosition: {x: 0, y: 0}
   MotorTeeth: 4
   GoalPositions:
-  - {x: 12, y: 0}
   - {x: 12, y: 0}
   Width: 13
   Height: 1
