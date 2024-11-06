@@ -18,14 +18,18 @@ public class MenuController : MonoBehaviour
     void Start()
     {
         int index = 0;
-		string[] files = Directory.GetFiles("Assets/Gears/Levels", "*.asset", SearchOption.TopDirectoryOnly);
+		//string[] files = Directory.GetFiles("Assets/Gears/Resources/Levels", "*.asset", SearchOption.TopDirectoryOnly);
+
 		pages.Add(new GameObject[6]);
-        List<Level> levels = new List<Level>();
-        foreach (var path in files)
-        {
-            levels.Add(AssetDatabase.LoadAssetAtPath<Level>(path));
-        }
-        levels.Sort(delegate(Level x1,Level x2) {
+		//      List<Level> levels = new List<Level>();
+		//      foreach (var path in files)
+		//      {
+		//          string resourcePath = path.Split("/").Last().Replace(".asset","");
+		//          Debug.Log(resourcePath);
+		//          levels.Add(Resources.Load<Level>(resourcePath));
+		//      }
+		List<Level> levels = Resources.LoadAll<Level>("Levels/").ToList();
+		levels.Sort(delegate(Level x1,Level x2) {
             int num1 = int.Parse(x1.name.Split(" ")[1]);
 			int num2 = int.Parse(x2.name.Split(" ")[1]);
             return num1.CompareTo(num2); 

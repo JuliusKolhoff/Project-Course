@@ -67,6 +67,7 @@ public class GridManager : MonoBehaviour
 	}
 	public void SaveState(string name)
 	{
+#if UNITY_EDITOR
 		Level level = ScriptableObject.CreateInstance<Level>();
 		level.Init(this);
 		for (int x = 0; x < Width; x++)
@@ -106,13 +107,13 @@ public class GridManager : MonoBehaviour
 		level.GoalPositions = GoalPositions.ToArray();
 		level.Width = Width;
 		level.Height = Height;
-		AssetDatabase.CreateAsset(level , $"Assets/Gears/Levels/{name}.asset");
+		AssetDatabase.CreateAsset(level , $"Assets/Gears/Resources/Levels/{name}.asset");
+#endif
 	}
 
 	public void LoadState(string name)
 	{
-		Debug.Log(name);
-		Level level = AssetDatabase.LoadAssetAtPath<Level>($"Assets/Gears/Levels/{name}.asset");
+		Level level = Resources.Load<Level>($"Levels/{name}");
 		MotorPosition = level.MotorPosition;
 		GoalPositions = level.GoalPositions.ToList();
 		ResizeGrid(level.Width,level.Height);
