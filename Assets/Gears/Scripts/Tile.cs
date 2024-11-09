@@ -9,7 +9,7 @@ public class Tile : MonoBehaviour
 
 	public List<Tile> AdjacentTiles = new();
 	public float Teeth { get; private set; }
-	public float CurrentRotation { get; private set; }
+	public float CurrentRotation { get;  set; }
 	public float CurrentTorque { get; private set; }
 	public float MinTorque { get; private set; }
 	public int Layer { get; set; }
@@ -87,6 +87,7 @@ public class Tile : MonoBehaviour
 		}
 		_motor.transform.localScale = new(GearSize, GearSize, 1);
 		_manager.MotorPosition = transform.position;
+		_manager.MotorTorque = _manager.MinTorque;
 		NewGear(teeth, 0);
 	}
 	public void DeleteMotor()
@@ -225,11 +226,11 @@ public class Tile : MonoBehaviour
 				{
 					if (_isOffset)
 					{
-						NewGear(8, 0);
+						NewGear(8, _manager.MinTorque);
 					}
 					else
 					{
-						NewGear(4, 0);
+						NewGear(4, _manager.MinTorque);
 					}
 					if (_manager.placeGoal)
 					{

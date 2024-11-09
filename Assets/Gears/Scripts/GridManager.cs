@@ -8,41 +8,34 @@ using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour
 {
-	//public int Width { get { return Width; } set { ResizeGrid(value, Height); } }		//16
-	//public int Height { get { return Height; } set { ResizeGrid(value, Height); } }   //9
 	public int Width, Height;
-	[SerializeField] private TMP_Text WidthSliderText, HeightSliderText;
+	[SerializeField] private TMP_Text WidthSliderText, HeightSliderText, TorqueSliderText;
 	[SerializeField] private Tile _tilePrefab;
 	[SerializeField] private Transform _cam;
 	[SerializeField] private GameObject _level1Partent;
 	[SerializeField] private GameObject _level2Partent;
 	[SerializeField] private float startRotationSpeed = 2f;
-	[SerializeField] private float startTorque = 10f;
 	[SerializeField] private bool applyMachineEfficiency = false;
 
 	public bool placeMotor = false;
 	public bool placeGoal = false;
 
 
-	public Vector2 MotorPosition { get; set; }
+	public Vector2 MotorPosition { get; set; } = new(0,0);
+	public float MotorTorque = 10f;
 	public List<Vector2> GoalPositions = new();
+	public float MinTorque { get; set; }
 
 	private Dictionary<Vector2, Tile>[] _tiles = new Dictionary<Vector2, Tile>[2];
-
+	
 	void Start()
 	{
 		LoadState(SceneLoader.LoadParameter);
-		//Width = 16;
-		//Height = 9;
-		//GenerateGrid(0);
-		//GenerateGrid(1);
-		//LinkAdjacentTiles(0);
-		//LinkAdjacentTiles(1);
-		//EnableLayer(0);
-		//GetTileAtPosition(new(0, 0),0).NewGear(4,0);
-		//MotorPosition = new(0, 0);
-		//GetTileAtIndex(Width-1,Height-1,0).NewGear(8,5);
-		//GoalPositions.Add( new(Width - 1, Height - 1));
+	}
+	public void SetTorqueFromSlider(Slider slider)
+	{
+		MinTorque = slider.value;
+		TorqueSliderText.text = $"Torque: {MinTorque}";
 	}
 	public void SetWidthFromSlider(Slider slider)
 	{
@@ -103,7 +96,16 @@ public class GridManager : MonoBehaviour
 			}
 		}
 		level.MotorPosition = MotorPosition;
-		level.MotorTeeth = GetTileAtPosition(MotorPosition, 0).Teeth;
+		level.MotorTorque = MotorTorque;
+		if(GetTileAtPosition(MotorPosition, 0))
+		{
+			level.MotorTeeth = GetTileAtPosition(MotorPosition, 0).Teeth;
+		}
+		else
+		{
+			level.MotorTeeth = 0;
+		}
+		
 		level.GoalPositions = GoalPositions.ToArray();
 		level.Width = Width;
 		level.Height = Height;
@@ -121,7 +123,7 @@ public class GridManager : MonoBehaviour
 		{
 			for (int y = 0; y < Height; y++)
 			{
-				if (new Vector2(x, y).Equals(level.MotorPosition))
+				if (new Vector2(x, y).Equals(level.MotorPosition) && level.MotorTeeth != 0)
 				{
 					GetTileAtIndex(x, y, 0).NewMotor(level.MotorTeeth);
 				}
@@ -140,6 +142,7 @@ public class GridManager : MonoBehaviour
 			}
 		}
 		MotorPosition = level.MotorPosition;
+		MotorTorque = level.MotorTorque;
 		GoalPositions = level.GoalPositions?.ToList();
 		EnableLayer(0);
 
@@ -186,28 +189,45 @@ public class GridManager : MonoBehaviour
 
 		if (Input.GetKey(KeyCode.R))
 		{
-			Tile.RotatedTiles.Clear();
-			GetTileAtPosition(MotorPosition,0).Rotate(startRotationSpeed, startTorque);
-		}
-		if (GoalPositions?.Count != 0)
-		{
-			bool allGoalsRotating = true;
-			foreach (Vector2 position in GoalPositions)
+			if(GetTileAtPosition(MotorPosition, 0) && GetTileAtPosition(MotorPosition, 0).Teeth != 0)
 			{
-				if (GetTileAtPosition(position, 0) == null)
-                {
-					continue;
-                }
-				if (GetTileAtPosition(position, 0).CurrentRotation == 0)
+				if (GoalPositions?.Count != 0)
 				{
-					allGoalsRotating = false;
+					foreach (Vector2 position in GoalPositions)
+					{
+						if (GetTileAtPosition(position, 0) == null)
+						{
+							continue;
+						}
+						GetTileAtPosition(position, 0).CurrentRotation = 0;
+
+					}
+				}
+				Tile.RotatedTiles.Clear();
+				GetTileAtPosition(MotorPosition, 0).Rotate(startRotationSpeed, MotorTorque);
+				if (GoalPositions?.Count != 0)
+				{
+					bool allGoalsRotating = true;
+					foreach (Vector2 position in GoalPositions)
+					{
+						if (GetTileAtPosition(position, 0) == null)
+						{
+							continue;
+						}
+						if (GetTileAtPosition(position, 0).CurrentRotation == 0)
+						{
+							allGoalsRotating = false;
+						}
+					}
+					if (allGoalsRotating)
+					{
+						Debug.Log("Won");
+					}
 				}
 			}
-			if (allGoalsRotating)
-			{
-				Debug.Log("Won");
-			}
+			
 		}
+		
 		
 	}
 	public void StopRotation(string Message)
