@@ -26,8 +26,8 @@ public class BoardController : MonoBehaviour
 	}
 	public void ChangeResistance(string value)
 	{
-		if(value != "")
-			_resistance = int.Parse(value);
+		if(value.Replace(" ","") != "")
+			_resistance = int.Parse(value.Replace(" ", ""));
 	}
     // Update is called once per frame
     void Update()
@@ -56,7 +56,7 @@ public class BoardController : MonoBehaviour
 					break;
 				case CurrentObject.Resistor:
 					obj = Instantiate(_resistor, position, Quaternion.identity);
-					_resistor.GetComponent<BoardObject>().Resistance = _resistance;
+					obj.GetComponent<BoardObject>().Resistance = _resistance;
 					obj.name = objects.Count.ToString();
 					objects.Add(obj);
 					break;

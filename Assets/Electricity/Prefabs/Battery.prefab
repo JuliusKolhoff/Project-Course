@@ -63,9 +63,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   plusConnections: []
   minusConnections: []
-  Resistance: 0
-  _plus: {fileID: 6849264070065349621}
-  _minus: {fileID: 3086192225806902520}
+  Plus: {fileID: 3086192225806902520}
+  Minus: {fileID: 6849264070065349621}
 --- !u!1 &3086192225806902520
 GameObject:
   m_ObjectHideFlags: 0

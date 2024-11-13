@@ -36,9 +36,14 @@ public class Wire : MonoBehaviour
 		{
 			return Obj2;
 		}
-		else
+		else if(current == Obj2)
 		{
 			return Obj1;
-		}
+        }
+        else
+        {
+            Debug.Log("Gameobject not in connection");
+            return null;
+        }
 	}
 }
