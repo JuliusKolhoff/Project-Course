@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class GridManager : MonoBehaviour
 {
 	public int Width, Height;
-	[SerializeField] private TMP_Text WidthSliderText, HeightSliderText, TorqueSliderText;
+	[SerializeField] private TMP_Text WidthSliderText, HeightSliderText, TorqueSliderText,RpmSliderText;
 	[SerializeField] private Tile _tilePrefab;
 	[SerializeField] private Transform _cam;
 	[SerializeField] private GameObject _level1Partent;
@@ -25,12 +25,18 @@ public class GridManager : MonoBehaviour
 	public float MotorTorque = 10f;
 	public List<Vector2> GoalPositions = new();
 	public float MinTorque { get; set; }
+	public float MinRpm { get; set; }
 
 	private Dictionary<Vector2, Tile>[] _tiles = new Dictionary<Vector2, Tile>[2];
 	
 	void Start()
 	{
 		LoadState(SceneLoader.LoadParameter);
+	}
+	public void SetRpmFromSlider(Slider slider)
+	{
+		MinRpm = slider.value;
+		RpmSliderText.text = $"Rpm: {MinRpm}";
 	}
 	public void SetTorqueFromSlider(Slider slider)
 	{
@@ -75,21 +81,25 @@ public class GridManager : MonoBehaviour
 				{
 					level.Layer1Teeth[x + Width * y] = GetTileAtIndex(x, y, 0).Teeth;
 					level.Layer1Torque[x + Width * y] = GetTileAtIndex(x, y, 0).MinTorque;
+					level.Layer1Rpm[x + Width * y] = GetTileAtIndex(x, y, 0).MinRpm;
 				}
 				else
 				{
 					level.Layer1Teeth[x+Width * y] = 0;
 					level.Layer1Torque[x + Width * y] = 0;
+					level.Layer1Rpm[x + Width * y] = 0;
 				}
 				if (GetTileAtIndex(x, y, 1).HasGear())
 				{
 					level.Layer2Teeth[x + Width * y] = GetTileAtIndex(x, y, 1).Teeth;
 					level.Layer2Torque[x + Width * y] = GetTileAtIndex(x, y, 1).MinTorque;
+					level.Layer2Rpm[x + Width * y] = GetTileAtIndex(x, y, 1).MinRpm;
 				}
 				else
 				{
 					level.Layer2Teeth[x + Width * y] = 0;
 					level.Layer2Torque[x + Width * y] = 0;
+					level.Layer2Rpm[x + Width * y] = 0;
 				}
 
 
@@ -129,13 +139,13 @@ public class GridManager : MonoBehaviour
 				}
 				else
 				{
-					if (level.Layer1Teeth[x + Width * y] != 0)
+					if (level.Layer1Teeth[x + Width * y] != 0 && level.Layer1Rpm != null)
 					{
-						GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], true);
+						GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], level.Layer1Rpm[x + Width * y], true);
 					}
-					if (level.Layer2Teeth[x + Width * y] != 0)
+					if (level.Layer2Teeth[x + Width * y] != 0 && level.Layer2Rpm != null)
 					{
-						GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], true);
+						GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], level.Layer2Rpm[x + Width * y], true);
 					}
 				}
 

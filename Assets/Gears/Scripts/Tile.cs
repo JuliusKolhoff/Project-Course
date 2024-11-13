@@ -12,6 +12,7 @@ public class Tile : MonoBehaviour
 	public float CurrentRotation { get;  set; }
 	public float CurrentTorque { get; private set; }
 	public float MinTorque { get; private set; }
+	public float MinRpm { get; private set; }
 	public int Layer { get; set; }
 
 
@@ -64,6 +65,7 @@ public class Tile : MonoBehaviour
 		}
 		Teeth = 0;
 		MinTorque = 0;
+		MinRpm = 0;
 		Destroy(_gear);
 		_gear = null;
 	}
@@ -88,7 +90,7 @@ public class Tile : MonoBehaviour
 		_motor.transform.localScale = new(GearSize, GearSize, 1);
 		_manager.MotorPosition = transform.position;
 		_manager.MotorTorque = _manager.MinTorque;
-		NewGear(teeth, 0);
+		NewGear(teeth, 0,0);
 	}
 	public void DeleteMotor()
 	{
@@ -100,11 +102,11 @@ public class Tile : MonoBehaviour
 		Destroy(_motor);
 		_motor = null;
 	}
-	public void NewGear(float teeth, float minTorque)
+	public void NewGear(float teeth, float minTorque,float minRpm)
     {
-		NewGear(teeth, minTorque, false);
+		NewGear(teeth, minTorque, minRpm, false);
     }
-	public void NewGear(float teeth, float minTorque, bool isPermanent)
+	public void NewGear(float teeth, float minTorque,float minRpm, bool isPermanent)
 	{
 		if (isPermanent)
         {
@@ -139,7 +141,7 @@ public class Tile : MonoBehaviour
 		}
 		Teeth = teeth;
 		MinTorque = minTorque;
-
+		MinRpm = minRpm;
 	}	
 	public bool Rotate(float degrees, float torque)
 	{
@@ -154,7 +156,12 @@ public class Tile : MonoBehaviour
 			_manager.StopRotation($"Not Enough torque at gear: {this.gameObject.name} in layer {Layer};	   Only {torque}/{MinTorque} of required Torque");
 			return false;
 		}
-		if(HasGear())
+		if (Mathf.Abs(degrees) < MinRpm)
+		{
+			_manager.StopRotation($"Not Enough Rpm at gear: {this.gameObject.name} in layer {Layer};	   Only {Mathf.Abs(degrees)}/{MinRpm} of required Rpm");
+			return false;
+		}
+		if (HasGear())
 		{
 			RotatedTiles.Add(this);
 			_gear.transform.Rotate(new Vector3(0, 0, degrees));
@@ -226,11 +233,11 @@ public class Tile : MonoBehaviour
 				{
 					if (_isOffset)
 					{
-						NewGear(8, _manager.MinTorque);
+						NewGear(8, _manager.MinTorque, _manager.MinRpm);
 					}
 					else
 					{
-						NewGear(4, _manager.MinTorque);
+						NewGear(4, _manager.MinTorque, _manager.MinRpm);
 					}
 					if (_manager.placeGoal)
 					{
