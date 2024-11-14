@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BatteryController : MonoBehaviour
 {
 	[SerializeField] private GameObject _plus, _minus;
+	[SerializeField] private float _volt = 10;
 	public BoardController Controller { get; set;}
 	private void Update()
 	{
@@ -17,14 +16,69 @@ public class BatteryController : MonoBehaviour
 		{
 			(float, float) Rges = FindRGesamt(gameObject, null);
 			Debug.Log($"Rgesamt: {Rges.Item1 + Rges.Item2}");
+			BoardObject obj = GetComponent<BoardObject>();
+			obj.Vin = _volt;
+			obj.Ampere = _volt / Sum(Rges);
+			CalculateRIU(gameObject);
 		}
+	}
+	private void CalculateRIU(GameObject obj)
+	{
+		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? obj.GetComponent<BoardObject>(); 
+		List<Wire> minusConnections = boardObject.minusConnections;
+		List<Wire> plusConnections = boardObject.plusConnections;
+		GameObject minusConnector = boardObject.Minus;
+		if(minusConnections.Count == 1)
+		{
+			
+			GameObject otherObject = minusConnections[0].GetOtherObject(minusConnector);
+			if(otherObject != _plus)
+			{
+				Debug.Log("Reihenschaltung");
+				Debug.Log(otherObject.transform.parent.name);
+				BoardObject otherBoardObject = otherObject.GetComponentInParent<BoardObject>();
+				otherBoardObject.Ampere = boardObject.Ampere;
+				Debug.Log("Ampere: " + otherBoardObject.Ampere);
+				float ResistanceSum = Sum(FindRGesamt(otherObject, minusConnections[0]));
+				otherBoardObject.Vin = ResistanceSum * otherBoardObject.Ampere;
+				otherBoardObject.Vuse = otherBoardObject.Vin * (otherBoardObject.Resistance / ResistanceSum);
+				CalculateRIU(otherObject);
+			}
+		}
+		else
+		{
+			foreach (Wire connection in minusConnections)
+			{
+				Debug.Log("Parallelschaltung");
+
+				GameObject otherObject = connection.GetOtherObject(minusConnector);
+				if (otherObject != _plus)
+				{
+					BoardObject otherBoardObject = otherObject.GetComponentInParent<BoardObject>();
+					float ResistanceSum = Sum(FindRGesamt(otherObject, minusConnections[0]));
+					otherBoardObject.Vin = boardObject.Vin - boardObject.Vuse;
+					otherBoardObject.Vuse = otherBoardObject.Vin * (otherBoardObject.Resistance / ResistanceSum);
+					otherBoardObject.Ampere = otherBoardObject.Vuse / ResistanceSum;
+					CalculateRIU(otherObject);
+				}
+			}
+		
+
+		}
+
+	}
+	private float Sum((float,float) value)
+	{
+		return value.Item1 + value.Item2;
 	}
 	private void LogResistance(GameObject obj,(float,float) resistance)
 	{
+		/*
 		if (obj.GetComponent<BatteryController>() == null)
 			Debug.Log($"{obj.transform.parent.name}: Resistance: {resistance.Item1} and OverflowResistance: {resistance.Item2}");
 		else
 			Debug.Log($"{obj.name}: Resistance: {resistance.Item1} and OverflowResistance: {resistance.Item2}");
+		*/
 	}
 	public (float,float) FindRGesamt(GameObject obj, Wire origin)
 	{

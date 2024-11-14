@@ -8,6 +8,8 @@ public class BoardObject : MonoBehaviour
 	public List<Wire> plusConnections = new();
 	public List<Wire> minusConnections = new();
 	private float _resistance;
+	public float Vin,Vuse;
+	public float Ampere;
 	public float Resistance 
 	{
 		get => _resistance;
@@ -20,9 +22,9 @@ public class BoardObject : MonoBehaviour
 	private int visits = 0;
 	public bool IsLastVisit()
 	{
-		Debug.Log("Name: " + name);
+		/*Debug.Log("Name: " + name);
 		Debug.Log("Visits: " + visits);
-		Debug.Log("Count: " + plusConnections.Count);
+		Debug.Log("Count: " + plusConnections.Count);*/
 		visits++;
 		if(visits == plusConnections.Count)
 		{
