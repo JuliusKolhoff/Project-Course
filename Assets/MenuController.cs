@@ -46,7 +46,7 @@ public class MenuController : MonoBehaviour
                 pages.Add(new GameObject[6]);
             }
             GameObject button = Instantiate(_buttonPrefab,new Vector3(0,0,0),Quaternion.identity, _canvas);
-            button.transform.localPosition = new(Mathf.Lerp(-300,300,(index % 3) / 2f),Mathf.Lerp(100, -100, index / 3),0);
+            button.transform.localPosition = new(100,Mathf.Lerp(90, -120, index / 6f),0);
 			button.name = level.name;
             button.GetComponent<ButtonHandler>().sceneToLoad = "Gears";
             button.GetComponentInChildren<TMP_Text>().text = level.name;

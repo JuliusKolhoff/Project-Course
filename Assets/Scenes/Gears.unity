@@ -7899,7 +7899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dca41f4f87d67ee49860856385d53e8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: BackgroundTest#4
+  sceneToLoad: FontTest
   menuValue: 1
 --- !u!1 &1617029762
 GameObject:

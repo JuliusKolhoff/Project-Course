@@ -35,4 +35,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Magnet.unity
     guid: dd1a26dc990f77c4aa4b1e3621359931
+  - enabled: 1
+    path: Assets/Scenes/FontTest.unity
+    guid: 597e0d38edd52a043837c58b334039b2
   m_configObjects: {}
