@@ -44,7 +44,7 @@ public class BoardController : MonoBehaviour
 		}
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 position = Camera.current.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 position = Camera.allCameras[0].ScreenToWorldPoint(Input.mousePosition);
             position.z = 0;
 			GameObject obj;
 			switch (_currentObject)
