@@ -139,13 +139,31 @@ public class GridManager : MonoBehaviour
 				}
 				else
 				{
-					if (level.Layer1Teeth[x + Width * y] != 0 && level.Layer1Rpm != null)
+					if (level.Layer1Teeth[x + Width * y] != 0)
 					{
-						GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], level.Layer1Rpm[x + Width * y], true);
+						if (level.Layer1Rpm == null)
+						{
+							GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], 0, true);
+
+						}
+						else
+						{
+							GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], level.Layer1Rpm[x + Width * y], true);
+
+						}
 					}
-					if (level.Layer2Teeth[x + Width * y] != 0 && level.Layer2Rpm != null)
+					if (level.Layer2Teeth[x + Width * y] != 0)
 					{
-						GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], level.Layer2Rpm[x + Width * y], true);
+						if(level.Layer2Rpm == null)
+						{
+							GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], 0, true);
+
+						}
+						else
+						{
+							GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], level.Layer2Rpm[x + Width * y], true);
+
+						}
 					}
 				}
 
