@@ -13,6 +13,8 @@ public class MenuController : MonoBehaviour
     [SerializeField] private GameObject _buttonPrefab;
     [SerializeField] private Transform _canvas;
     [SerializeField] private GameObject _nextPageButton,_previousPageButton;
+    [SerializeField] private TMP_Text _text;
+    private TextAsset[] texts;
     private int currentPage = 0;
     // Start is called before the first frame update
     void Start()
@@ -30,8 +32,8 @@ public class MenuController : MonoBehaviour
 		//      }
 		List<Level> levels = Resources.LoadAll<Level>("Levels/").ToList();
 		levels.Sort(delegate(Level x1,Level x2) {
-            int num1 = int.Parse(x1.name.Split(" ")[1]);
-			int num2 = int.Parse(x2.name.Split(" ")[1]);
+            int num1 = int.Parse(x1.name.Split("_")[0]);
+			int num2 = int.Parse(x2.name.Split("_")[0]);
             return num1.CompareTo(num2); 
         
         
@@ -55,7 +57,9 @@ public class MenuController : MonoBehaviour
             index++;
         }
         currentPage = 0;
-        _previousPageButton.SetActive(false);
+		texts = Resources.LoadAll<TextAsset>("Pages/");
+        _text.text = texts[currentPage].text;
+		_previousPageButton.SetActive(false);
         ToggleActivatedButtons(0, true);
     }
     public void NextPage()
@@ -81,7 +85,8 @@ public class MenuController : MonoBehaviour
         ToggleActivatedButtons(currentPage, false);
 		ToggleActivatedButtons(page, true);
 		currentPage = page;
-    }
+		_text.text = texts[currentPage].text;
+	}
     private void ToggleActivatedButtons(int page,bool active)
     {
         for (int i = 0; i < pages[page].Length; i++)
@@ -90,9 +95,4 @@ public class MenuController : MonoBehaviour
 
 		}
 	}
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

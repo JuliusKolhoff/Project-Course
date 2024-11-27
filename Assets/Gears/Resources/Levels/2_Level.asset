@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d539ff9171167f047a80b1784a7780e7, type: 3}
-  m_Name: Level 3
+  m_Name: 2_Level
   m_EditorClassIdentifier: 
   Layer1Teeth:
   - 4
@@ -31,34 +31,36 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
   - 4
-  - 8
-  - 4
-  - 8
-  - 0
-  - 8
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 4
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
   - 0
   - 0
   - 0
@@ -68,6 +70,8 @@ MonoBehaviour:
   - 0
   - 0
   Layer1Torque:
+  - 0
+  - 0
   - 0
   - 0
   - 0
@@ -142,11 +146,13 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  - 4
-  - 8
-  - 4
-  - 8
-  - 4
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
   - 0
   - 0
   - 0
@@ -232,9 +238,11 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  - 0
+  - 0
   MotorPosition: {x: 0, y: 0}
   MotorTeeth: 4
   GoalPositions:
-  - {x: 0, y: 4}
-  Width: 9
-  Height: 5
+  - {x: 7, y: 5}
+  Width: 8
+  Height: 6
