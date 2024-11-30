@@ -49,6 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _plus: {fileID: 3086192225806902520}
   _minus: {fileID: 6849264070065349621}
+  _volt: 10
 --- !u!114 &2647074105449543707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,6 +64,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   plusConnections: []
   minusConnections: []
+  Vin: 0
+  Vuse: 0
+  Ampere: 0
   Plus: {fileID: 3086192225806902520}
   Minus: {fileID: 6849264070065349621}
 --- !u!1 &3086192225806902520
@@ -139,7 +143,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.6226415, g: 0, b: 0, a: 1}
   m_FlipX: 0
@@ -265,7 +269,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 0.042009804, b: 0.4716981, a: 1}
   m_FlipX: 0

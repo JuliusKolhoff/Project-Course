@@ -8,6 +8,7 @@ public class BoardController : MonoBehaviour
 {
     private List<GameObject> objects;
     [SerializeField] private GameObject _battery,_wire,_resistor;
+	[SerializeField] private GameObject _board;
     public GameObject CurrentObj { get; set; }
 	private CurrentObject _currentObject;
 	private TMP_Text _text;
@@ -29,6 +30,13 @@ public class BoardController : MonoBehaviour
 		if(value.Replace(" ","") != "")
 			_resistance = int.Parse(value.Replace(" ", ""));
 	}
+	public void ResetBoard()
+	{
+        foreach (var item in objects)
+        {
+			Destroy(item);
+        }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -46,21 +54,42 @@ public class BoardController : MonoBehaviour
         {
             Vector3 position = Camera.allCameras[0].ScreenToWorldPoint(Input.mousePosition);
             position.z = 0;
-			GameObject obj;
-			switch (_currentObject)
+			// Create a ray from the camera through the mouse position in 2D space
+			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			Vector2 rayDirection = Vector2.zero; // In 2D, usually a direction isn't needed if you're just checking a point
+
+			RaycastHit2D hit = Physics2D.Raycast(mousePosition, rayDirection, 100f);
+			if(hit.collider != null && hit.collider.gameObject == _board)
 			{
-				case CurrentObject.Battery:
-					obj = Instantiate(_battery, position, Quaternion.identity);
-					obj.GetComponent<BatteryController>().Controller = this;
-					objects.Add(obj);
-					break;
-				case CurrentObject.Resistor:
-					obj = Instantiate(_resistor, position, Quaternion.identity);
-					obj.GetComponent<BoardObject>().Resistance = _resistance;
-					obj.name = objects.Count.ToString();
-					objects.Add(obj);
-					break;
+				GameObject obj;
+				switch (_currentObject)
+				{
+					case CurrentObject.Battery:
+						if(position.x - _battery.transform.localScale.x/2 > _board.transform.position.x - _board.transform.localScale.x/2 
+							&& position.x + _battery.transform.localScale.x/2 < _board.transform.position.x + _board.transform.localScale.x /2
+							&& position.y - _battery.transform.localScale.y / 2 > _board.transform.position.y - _board.transform.localScale.y / 2
+							&& position.y + _battery.transform.localScale.y / 2 < _board.transform.position.y + _board.transform.localScale.y / 2)
+						{
+							obj = Instantiate(_battery, position, Quaternion.identity);
+							obj.GetComponent<BatteryController>().Controller = this;
+							objects.Add(obj);
+						}
+						break;
+					case CurrentObject.Resistor:
+						if (position.x - _resistor.transform.localScale.x > _board.transform.position.x - _board.transform.localScale.x / 2
+							&& position.x + _resistor.transform.localScale.x < _board.transform.position.x + _board.transform.localScale.x / 2
+							&& position.y - _resistor.transform.localScale.y / 2 > _board.transform.position.y - _board.transform.localScale.y / 2
+							&& position.y + _resistor.transform.localScale.y / 2 < _board.transform.position.y + _board.transform.localScale.y / 2)
+						{
+							obj = Instantiate(_resistor, position, Quaternion.identity);
+							obj.GetComponent<BoardObject>().Resistance = _resistance;
+							obj.name = objects.Count.ToString();
+							objects.Add(obj);
+						}
+						break;
+				}
 			}
+			
 			
 			
         }
@@ -84,6 +113,7 @@ public class BoardController : MonoBehaviour
 					hitObject.GetComponent<WireAcceptor>().AddWire(wire);
 					CurrentObj.GetComponent<WireAcceptor>().AddWire(wire);
 					CurrentObj = null;
+					objects.Add(obj);
 				}
 				else
 				{
