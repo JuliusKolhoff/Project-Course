@@ -62,8 +62,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e773e573a6725ec47b5b08a743c62c02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  plusConnections: []
-  minusConnections: []
+  PlusConnections: []
+  MinusConnections: []
   Vin: 0
   Vuse: 0
   Ampere: 0
@@ -194,7 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 2647074105449543707}
-  isPositive: 1
+  _isPositive: 1
 --- !u!1 &6849264070065349621
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,4 +320,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 2647074105449543707}
-  isPositive: 0
+  _isPositive: 0

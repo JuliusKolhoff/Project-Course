@@ -5,16 +5,28 @@ using UnityEngine;
 public class WireAcceptor : MonoBehaviour
 {
 	[SerializeField] private BoardObject parent;
-	[SerializeField] private bool isPositive;
+	[SerializeField] private bool _isPositive;
 	public void AddWire(Wire wire)
 	{
-		if (isPositive)
+		if (_isPositive)
 		{
-			parent.plusConnections.Add(wire);
+			parent.PlusConnections.Add(wire);
 		}
 		else
 		{
-			parent.minusConnections.Add(wire);
+			parent.MinusConnections.Add(wire);
+
+		}
+	}
+	public void RemoveWire(Wire wire)
+	{
+		if (_isPositive)
+		{
+			parent.PlusConnections.Remove(wire);
+		}
+		else
+		{
+			parent.MinusConnections.Remove(wire);
 
 		}
 	}

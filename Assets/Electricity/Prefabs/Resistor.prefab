@@ -272,8 +272,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e773e573a6725ec47b5b08a743c62c02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  plusConnections: []
-  minusConnections: []
+  PlusConnections: []
+  MinusConnections: []
   Vin: 0
   Vuse: 0
   Ampere: 0
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 156380245069525345}
-  isPositive: 0
+  _isPositive: 0
 --- !u!61 &6676150329708615581
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -504,7 +504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 156380245069525345}
-  isPositive: 1
+  _isPositive: 1
 --- !u!61 &5928263043130350004
 BoxCollider2D:
   m_ObjectHideFlags: 0

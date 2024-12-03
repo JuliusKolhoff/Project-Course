@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BatteryController : MonoBehaviour
@@ -12,64 +13,122 @@ public class BatteryController : MonoBehaviour
 		//	List<GameObject> path = FindBattery(new List<GameObject>{ _plus });
 		//	path.ForEach(x => Debug.Log(x.name));
 		//}
+		CalculateValues();
 		if (Input.GetKeyDown(KeyCode.R))
 		{
-			(float, float) Rges = FindRGesamt(gameObject, null);
-			Debug.Log($"Rgesamt: {Rges.Item1 + Rges.Item2}");
-			BoardObject obj = GetComponent<BoardObject>();
-			obj.Vin = _volt;
-			obj.Ampere = _volt / Sum(Rges);
-			CalculateRIU(gameObject);
+			CalculateValues();
 		}
 	}
-	private void CalculateRIU(GameObject obj)
+	public void CalculateValues()
+	{
+		ClearValues();
+		(float, float) Rges = FindRGesamt(gameObject, null);
+		Debug.Log($"Rgesamt: {Rges.Item1 + Rges.Item2}");
+		BoardObject obj = GetComponent<BoardObject>();
+		obj.Vin = _volt;
+		obj.Ampere = _volt / Sum(Rges);
+		CalculateRIU(gameObject);
+		Controller.RgesText.text = "RGes: " + Sum(Rges);
+	}
+	//returns if follwing Circuit is connected to battery 
+	private bool CalculateRIU(GameObject obj)
 	{
 		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? obj.GetComponent<BoardObject>(); 
-		List<Wire> minusConnections = boardObject.minusConnections;
-		List<Wire> plusConnections = boardObject.plusConnections;
+		List<Wire> minusConnections = boardObject.MinusConnections;
 		GameObject minusConnector = boardObject.Minus;
 		if(minusConnections.Count == 1)
 		{
-			
 			GameObject otherObject = minusConnections[0].GetOtherObject(minusConnector);
 			if(otherObject != _plus)
 			{
-				Debug.Log("Reihenschaltung");
-				Debug.Log(otherObject.transform.parent.name);
 				BoardObject otherBoardObject = otherObject.GetComponentInParent<BoardObject>();
+				if (float.IsNaN(otherBoardObject.Rges))
+				{
+					return false;
+				}
 				otherBoardObject.Ampere = boardObject.Ampere;
-				Debug.Log("Ampere: " + otherBoardObject.Ampere);
-				float ResistanceSum = Sum(FindRGesamt(otherObject, minusConnections[0]));
+				float ResistanceSum = otherBoardObject.Rges;
 				otherBoardObject.Vin = ResistanceSum * otherBoardObject.Ampere;
 				otherBoardObject.Vuse = otherBoardObject.Vin * (otherBoardObject.Resistance / ResistanceSum);
-				CalculateRIU(otherObject);
+				if (CalculateRIU(otherObject))
+				{
+					return true;
+				}
+				else
+				{
+					otherBoardObject.Vin = 0;
+					otherBoardObject.Vuse = 0;
+					otherBoardObject.Ampere = 0;
+					return false;
+				}
+			}
+			else
+			{
+				return true;
 			}
 		}
 		else
 		{
+			List<GameObject> otherObjs = new();
 			foreach (Wire connection in minusConnections)
 			{
-				Debug.Log("Parallelschaltung");
-
 				GameObject otherObject = connection.GetOtherObject(minusConnector);
-				if (otherObject != _plus)
+				if (otherObject != _plus && !float.IsNaN(otherObject.GetComponentInParent<BoardObject>().Rges))
+				{
+					otherObjs.Add(otherObject);
+				}
+				//TODO dont return false when reaching Battery
+			}
+			otherObjs.ForEach(x => Debug.Log(x.name));
+			otherObjs.Sort(delegate (GameObject x1, GameObject x2)
+			{
+				float rGes1 = x1.GetComponentInParent<BoardObject>().Rges;
+				float rGes2 = x2.GetComponentInParent<BoardObject>().Rges;
+				return rGes1.CompareTo(rGes2);
+			});
+			if(otherObjs.Count != 0 && otherObjs.First().GetComponentInParent<BoardObject>().Rges == 0)
+			{
+				for (int i = 1; i < otherObjs.Count; i++)
+				{
+					otherObjs[i].GetComponentInParent<BoardObject>().Vin = 0;
+					otherObjs[i].GetComponentInParent<BoardObject>().Vuse = 0;
+					otherObjs[i].GetComponentInParent<BoardObject>().Ampere = 0;
+				}
+			}
+			else
+			{
+				foreach (GameObject otherObject in otherObjs)
 				{
 					BoardObject otherBoardObject = otherObject.GetComponentInParent<BoardObject>();
-					float ResistanceSum = Sum(FindRGesamt(otherObject, minusConnections[0]));
+					float ResistanceSum = otherBoardObject.Rges;
 					otherBoardObject.Vin = boardObject.Vin - boardObject.Vuse;
 					otherBoardObject.Vuse = otherBoardObject.Vin * (otherBoardObject.Resistance / ResistanceSum);
 					otherBoardObject.Ampere = otherBoardObject.Vuse / ResistanceSum;
-					CalculateRIU(otherObject);
+					if (CalculateRIU(otherObject))
+					{
+						return true;
+					}
+					else
+					{
+						otherBoardObject.Vin = 0;
+						otherBoardObject.Vuse = 0;
+						otherBoardObject.Ampere = 0;
+						return false;
+					}
 				}
 			}
-		
+			
 
 		}
-
+		return false;
 	}
 	private float Sum((float,float) value)
 	{
 		return value.Item1 + value.Item2;
+	}
+	private void ClearValues()
+	{
+		Controller.ClearValues();
 	}
 	private void LogResistance(GameObject obj,(float,float) resistance)
 	{
@@ -82,15 +141,16 @@ public class BatteryController : MonoBehaviour
 	}
 	public (float,float) FindRGesamt(GameObject obj, Wire origin)
 	{
-		BoardObject boardObject = obj.GetComponentInParent<BoardObject>();
-		List<Wire> minusConnections = boardObject.minusConnections;
-		List<Wire> plusConnections = boardObject.plusConnections;
+		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? GetComponent<BoardObject>();
+		List<Wire> minusConnections = boardObject.MinusConnections;
+		List<Wire> plusConnections = boardObject.PlusConnections;
 		int plusConnectionCount = plusConnections.Count;
 		GameObject minusConnector = boardObject.Minus;
 		if (minusConnections.Count == 0)
 		{
-			Debug.Log($"Nicht im Kreislauf: {obj.transform.parent.name}");
-			return (-1,-1);
+			string name = obj.transform.parent?.name ?? obj.transform.name;
+			Debug.Log($"Nicht im Kreislauf: {name}");
+			return ReturnResisitances(obj, (float.NaN, 0), plusConnectionCount);
 		}
 		else if (minusConnections.Count == 1)
 		{
@@ -102,12 +162,20 @@ public class BatteryController : MonoBehaviour
 			else
 			{
 				(float, float) Rgesamt = FindRGesamt(otherObject, minusConnections[0]);
-				Rgesamt.Item1 += boardObject.Resistance;
-				if (!otherObject.transform.parent.GetComponent<BoardObject>().IsLastVisit())
+				if (float.IsNaN(Rgesamt.Item1))
 				{
-					Rgesamt.Item2 = 0;
+					return ReturnResisitances(obj, (float.NaN, 0), plusConnectionCount);
 				}
-				return ReturnResisitances(obj, Rgesamt,plusConnectionCount);
+				else
+				{
+					Rgesamt.Item1 += boardObject.Resistance;
+					if (!otherObject.transform.parent.GetComponent<BoardObject>()?.IsLastVisit() ?? !otherObject.transform.GetComponent<BoardObject>().IsLastVisit())
+					{
+						Rgesamt.Item2 = 0;
+					}
+					return ReturnResisitances(obj, Rgesamt, plusConnectionCount);
+				}
+				
 			}
 		}
 		else
@@ -117,27 +185,54 @@ public class BatteryController : MonoBehaviour
 			
             foreach (Wire connection in minusConnections)
             {
+				//Debug.Log(connection);
 				GameObject otherObject = connection.GetOtherObject(minusConnector);
-				Debug.Log("i: " + i);
-				Debug.Log("Other Obj: " + otherObject.transform.parent.name);
+				//Debug.Log("i: " + i);
+				//Debug.Log("Other Obj: " + otherObject.transform.parent.name);
 				(float,float) resitance = FindRGesamt(otherObject, connection);
 				resitances[i] = resitance;
 				i++;
             }
 			float inverseSum = 0;
 			float sum = 0;
+			bool oneNotNaN = false;
             foreach ((float,float) resistance in resitances)
             {
-				inverseSum += 1f / resistance.Item1;
-				sum += resistance.Item2;
+				if (!float.IsNaN(resistance.Item1))
+				{
+					oneNotNaN = true;
+					if(resistance.Item1 == 0)
+					{
+						return ReturnResisitances(obj, (0, 0), plusConnectionCount);
+					}
+					inverseSum += 1f / resistance.Item1;
+					sum += resistance.Item2;
+				}
             }
-			float finalResistance = 1f / inverseSum + boardObject.Resistance;
+			if (oneNotNaN)
+			{
+				float finalResistance = 1f / inverseSum + boardObject.Resistance;
+
+				return ReturnResisitances(obj, (finalResistance + sum, 0), plusConnectionCount);
+			}
+			else
+			{
+				return ReturnResisitances(obj, (float.NaN, 0), plusConnectionCount);
+			}
 			
-			return ReturnResisitances(obj,(finalResistance + sum,0),plusConnectionCount);
         }
 	}
 	private (float,float) ReturnResisitances(GameObject obj,(float,float) values,int plusConnectionCount)
 	{
+		if(obj.GetComponentInParent<BoardObject>() != null)
+		{
+			obj.GetComponentInParent<BoardObject>().Rges = values.Item1;
+
+		}
+		if (float.IsNaN(values.Item1) ||values.Item1 == 0)
+		{
+			return values;
+		}
 		if(plusConnectionCount < 2)
 		{
 			LogResistance(obj, values);

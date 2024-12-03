@@ -1,29 +1,39 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BoardController : MonoBehaviour
 {
     private List<GameObject> objects;
-    [SerializeField] private GameObject _battery,_wire,_resistor;
+	private List<GameObject> wires;
+	[SerializeField] private GameObject _battery,_wire,_resistor,_lamp,_switch;
 	[SerializeField] private GameObject _board;
-    public GameObject CurrentObj { get; set; }
+	[SerializeField] private Button _calculateButton;
+	public GameObject CurrentObj { get; set; }
 	private CurrentObject _currentObject;
-	private TMP_Text _text;
+	private TMP_Text _currentObjtext;
+	public TMP_Text RgesText;
 	private float _resistance;
+	private BatteryController _batteryController;
     void Start()
     {
         objects = new();
-		_text = GetComponent<TMP_Text>();
+		wires = new();
+		_currentObjtext = GetComponent<TMP_Text>();
 		_currentObject = CurrentObject.Battery;
-    }
+		_calculateButton.interactable = false;
+	}
 	private enum CurrentObject
 	{
 		None,
 		Battery,
-		Resistor
+		Resistor,
+		Switch,
+		Lamp
 	}
 	public void ChangeResistance(string value)
 	{
@@ -32,11 +42,31 @@ public class BoardController : MonoBehaviour
 	}
 	public void ResetBoard()
 	{
-        foreach (var item in objects)
+		_batteryController = null;
+		_calculateButton.interactable = false;
+		GameObject item;
+        while ((item = objects.FirstOrDefault()) != null)
         {
 			Destroy(item);
+			objects.Remove(item);
         }
-    }
+		while ((item = wires.FirstOrDefault()) != null)
+		{
+			Destroy(item);
+			wires.Remove(item);
+		}
+	}
+	public void CalculateCircuit()
+	{
+		_batteryController.CalculateValues();
+	}
+	public void ClearValues()
+	{
+		foreach (GameObject obj in objects)
+		{
+			obj.GetComponentInChildren<BoardObject>().ResetValues();
+		}
+	}
     // Update is called once per frame
     void Update()
     {
@@ -48,7 +78,7 @@ public class BoardController : MonoBehaviour
 				_currentObject = 0;
 			}
 			
-			_text.text = _currentObject.ToString();
+			_currentObjtext.text = _currentObject.ToString();
 		}
         if (Input.GetMouseButtonDown(0))
         {
@@ -65,7 +95,8 @@ public class BoardController : MonoBehaviour
 				switch (_currentObject)
 				{
 					case CurrentObject.Battery:
-						if(position.x - _battery.transform.localScale.x/2 > _board.transform.position.x - _board.transform.localScale.x/2 
+						if(_batteryController == null 
+							&& position.x - _battery.transform.localScale.x/2 > _board.transform.position.x - _board.transform.localScale.x/2 
 							&& position.x + _battery.transform.localScale.x/2 < _board.transform.position.x + _board.transform.localScale.x /2
 							&& position.y - _battery.transform.localScale.y / 2 > _board.transform.position.y - _board.transform.localScale.y / 2
 							&& position.y + _battery.transform.localScale.y / 2 < _board.transform.position.y + _board.transform.localScale.y / 2)
@@ -73,6 +104,8 @@ public class BoardController : MonoBehaviour
 							obj = Instantiate(_battery, position, Quaternion.identity);
 							obj.GetComponent<BatteryController>().Controller = this;
 							objects.Add(obj);
+							_batteryController = obj.GetComponent<BatteryController>();
+							_calculateButton.interactable = true;
 						}
 						break;
 					case CurrentObject.Resistor:
@@ -86,6 +119,17 @@ public class BoardController : MonoBehaviour
 							obj.name = objects.Count.ToString();
 							objects.Add(obj);
 						}
+						break;
+					case CurrentObject.Lamp:
+						obj = Instantiate(_lamp, position, Quaternion.identity);
+						obj.GetComponent<BoardObject>().Resistance = _resistance;
+						obj.name = objects.Count.ToString();
+						objects.Add(obj);
+						break;
+					case CurrentObject.Switch:
+						obj = Instantiate(_switch, position, Quaternion.identity);
+						obj.name = objects.Count.ToString();
+						objects.Add(obj);
 						break;
 				}
 			}
@@ -113,7 +157,7 @@ public class BoardController : MonoBehaviour
 					hitObject.GetComponent<WireAcceptor>().AddWire(wire);
 					CurrentObj.GetComponent<WireAcceptor>().AddWire(wire);
 					CurrentObj = null;
-					objects.Add(obj);
+					wires.Add(obj);
 				}
 				else
 				{

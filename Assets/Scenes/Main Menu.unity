@@ -1698,7 +1698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dca41f4f87d67ee49860856385d53e8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: BackgroundTest#2
+  sceneToLoad: Electricity
   menuValue: 1
 --- !u!222 &1363702358
 CanvasRenderer:

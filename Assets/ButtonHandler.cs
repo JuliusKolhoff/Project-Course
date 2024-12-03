@@ -14,8 +14,8 @@ public class ButtonHandler : MonoBehaviour, IPointerClickHandler
 		SceneLoader sceneLoader = FindFirstObjectByType<SceneLoader>();
 		if (sceneToLoad.Equals("NextLevel"))
         {
-            string[] level = SceneLoader.LoadParameter.Split();
-            string nextLevel = level[0] + " " + (int.Parse(level[1]) + 1);
+            string[] level = SceneLoader.LoadParameter.Split("_");
+            string nextLevel = (int.Parse(level[0]) + 1) + "_" + level[1];
             SceneLoader.LoadParameter = nextLevel;
 			sceneLoader.LoadNextScene("Gears", menuValue);
         }
