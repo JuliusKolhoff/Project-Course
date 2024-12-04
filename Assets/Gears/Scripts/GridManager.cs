@@ -146,7 +146,7 @@ public class GridManager : MonoBehaviour
 				{
 					if (level.Layer1Teeth[x + Width * y] != 0)
 					{
-						if (level.Layer1Rpm == null)
+						if (level.Layer1Rpm == null ||level.Layer1Rpm.Length == 0)
 						{
 							GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], 0, true);
 
@@ -271,6 +271,7 @@ public class GridManager : MonoBehaviour
 							{
 								continue;
 							}
+							Debug.Log("Position: " + position + "CurrentRotation: " + GetTileAtPosition(position, 0).CurrentRotation);
 							if (GetTileAtPosition(position, 0).CurrentRotation == 0)
 							{
 								allGoalsRotating = false;
