@@ -20,6 +20,10 @@ public class GridManager : MonoBehaviour
 	public bool placeMotor = false;
 	public bool placeGoal = false;
 
+	private bool _won;
+	private int _exitTimer;
+	private int _exitTime = 50;
+	private bool _loading;
 
 	public Vector2 MotorPosition { get; set; } = new(0,0);
 	public float MotorTorque = 10f;
@@ -28,6 +32,7 @@ public class GridManager : MonoBehaviour
 	public float MinRpm { get; set; }
 
 	private Dictionary<Vector2, Tile>[] _tiles = new Dictionary<Vector2, Tile>[2];
+	public bool DisplayInfo = false;
 	
 	void Start()
 	{
@@ -166,14 +171,13 @@ public class GridManager : MonoBehaviour
 						}
 					}
 				}
-
 			}
 		}
 		MotorPosition = level.MotorPosition;
 		MotorTorque = level.MotorTorque;
 		GoalPositions = level.GoalPositions?.ToList();
 		EnableLayer(0);
-
+		SetDisplayGearInformation(false);
 	}
 	private void ResizeGrid(int width, int height)
 	{
@@ -199,15 +203,20 @@ public class GridManager : MonoBehaviour
 		LinkAdjacentTiles(1);
 		EnableLayer(0);
 	}
-	public void ToggleGearInformation()
+	public void ToggleDisplayInfo()
 	{
+		SetDisplayGearInformation(!DisplayInfo);
+	}
+	public void SetDisplayGearInformation(bool value)
+	{
+		DisplayInfo = value;
 		for (int i = 0; i < 2; i++)
 		{
 			foreach (Tile tile in _tiles[i].Values)
 			{
 				if (tile.HasGear())
 				{
-					tile.ToggleInfo();
+					tile.SetDisplayInfo(DisplayInfo);
 				}
 			}
 		}
@@ -219,56 +228,75 @@ public class GridManager : MonoBehaviour
 	}
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Alpha1))
+		if (_won)
 		{
-			EnableLayer(0);
+			_exitTimer++;
 		}
-		else if(Input.GetKeyDown(KeyCode.Alpha2))
+		if (_exitTimer < _exitTime)
 		{
-			EnableLayer(1);
-		}
-
-
-		if (Input.GetKey(KeyCode.R))
-		{
-			if(GetTileAtPosition(MotorPosition, 0) && GetTileAtPosition(MotorPosition, 0).Teeth != 0)
+			if (Input.GetKeyDown(KeyCode.Alpha1))
 			{
-				if (GoalPositions?.Count != 0)
-				{
-					foreach (Vector2 position in GoalPositions)
-					{
-						if (GetTileAtPosition(position, 0) == null)
-						{
-							continue;
-						}
-						GetTileAtPosition(position, 0).CurrentRotation = 0;
-
-					}
-				}
-				Tile.RotatedTiles.Clear();
-				GetTileAtPosition(MotorPosition, 0).Rotate(startRotationSpeed, MotorTorque);
-				if (GoalPositions?.Count != 0)
-				{
-					bool allGoalsRotating = true;
-					foreach (Vector2 position in GoalPositions)
-					{
-						if (GetTileAtPosition(position, 0) == null)
-						{
-							continue;
-						}
-						if (GetTileAtPosition(position, 0).CurrentRotation == 0)
-						{
-							allGoalsRotating = false;
-						}
-					}
-					if (allGoalsRotating)
-					{
-						Debug.Log("Won");
-					}
-				}
+				EnableLayer(0);
 			}
-			
+			else if (Input.GetKeyDown(KeyCode.Alpha2))
+			{
+				EnableLayer(1);
+			}
+
+
+			if (Input.GetKey(KeyCode.R))
+			{
+				if (GetTileAtPosition(MotorPosition, 0) && GetTileAtPosition(MotorPosition, 0).Teeth != 0)
+				{
+					if (GoalPositions?.Count != 0)
+					{
+						foreach (Vector2 position in GoalPositions)
+						{
+							if (GetTileAtPosition(position, 0) == null)
+							{
+								continue;
+							}
+							GetTileAtPosition(position, 0).CurrentRotation = 0;
+
+						}
+					}
+					Tile.RotatedTiles.Clear();
+					GetTileAtPosition(MotorPosition, 0).Rotate(startRotationSpeed, MotorTorque);
+					if (GoalPositions?.Count != 0)
+					{
+						bool allGoalsRotating = true;
+						foreach (Vector2 position in GoalPositions)
+						{
+							if (GetTileAtPosition(position, 0) == null)
+							{
+								continue;
+							}
+							if (GetTileAtPosition(position, 0).CurrentRotation == 0)
+							{
+								allGoalsRotating = false;
+							}
+						}
+						if (allGoalsRotating)
+						{
+							Debug.Log("Won");
+							
+							_won = true;
+						}
+					}
+				}
+
+			}
 		}
+		else if(!_loading)
+		{
+			_loading = true;
+			SceneLoader sceneLoader = FindFirstObjectByType<SceneLoader>();
+			string[] level = SceneLoader.LoadParameter.Split("_");
+			string nextLevel = (int.Parse(level[0]) + 1) + "_" + level[1];
+			SceneLoader.LoadParameter = nextLevel;
+			sceneLoader.LoadNextScene("Gears", 2);
+		}
+		
 		
 		
 	}

@@ -150,14 +150,18 @@ public class BoardController : MonoBehaviour
 				if (CurrentObj != null)
 				{
 					GameObject hitObject = hit.collider.gameObject;
-					GameObject obj = Instantiate(_wire);
-					Wire wire = obj.GetComponent<Wire>();
-					wire.Obj1 = CurrentObj;
-					wire.Obj2 = hitObject;
-					hitObject.GetComponent<WireAcceptor>().AddWire(wire);
-					CurrentObj.GetComponent<WireAcceptor>().AddWire(wire);
-					CurrentObj = null;
-					wires.Add(obj);
+					if (hitObject != CurrentObj)
+					{
+						GameObject obj = Instantiate(_wire);
+						Wire wire = obj.GetComponent<Wire>();
+						wire.Obj1 = CurrentObj;
+						wire.Obj2 = hitObject;
+						hitObject.GetComponent<WireAcceptor>().AddWire(wire);
+						CurrentObj.GetComponent<WireAcceptor>().AddWire(wire);
+						CurrentObj = null;
+						wires.Add(obj);
+					}
+					
 				}
 				else
 				{

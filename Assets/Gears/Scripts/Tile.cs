@@ -35,9 +35,9 @@ public class Tile : MonoBehaviour
 	private GameObject _motor;
 	private GridManager _manager;
 
-	public void ToggleInfo()
+	public void SetDisplayInfo(bool value)
 	{
-		_gear.GetComponentInChildren<TMP_Text>().enabled = !_gear.GetComponentInChildren<TMP_Text>().enabled;
+		_gear.GetComponentInChildren<TMP_Text>().enabled = value;
 	}
 
 	public void Init(bool IsOffset, GridManager Manager)
@@ -262,7 +262,7 @@ public class Tile : MonoBehaviour
 						_manager.NewGoalPosition(transform.position);
 					}
 				}
-				
+				SetDisplayInfo(_manager.DisplayInfo);
 				
 			}
 		}
