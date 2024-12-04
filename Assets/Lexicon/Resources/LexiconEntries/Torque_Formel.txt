@@ -1,0 +1,2 @@
+Die “Torque” hängt davon ab, wie groß dein Zahnrad ist und mit wie viel Kraft du es drehst, je länger der Radius des Zahnrades, desto mehr Torque bekommst du. Gleiches sieht man am Schraubenschlüssel, der Schraubenschlüssel ist nichts anderes als eine Art Zahnrad, da es sich um einen Punkt dreht. Ist der Schraubenschlüssel länger, hast du mehr Torque und kannst die Mutter leichter drehen. Aber du merkst auch, mit dem kleinen Schraubenschlüssel lässt sich die Mutter auch drehen, dafür brauchst du auch mehr Kraft.
+Torque = Länge * Kraft

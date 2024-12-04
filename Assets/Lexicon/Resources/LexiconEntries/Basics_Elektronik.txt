@@ -1,0 +1,1 @@
+Schaltet man eine Batterie an eine Lampe mit Drähten, leuchtet die Lampe. Dabei muss eine Leitung von der Batterie zur Lampe und von der Lampe zurück zur Batterie bestehen, damit ein Stromkreis entsteht und geschlossen ist. Die Lampe kann man auch gegen andere Geräte wie einen Motor oder einen Widerstand tauschen.
