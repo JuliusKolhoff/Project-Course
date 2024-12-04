@@ -41,4 +41,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Electricity.unity
     guid: 43da714147ee184499ed97fbf0c9ec85
+  - enabled: 1
+    path: Assets/Scenes/Lexikon.unity
+    guid: 1df8b857e38428b4197ce8e36927076d
   m_configObjects: {}
