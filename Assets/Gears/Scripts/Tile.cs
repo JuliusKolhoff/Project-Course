@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,10 +10,14 @@ public class Tile : MonoBehaviour
 
 	public List<Tile> AdjacentTiles = new();
 	public float Teeth { get; private set; }
-	public float CurrentRotation { get;  set; }
-	public float CurrentTorque { get; private set; }
-	public float MinTorque { get; private set; }
-	public float MinRpm { get; private set; }
+	private float _currentRotation;
+	private float _currentTorque;
+	private float _minTorque;
+	private float _minRpm;
+	public float CurrentRotation { get { return _currentRotation; }  set { UpdateText(); _currentRotation = value; } }
+	public float CurrentTorque { get { return _currentTorque; } private set { UpdateText(); _currentTorque = value; } }
+	public float MinTorque { get { return _minTorque; } private set { UpdateText(); _minTorque = value; } }
+	public float MinRpm { get { return _minRpm; } private set { UpdateText(); _minRpm = value; } }
 	public int Layer { get; set; }
 
 
@@ -30,6 +35,11 @@ public class Tile : MonoBehaviour
 	private GameObject _motor;
 	private GridManager _manager;
 
+	public void ToggleInfo()
+	{
+		_gear.GetComponentInChildren<TMP_Text>().enabled = !_gear.GetComponentInChildren<TMP_Text>().enabled;
+	}
+
 	public void Init(bool IsOffset, GridManager Manager)
 	{
 		_isOffset = IsOffset;
@@ -39,6 +49,14 @@ public class Tile : MonoBehaviour
 			_renderer.enabled = false;
 		}
 		_renderer.color = IsOffset ? _offsetColor : _baseColor;
+	}
+	private void UpdateText()
+	{
+		if(_gear != null)
+		{
+			_gear.GetComponentInChildren<TMP_Text>().text = $"Min Rpm: {MinRpm}\nCurrentRpm: {Mathf.Abs(CurrentRotation)}\nMin Torque: {MinTorque}\nCurrentTorque: {CurrentTorque}";
+			_gear.GetComponentInChildren<TMP_Text>().gameObject.transform.rotation = Quaternion.identity;
+		}
 	}
 	void OnMouseEnter()
 	{

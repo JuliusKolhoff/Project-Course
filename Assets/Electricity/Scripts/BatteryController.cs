@@ -28,7 +28,17 @@ public class BatteryController : MonoBehaviour
 		obj.Vin = _volt;
 		obj.Ampere = _volt / Sum(Rges);
 		CalculateRIU(gameObject);
-		Controller.RgesText.text = "RGes: " + Sum(Rges);
+		if (float.IsNaN(Rges.Item1) || float.IsNaN(Rges.Item2))
+		{
+			Controller.RgesText.text = "Kein Geschlossener Stromkreislauf";
+		}else if(Sum(Rges) == 0)
+		{
+			Controller.RgesText.text = "Kurzschluss";
+		}
+		else
+		{
+			Controller.RgesText.text = "RGes: " + Sum(Rges);
+		}
 	}
 	//returns if follwing Circuit is connected to battery 
 	private bool CalculateRIU(GameObject obj)
@@ -94,6 +104,7 @@ public class BatteryController : MonoBehaviour
 					otherObjs[i].GetComponentInParent<BoardObject>().Vuse = 0;
 					otherObjs[i].GetComponentInParent<BoardObject>().Ampere = 0;
 				}
+				return true;
 			}
 			else
 			{
@@ -203,7 +214,7 @@ public class BatteryController : MonoBehaviour
 					oneNotNaN = true;
 					if(resistance.Item1 == 0)
 					{
-						return ReturnResisitances(obj, (0, 0), plusConnectionCount);
+						return ReturnResisitances(obj, (boardObject.Resistance, 0), plusConnectionCount);
 					}
 					inverseSum += 1f / resistance.Item1;
 					sum += resistance.Item2;

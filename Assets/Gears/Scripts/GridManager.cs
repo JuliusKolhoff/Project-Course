@@ -199,6 +199,20 @@ public class GridManager : MonoBehaviour
 		LinkAdjacentTiles(1);
 		EnableLayer(0);
 	}
+	public void ToggleGearInformation()
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			foreach (Tile tile in _tiles[i].Values)
+			{
+				if (tile.HasGear())
+				{
+					tile.ToggleInfo();
+				}
+			}
+		}
+		
+	}
 	public bool IncludeMachineEfficiency()
 	{
 		return applyMachineEfficiency;
