@@ -8,13 +8,13 @@ using UnityEngine.UI;
 
 public class BoardController : MonoBehaviour
 {
-    private List<GameObject> objects;
+    public List<GameObject> objects;
 	private List<GameObject> wires;
 	[SerializeField] private GameObject _battery,_wire,_resistor,_lamp,_switch;
 	[SerializeField] private GameObject _board;
 	[SerializeField] private Button _calculateButton;
 	public GameObject CurrentObj { get; set; }
-	private CurrentObject _currentObject;
+	private PlacableObject _currentObject;
 	private TMP_Text _currentObjtext;
 	public TMP_Text RgesText;
 	private float _resistance;
@@ -24,10 +24,10 @@ public class BoardController : MonoBehaviour
         objects = new();
 		wires = new();
 		_currentObjtext = GetComponent<TMP_Text>();
-		_currentObject = CurrentObject.Battery;
+		_currentObject = PlacableObject.Battery;
 		_calculateButton.interactable = false;
 	}
-	private enum CurrentObject
+	public enum PlacableObject
 	{
 		None,
 		Battery,
@@ -35,10 +35,18 @@ public class BoardController : MonoBehaviour
 		Switch,
 		Lamp
 	}
+	public BatteryController GetBattery()
+	{
+		return _batteryController;
+	}
 	public void ChangeResistance(string value)
 	{
 		if(value.Replace(" ","") != "")
 			_resistance = int.Parse(value.Replace(" ", ""));
+	}
+	public void Unlock(PlacableObject obj,int amount)
+	{
+		throw new NotImplementedException("TODO: Unlock Methode muss noch Implementiert werden!!!");
 	}
 	public void ResetBoard()
 	{
@@ -73,7 +81,7 @@ public class BoardController : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			_currentObject++;
-			if (!Enum.IsDefined(typeof(CurrentObject), _currentObject))
+			if (!Enum.IsDefined(typeof(PlacableObject), _currentObject))
 			{
 				_currentObject = 0;
 			}
@@ -94,7 +102,7 @@ public class BoardController : MonoBehaviour
 				GameObject obj;
 				switch (_currentObject)
 				{
-					case CurrentObject.Battery:
+					case PlacableObject.Battery:
 						if(_batteryController == null 
 							&& position.x - _battery.transform.localScale.x/2 > _board.transform.position.x - _board.transform.localScale.x/2 
 							&& position.x + _battery.transform.localScale.x/2 < _board.transform.position.x + _board.transform.localScale.x /2
@@ -108,7 +116,7 @@ public class BoardController : MonoBehaviour
 							_calculateButton.interactable = true;
 						}
 						break;
-					case CurrentObject.Resistor:
+					case PlacableObject.Resistor:
 						if (position.x - _resistor.transform.localScale.x > _board.transform.position.x - _board.transform.localScale.x / 2
 							&& position.x + _resistor.transform.localScale.x < _board.transform.position.x + _board.transform.localScale.x / 2
 							&& position.y - _resistor.transform.localScale.y / 2 > _board.transform.position.y - _board.transform.localScale.y / 2
@@ -120,13 +128,13 @@ public class BoardController : MonoBehaviour
 							objects.Add(obj);
 						}
 						break;
-					case CurrentObject.Lamp:
+					case PlacableObject.Lamp:
 						obj = Instantiate(_lamp, position, Quaternion.identity);
 						obj.GetComponent<BoardObject>().Resistance = _resistance;
 						obj.name = objects.Count.ToString();
 						objects.Add(obj);
 						break;
-					case CurrentObject.Switch:
+					case PlacableObject.Switch:
 						obj = Instantiate(_switch, position, Quaternion.identity);
 						obj.name = objects.Count.ToString();
 						objects.Add(obj);

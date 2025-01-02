@@ -23,7 +23,7 @@ public class BatteryController : MonoBehaviour
 	{
 		ClearValues();
 		(float, float) Rges = FindRGesamt(gameObject, null);
-		Debug.Log($"Rgesamt: {Rges.Item1 + Rges.Item2}");
+		//Debug.Log($"Rgesamt: {Rges.Item1 + Rges.Item2}");
 		BoardObject obj = GetComponent<BoardObject>();
 		obj.Vin = _volt;
 		obj.Ampere = _volt / Sum(Rges);
@@ -89,14 +89,14 @@ public class BatteryController : MonoBehaviour
 				}
 				//TODO dont return false when reaching Battery
 			}
-			otherObjs.ForEach(x => Debug.Log(x.name));
+			//otherObjs.ForEach(x => Debug.Log(x.name));
 			otherObjs.Sort(delegate (GameObject x1, GameObject x2)
 			{
 				float rGes1 = x1.GetComponentInParent<BoardObject>().Rges;
 				float rGes2 = x2.GetComponentInParent<BoardObject>().Rges;
 				return rGes1.CompareTo(rGes2);
 			});
-			if(otherObjs.Count != 0 && otherObjs.First().GetComponentInParent<BoardObject>().Rges == 0)
+			if (otherObjs.Count != 0 && otherObjs.First().GetComponentInParent<BoardObject>().Rges == 0)
 			{
 				for (int i = 1; i < otherObjs.Count; i++)
 				{
@@ -115,23 +115,18 @@ public class BatteryController : MonoBehaviour
 					otherBoardObject.Vin = boardObject.Vin - boardObject.Vuse;
 					otherBoardObject.Vuse = otherBoardObject.Vin * (otherBoardObject.Resistance / ResistanceSum);
 					otherBoardObject.Ampere = otherBoardObject.Vuse / ResistanceSum;
-					if (CalculateRIU(otherObject))
-					{
-						return true;
-					}
-					else
+					if (!CalculateRIU(otherObject))
 					{
 						otherBoardObject.Vin = 0;
 						otherBoardObject.Vuse = 0;
 						otherBoardObject.Ampere = 0;
 						return false;
 					}
-				}
-			}
-			
 
+				}
+				return true;
+			}
 		}
-		return false;
 	}
 	private float Sum((float,float) value)
 	{

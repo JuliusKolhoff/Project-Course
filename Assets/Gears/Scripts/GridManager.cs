@@ -146,7 +146,7 @@ public class GridManager : MonoBehaviour
 				{
 					if (level.Layer1Teeth[x + Width * y] != 0)
 					{
-						if (level.Layer1Rpm == null ||level.Layer1Rpm.Length == 0)
+						if (level.Layer1Rpm == null || level.Layer1Rpm.Length == 0)
 						{
 							GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], 0, true);
 
@@ -159,7 +159,7 @@ public class GridManager : MonoBehaviour
 					}
 					if (level.Layer2Teeth[x + Width * y] != 0)
 					{
-						if(level.Layer2Rpm == null)
+						if(level.Layer2Rpm == null || level.Layer2Rpm.Length == 0)
 						{
 							GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], 0, true);
 
