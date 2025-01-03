@@ -26,7 +26,12 @@ public class Quest : MonoBehaviour
 	{
 		for(int i = 0; i < quests.Length; i++)
 		{
-			Debug.Log($"Quest {i + 1}: {quests[i].Invoke(this)}");
+			bool completed = quests[i]?.Invoke(this) ?? false;
+			if (completed)
+			{
+				Debug.Log($"Quest {i+1} wurde beendet -> Neue Items freigeschaltet");
+				quests[i] = null;
+			}
 		}
     }
 
