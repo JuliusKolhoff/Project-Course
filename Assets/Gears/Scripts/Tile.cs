@@ -34,10 +34,12 @@ public class Tile : MonoBehaviour
 	private GameObject _gear;
 	private GameObject _motor;
 	private GridManager _manager;
+	private GameObject _child;
+	private bool _canShow;
 
 	public void SetDisplayInfo(bool value)
 	{
-		_gear.GetComponentInChildren<TMP_Text>().enabled = value;
+		_canShow = value;
 	}
 
 	public void Init(bool IsOffset, GridManager Manager)
@@ -61,11 +63,19 @@ public class Tile : MonoBehaviour
 	void OnMouseEnter()
 	{
 		_highlight.SetActive(true);
+		if(_child != null)
+        {
+			_child.SetActive(true);
+		}
 	}
 
 	void OnMouseExit()
 	{
 		_highlight.SetActive(false);
+		if (_child != null)
+		{
+			_child.SetActive(false);
+		}
 	}
 	public void DeleteGear()
 	{
@@ -86,6 +96,7 @@ public class Tile : MonoBehaviour
 		MinRpm = 0;
 		Destroy(_gear);
 		_gear = null;
+		_child = null;
 	}
 	public void NewMotor(float teeth)
 	{
@@ -157,6 +168,8 @@ public class Tile : MonoBehaviour
 				break;
 			}
 		}
+		_child = _gear.transform.GetChild(0).gameObject;
+		_child.SetActive(false);
 		Teeth = teeth;
 		MinTorque = minTorque;
 		MinRpm = minRpm;

@@ -7,7 +7,7 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/Main Menu.unity
-    guid: 485d77e6e1e4bc04d857ff9fdcf87b81
+    guid: 597e0d38edd52a043837c58b334039b2
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
@@ -35,9 +35,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Magnet.unity
     guid: dd1a26dc990f77c4aa4b1e3621359931
-  - enabled: 1
-    path: Assets/Scenes/FontTest.unity
-    guid: 597e0d38edd52a043837c58b334039b2
   - enabled: 1
     path: Assets/Scenes/Electricity.unity
     guid: 43da714147ee184499ed97fbf0c9ec85

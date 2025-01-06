@@ -9,10 +9,10 @@ public class Quest : MonoBehaviour
 
     /*
         Quest 1: Lasse eine Lampe leuchten -> 2.Lampe
-        Quest 2: Lasse zwei Lampen mit der Gleiche Ampere Anzahl leucheten -> Nichts
+        Quest 2: Lasse zwei Lampen mit der Gleiche Ampere Anzahl leucheten -> Info
         Quest 3: Lasse zwei Lampen mit gleicher Volt Anzahl -> Resistor
         Quest 4: Lasse eine Lampe mit halber Volt Zahl Leuchten -> Schalter
-        Quest 5: Lasse Lampe leuchten und nicht leuchten -> Nichts
+        Quest 5: Lasse Lampe leuchten und nicht leuchten -> Info
         Quest 6: Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon -> infinite alles
     */
     public Func<Quest,bool>[] quests =
