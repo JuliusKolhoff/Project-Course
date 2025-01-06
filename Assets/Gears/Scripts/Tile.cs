@@ -54,10 +54,10 @@ public class Tile : MonoBehaviour
 	}
 	private void UpdateText()
 	{
-		if(_gear != null)
+		if (_child != null)
 		{
-			_gear.GetComponentInChildren<TMP_Text>().text = $"Min Rpm: {MinRpm}\nCurrentRpm: {Mathf.Abs(CurrentRotation)}\nMin Torque: {MinTorque}\nCurrentTorque: {CurrentTorque}";
-			_gear.GetComponentInChildren<TMP_Text>().gameObject.transform.rotation = Quaternion.identity;
+			_child.GetComponent<TMP_Text>().text = $"Min Rpm: {MinRpm}\nCurrentRpm: {Mathf.Abs(CurrentRotation)}\nMin Torque: {MinTorque}\nCurrentTorque: {CurrentTorque}";
+			_child.GetComponent<TMP_Text>().gameObject.transform.rotation = Quaternion.identity;
 		}
 	}
 	void OnMouseEnter()
