@@ -2,12 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class Quest : MonoBehaviour
 {
 
-    /*
+	/*
         Quest 1: Lasse eine Lampe leuchten -> 2.Lampe
         Quest 2: Lasse zwei Lampen mit der Gleiche Ampere Anzahl leucheten -> Info
         Quest 3: Lasse zwei Lampen mit gleicher Volt Anzahl -> Resistor
@@ -15,6 +16,16 @@ public class Quest : MonoBehaviour
         Quest 5: Lasse Lampe leuchten und nicht leuchten -> Info
         Quest 6: Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon -> infinite alles
     */
+	[SerializeField] private TMP_Text _questTextField;  
+	private string[] QuestDescription =
+	{
+		"Quest 1:  Lasse eine Lampe leuchten \n	-> Schaltet die 2.Lampe frei",
+		"Quest 2:  Lasse zwei Lampen mit der Gleiche Ampere Anzahl leucheten \n	-> Schaltet neue Informationen frei",
+		"Quest 3:  Lasse zwei Lampen mit gleicher Volt Anzahl\n	-> Schaltet einen Resistor frei",
+		"Quest 4:  Lasse eine Lampe mit halber Volt Zahl Leuchten \n ->	Schaltet einen Schalter frei",
+		"Quest 5:  Lasse Lampe leuchten und nicht leuchten \n -> Schaltet neue Informationen frei",
+		"Quest 6:  Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon \n	-> infinite alles"
+	};
     public Func<Quest,bool>[] quests =
     {
         x => {return x.Q1(x.boardController); },
@@ -22,18 +33,22 @@ public class Quest : MonoBehaviour
 		x => {return x.Q3(x.boardController); }
 	};
     public BoardController boardController;
+	private int currentQuest = 0;
+	public void Start()
+	{
+		_questTextField.text = QuestDescription[currentQuest];
+	}
 	public void Update()
 	{
-		for(int i = 0; i < quests.Length; i++)
+		bool completed = quests[currentQuest]?.Invoke(this) ?? false;
+		if (completed)
 		{
-			bool completed = quests[i]?.Invoke(this) ?? false;
-			if (completed)
-			{
-				Debug.Log($"Quest {i+1} wurde beendet -> Neue Items freigeschaltet");
-				quests[i] = null;
-			}
+			Debug.Log(QuestDescription[currentQuest]);
+			quests[currentQuest] = null;
+			currentQuest++;
+			_questTextField.text = QuestDescription[currentQuest];
 		}
-    }
+	}
 
 	private bool Q1(BoardController boardController)
 	{
