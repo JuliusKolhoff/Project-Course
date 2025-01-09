@@ -16,7 +16,6 @@ public class Quest : MonoBehaviour
         Quest 5: Lasse Lampe leuchten und nicht leuchten -> Info
         Quest 6: Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon -> infinite alles
     */
-	[SerializeField] private TMP_Text _questTextField;  
 	private string[] QuestDescription =
 	{
 		"Quest 1:  Lasse eine Lampe leuchten \n	-> Schaltet die 2.Lampe frei",
@@ -34,6 +33,7 @@ public class Quest : MonoBehaviour
 	};
     public BoardController boardController;
 	private int currentQuest = 0;
+	[SerializeField] private TMP_Text _questTextField;  
 	public void Start()
 	{
 		_questTextField.text = QuestDescription[currentQuest];

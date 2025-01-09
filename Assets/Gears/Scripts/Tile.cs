@@ -28,19 +28,15 @@ public class Tile : MonoBehaviour
 	[SerializeField] private GameObject _smallGearPrefab;
 	[SerializeField] private GameObject _enginePrefab;
 	[SerializeField] private GameObject _smallEnginePrefab;
+	[SerializeField] private GameObject _infoObjPrefab;
 
 	public bool _isOffset;
 	private bool _permanent = false;
 	private GameObject _gear;
 	private GameObject _motor;
 	private GridManager _manager;
-	private GameObject _child;
-	private bool _canShow;
+	private GameObject _infoTextObj;
 
-	public void SetDisplayInfo(bool value)
-	{
-		_canShow = value;
-	}
 
 	public void Init(bool IsOffset, GridManager Manager)
 	{
@@ -54,27 +50,26 @@ public class Tile : MonoBehaviour
 	}
 	private void UpdateText()
 	{
-		if (_child != null)
+		if (_infoTextObj != null)
 		{
-			_child.GetComponent<TMP_Text>().text = $"Min Rpm: {MinRpm}\nCurrentRpm: {Mathf.Abs(CurrentRotation)}\nMin Torque: {MinTorque}\nCurrentTorque: {CurrentTorque}";
-			_child.GetComponent<TMP_Text>().gameObject.transform.rotation = Quaternion.identity;
+			_infoTextObj.GetComponent<TMP_Text>().text = $"Min Rpm: {MinRpm}\nCurrentRpm: {Mathf.Abs(CurrentRotation)}\nMin Torque: {MinTorque}\nCurrentTorque: {CurrentTorque}";
 		}
 	}
 	void OnMouseEnter()
 	{
 		_highlight.SetActive(true);
-		if(_child != null)
+		if(_infoTextObj != null)
         {
-			_child.SetActive(true);
+			_infoTextObj.SetActive(true);
 		}
 	}
 
 	void OnMouseExit()
 	{
 		_highlight.SetActive(false);
-		if (_child != null)
+		if (_infoTextObj != null)
 		{
-			_child.SetActive(false);
+			_infoTextObj.SetActive(false);
 		}
 	}
 	public void DeleteGear()
@@ -96,7 +91,7 @@ public class Tile : MonoBehaviour
 		MinRpm = 0;
 		Destroy(_gear);
 		_gear = null;
-		_child = null;
+		_infoTextObj = null;
 	}
 	public void NewMotor(float teeth)
 	{
@@ -168,8 +163,9 @@ public class Tile : MonoBehaviour
 				break;
 			}
 		}
-		_child = _gear.transform.GetChild(0).gameObject;
-		_child.SetActive(false);
+		_infoTextObj = Instantiate(_infoObjPrefab, _gear.transform.position + new Vector3(0, 2.5f, 0), Quaternion.identity,transform);
+		_infoTextObj.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
+		_infoTextObj.SetActive(false);
 		Teeth = teeth;
 		MinTorque = minTorque;
 		MinRpm = minRpm;
@@ -275,7 +271,7 @@ public class Tile : MonoBehaviour
 						_manager.NewGoalPosition(transform.position);
 					}
 				}
-				SetDisplayInfo(_manager.DisplayInfo);
+				_infoTextObj.SetActive(true);
 				
 			}
 		}

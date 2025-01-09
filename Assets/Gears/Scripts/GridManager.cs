@@ -177,7 +177,6 @@ public class GridManager : MonoBehaviour
 		MotorTorque = level.MotorTorque;
 		GoalPositions = level.GoalPositions?.ToList();
 		EnableLayer(0);
-		SetDisplayGearInformation(false);
 	}
 	private void ResizeGrid(int width, int height)
 	{
@@ -203,25 +202,7 @@ public class GridManager : MonoBehaviour
 		LinkAdjacentTiles(1);
 		EnableLayer(0);
 	}
-	public void ToggleDisplayInfo()
-	{
-		SetDisplayGearInformation(!DisplayInfo);
-	}
-	public void SetDisplayGearInformation(bool value)
-	{
-		DisplayInfo = value;
-		for (int i = 0; i < 2; i++)
-		{
-			foreach (Tile tile in _tiles[i].Values)
-			{
-				if (tile.HasGear())
-				{
-					tile.SetDisplayInfo(DisplayInfo);
-				}
-			}
-		}
-		
-	}
+	
 	public bool IncludeMachineEfficiency()
 	{
 		return applyMachineEfficiency;
