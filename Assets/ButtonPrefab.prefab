@@ -62,7 +62,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneToLoad: Gears
-  menuValue: 2
+  menuValue: 1
 --- !u!114 &3179443854617737005
 MonoBehaviour:
   m_ObjectHideFlags: 0
