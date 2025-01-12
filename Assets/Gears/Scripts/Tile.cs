@@ -90,6 +90,7 @@ public class Tile : MonoBehaviour
 		MinTorque = 0;
 		MinRpm = 0;
 		Destroy(_gear);
+		Destroy(_infoTextObj);
 		_gear = null;
 		_infoTextObj = null;
 	}
@@ -124,6 +125,7 @@ public class Tile : MonoBehaviour
         }
 		_manager.MotorPosition = new(-1, -1);
 		Destroy(_motor);
+		Destroy(_infoTextObj);
 		_motor = null;
 	}
 	public void NewGear(float teeth, float minTorque,float minRpm)
