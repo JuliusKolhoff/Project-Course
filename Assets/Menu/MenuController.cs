@@ -176,7 +176,7 @@ public class MenuController : MonoBehaviour
 	}
 	void Start()
     {
-		_chapters.Add(GenerateGearChapter("Gears/Levels/"));
+		_chapters.Add(GenerateGearChapter("Levels/"));
 		_chapters.Add(GenerateElectricityChapter());
 		_chapters.Add(GenerateExplenationChapter("Pages/Gears","Gear-\nExplanations"));
 		_chapters.Add(GenerateExplenationChapter("Pages/Electricity","Electricity-\nExplanations"));

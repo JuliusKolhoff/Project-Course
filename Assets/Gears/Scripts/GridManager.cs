@@ -14,11 +14,13 @@ public class GridManager : MonoBehaviour
 	[SerializeField] private Transform _cam;
 	[SerializeField] private GameObject _level1Partent;
 	[SerializeField] private GameObject _level2Partent;
+	[SerializeField] private Transform _canvas;
+	[SerializeField] private GameObject _popupTextPrefab;
 	[SerializeField] private float startRotationSpeed = 2f;
 	[SerializeField] private bool applyMachineEfficiency = false;
 
-	public bool placeMotor = false;
-	public bool placeGoal = false;
+	public bool PlaceMotor { get; set; } = false;
+	public bool PlaceGoal { get; set; } = false;
 
 	private bool _won;
 	private int _exitTimer;
@@ -26,17 +28,49 @@ public class GridManager : MonoBehaviour
 	private bool _loading;
 
 	public Vector2 MotorPosition { get; set; } = new(0,0);
-	public float MotorTorque = 10f;
-	public List<Vector2> GoalPositions = new();
+	public float MotorTorque { get; set; } = 10f;
+	public List<Vector2> GoalPositions { get; set; } = new();
 	public float MinTorque { get; set; }
 	public float MinRpm { get; set; }
 
+	private GameObject _popup;
+	[SerializeField] private GameObject _popupButton;
+
 	private Dictionary<Vector2, Tile>[] _tiles = new Dictionary<Vector2, Tile>[2];
-	public bool DisplayInfo = false;
-	
+	private TextAsset[] _textAssets;
+	private Dictionary<int, string> _popupTexts = new();
+	public void SetTilesVisible(bool value)
+	{
+		_level1Partent.SetActive(value);
+		_level2Partent.SetActive(value);
+	}
+	public void SetPopupEnabled(bool value)
+	{
+		_popup.SetActive(value);
+	}
+	public void SetPopupButtonEnabled(bool value)
+	{
+		_popupButton.SetActive(value);
+	}
 	void Start()
 	{
+		_textAssets = Resources.LoadAll<TextAsset>("Popups/");
+		foreach(var t in _textAssets) 
+		{
+			_popupTexts.Add(int.Parse(t.name.Split("_")[0]),t.text);
+		}
 		LoadState(SceneLoader.LoadParameter);
+		SetPopupButtonEnabled(false);
+		int index = int.Parse(SceneLoader.LoadParameter.Split("_")[0]);
+		string text = _popupTexts.GetValueOrDefault(index, null);
+		if (!string.IsNullOrEmpty(text))
+		{
+			SetPopupButtonEnabled(true);
+			_popup = Instantiate(_popupTextPrefab, _canvas);
+			_popup.GetComponent<Popup>().Controller = this;
+			_popup.GetComponent<TMP_Text>().text = text;
+			SetTilesVisible(false);
+		}
 	}
 	public void SetRpmFromSlider(Slider slider)
 	{
@@ -62,12 +96,12 @@ public class GridManager : MonoBehaviour
 	}
 	public void SetPlaceGoal(bool value)
 	{
-		placeGoal = value;
+		PlaceGoal = value;
 	}
 	public void NewGoalPosition(Vector2 position)
 	{
 		GoalPositions.Add(position);
-		placeGoal = false;
+		PlaceGoal = false;
 	}
 	public void SaveState(string name)
 	{
@@ -130,6 +164,7 @@ public class GridManager : MonoBehaviour
 
 	public void LoadState(string name)
 	{
+		Debug.Log(name);
 		Level level = Resources.Load<Level>($"Levels/{name}");
 		MotorPosition = level.MotorPosition;
 		GoalPositions = level.GoalPositions.ToList();
@@ -389,7 +424,7 @@ public class GridManager : MonoBehaviour
 
 	public void SetPlaceMotor(bool value)
 	{
-		placeMotor = value;
+		PlaceMotor = value;
 	}
 	public Tile GetTileAtPosition(Vector2 pos,int layer)
 	{

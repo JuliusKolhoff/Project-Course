@@ -245,7 +245,7 @@ public class Tile : MonoBehaviour
 		{
 			if (_gear == null)
 			{
-				if (_manager.placeMotor && _manager.MotorPosition.Equals(new(-1, -1)))
+				if (_manager.PlaceMotor && _manager.MotorPosition.Equals(new(-1, -1)))
 				{
 					_manager.SetPlaceMotor(false);
 					
@@ -268,7 +268,7 @@ public class Tile : MonoBehaviour
 					{
 						NewGear(4, _manager.MinTorque, _manager.MinRpm);
 					}
-					if (_manager.placeGoal)
+					if (_manager.PlaceGoal)
 					{
 						_manager.NewGoalPosition(transform.position);
 					}
