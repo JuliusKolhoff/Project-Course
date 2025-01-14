@@ -6,6 +6,7 @@ public class LampController : MonoBehaviour
 {
     [SerializeField] private BoardObject _obj;
     private SpriteRenderer _renderer;
+    private bool isGlowing = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,11 +19,17 @@ public class LampController : MonoBehaviour
     {
         if(_obj.Ampere > 0 && _obj.Vuse > 0)
         {
+            isGlowing = true;
             _renderer.color = Color.yellow;
         }
         else
         {
+            isGlowing = false;
             _renderer.color = Color.white;
         }
+    }
+    public bool IsGlowing()
+    {
+        return isGlowing;
     }
 }

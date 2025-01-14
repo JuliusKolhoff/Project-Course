@@ -14,24 +14,63 @@ public class GridManager : MonoBehaviour
 	[SerializeField] private Transform _cam;
 	[SerializeField] private GameObject _level1Partent;
 	[SerializeField] private GameObject _level2Partent;
+	[SerializeField] private Transform _canvas;
+	[SerializeField] private GameObject _popupTextPrefab;
 	[SerializeField] private float startRotationSpeed = 2f;
 	[SerializeField] private bool applyMachineEfficiency = false;
 
-	public bool placeMotor = false;
-	public bool placeGoal = false;
+	public bool PlaceMotor { get; set; } = false;
+	public bool PlaceGoal { get; set; } = false;
 
+	private bool _won;
+	private int _exitTimer;
+	private int _exitTime = 50;
+	private bool _loading;
 
 	public Vector2 MotorPosition { get; set; } = new(0,0);
-	public float MotorTorque = 10f;
-	public List<Vector2> GoalPositions = new();
+	public float MotorTorque { get; set; } = 10f;
+	public List<Vector2> GoalPositions { get; set; } = new();
 	public float MinTorque { get; set; }
 	public float MinRpm { get; set; }
 
+	private GameObject _popup;
+	[SerializeField] private GameObject _popupButton;
+
 	private Dictionary<Vector2, Tile>[] _tiles = new Dictionary<Vector2, Tile>[2];
-	
+	private TextAsset[] _textAssets;
+	private Dictionary<int, string> _popupTexts = new();
+	public void SetTilesVisible(bool value)
+	{
+		_level1Partent.SetActive(value);
+		_level2Partent.SetActive(value);
+	}
+	public void SetPopupEnabled(bool value)
+	{
+		_popup.SetActive(value);
+	}
+	public void SetPopupButtonEnabled(bool value)
+	{
+		_popupButton.SetActive(value);
+	}
 	void Start()
 	{
+		_textAssets = Resources.LoadAll<TextAsset>("Popups/");
+		foreach(var t in _textAssets) 
+		{
+			_popupTexts.Add(int.Parse(t.name.Split("_")[0]),t.text);
+		}
 		LoadState(SceneLoader.LoadParameter);
+		SetPopupButtonEnabled(false);
+		int index = int.Parse(SceneLoader.LoadParameter.Split("_")[0]);
+		string text = _popupTexts.GetValueOrDefault(index, null);
+		if (!string.IsNullOrEmpty(text))
+		{
+			SetPopupButtonEnabled(true);
+			_popup = Instantiate(_popupTextPrefab, _canvas);
+			_popup.GetComponent<Popup>().Controller = this;
+			_popup.GetComponent<TMP_Text>().text = text;
+			SetTilesVisible(false);
+		}
 	}
 	public void SetRpmFromSlider(Slider slider)
 	{
@@ -57,12 +96,12 @@ public class GridManager : MonoBehaviour
 	}
 	public void SetPlaceGoal(bool value)
 	{
-		placeGoal = value;
+		PlaceGoal = value;
 	}
 	public void NewGoalPosition(Vector2 position)
 	{
 		GoalPositions.Add(position);
-		placeGoal = false;
+		PlaceGoal = false;
 	}
 	public void SaveState(string name)
 	{
@@ -125,6 +164,7 @@ public class GridManager : MonoBehaviour
 
 	public void LoadState(string name)
 	{
+		Debug.Log(name);
 		Level level = Resources.Load<Level>($"Levels/{name}");
 		MotorPosition = level.MotorPosition;
 		GoalPositions = level.GoalPositions.ToList();
@@ -141,7 +181,7 @@ public class GridManager : MonoBehaviour
 				{
 					if (level.Layer1Teeth[x + Width * y] != 0)
 					{
-						if (level.Layer1Rpm == null)
+						if (level.Layer1Rpm == null || level.Layer1Rpm.Length == 0)
 						{
 							GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], 0, true);
 
@@ -154,7 +194,7 @@ public class GridManager : MonoBehaviour
 					}
 					if (level.Layer2Teeth[x + Width * y] != 0)
 					{
-						if(level.Layer2Rpm == null)
+						if(level.Layer2Rpm == null || level.Layer2Rpm.Length == 0)
 						{
 							GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], 0, true);
 
@@ -166,14 +206,12 @@ public class GridManager : MonoBehaviour
 						}
 					}
 				}
-
 			}
 		}
 		MotorPosition = level.MotorPosition;
 		MotorTorque = level.MotorTorque;
 		GoalPositions = level.GoalPositions?.ToList();
 		EnableLayer(0);
-
 	}
 	private void ResizeGrid(int width, int height)
 	{
@@ -199,76 +237,83 @@ public class GridManager : MonoBehaviour
 		LinkAdjacentTiles(1);
 		EnableLayer(0);
 	}
-	public void ToggleGearInformation()
-	{
-		for (int i = 0; i < 2; i++)
-		{
-			foreach (Tile tile in _tiles[i].Values)
-			{
-				if (tile.HasGear())
-				{
-					tile.ToggleInfo();
-				}
-			}
-		}
-		
-	}
+	
 	public bool IncludeMachineEfficiency()
 	{
 		return applyMachineEfficiency;
 	}
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Alpha1))
+		if (_won)
 		{
-			EnableLayer(0);
+			_exitTimer++;
 		}
-		else if(Input.GetKeyDown(KeyCode.Alpha2))
+		if (_exitTimer < _exitTime)
 		{
-			EnableLayer(1);
-		}
-
-
-		if (Input.GetKey(KeyCode.R))
-		{
-			if(GetTileAtPosition(MotorPosition, 0) && GetTileAtPosition(MotorPosition, 0).Teeth != 0)
+			if (Input.GetKeyDown(KeyCode.Alpha1))
 			{
-				if (GoalPositions?.Count != 0)
-				{
-					foreach (Vector2 position in GoalPositions)
-					{
-						if (GetTileAtPosition(position, 0) == null)
-						{
-							continue;
-						}
-						GetTileAtPosition(position, 0).CurrentRotation = 0;
-
-					}
-				}
-				Tile.RotatedTiles.Clear();
-				GetTileAtPosition(MotorPosition, 0).Rotate(startRotationSpeed, MotorTorque);
-				if (GoalPositions?.Count != 0)
-				{
-					bool allGoalsRotating = true;
-					foreach (Vector2 position in GoalPositions)
-					{
-						if (GetTileAtPosition(position, 0) == null)
-						{
-							continue;
-						}
-						if (GetTileAtPosition(position, 0).CurrentRotation == 0)
-						{
-							allGoalsRotating = false;
-						}
-					}
-					if (allGoalsRotating)
-					{
-						Debug.Log("Won");
-					}
-				}
+				EnableLayer(0);
 			}
-			
+			else if (Input.GetKeyDown(KeyCode.Alpha2))
+			{
+				EnableLayer(1);
+			}
+
+
+			if (Input.GetKey(KeyCode.R))
+			{
+				if (GetTileAtPosition(MotorPosition, 0) && GetTileAtPosition(MotorPosition, 0).Teeth != 0)
+				{
+					if (GoalPositions?.Count != 0)
+					{
+						foreach (Vector2 position in GoalPositions)
+						{
+							if (GetTileAtPosition(position, 0) == null)
+							{
+								continue;
+							}
+							GetTileAtPosition(position, 0).CurrentRotation = 0;
+
+						}
+					}
+					Tile.RotatedTiles.Clear();
+					GetTileAtPosition(MotorPosition, 0).Rotate(startRotationSpeed, MotorTorque);
+					if (GoalPositions?.Count != 0)
+					{
+						bool allGoalsRotating = true;
+						foreach (Vector2 position in GoalPositions)
+						{
+							if (GetTileAtPosition(position, 0) == null)
+							{
+								continue;
+							}
+							Debug.Log("Position: " + position + "CurrentRotation: " + GetTileAtPosition(position, 0).CurrentRotation);
+							if (GetTileAtPosition(position, 0).CurrentRotation == 0)
+							{
+								allGoalsRotating = false;
+							}
+						}
+						if (allGoalsRotating)
+						{
+							Debug.Log("Won");
+							
+							_won = true;
+						}
+					}
+				}
+
+			}
 		}
+		else if(!_loading)
+		{
+			_loading = true;
+			SceneLoader sceneLoader = FindFirstObjectByType<SceneLoader>();
+			string[] level = SceneLoader.LoadParameter.Split("_");
+			string nextLevel = (int.Parse(level[0]) + 1) + "_" + level[1];
+			SceneLoader.LoadParameter = nextLevel;
+			sceneLoader.LoadNextScene("Gears", 1);
+		}
+		
 		
 		
 	}
@@ -379,7 +424,7 @@ public class GridManager : MonoBehaviour
 
 	public void SetPlaceMotor(bool value)
 	{
-		placeMotor = value;
+		PlaceMotor = value;
 	}
 	public Tile GetTileAtPosition(Vector2 pos,int layer)
 	{
