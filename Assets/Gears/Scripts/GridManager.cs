@@ -311,7 +311,7 @@ public class GridManager : MonoBehaviour
 			string[] level = SceneLoader.LoadParameter.Split("_");
 			string nextLevel = (int.Parse(level[0]) + 1) + "_" + level[1];
 			SceneLoader.LoadParameter = nextLevel;
-			sceneLoader.LoadNextScene("Gears", 1);
+			sceneLoader.LoadNextScene("Gears", 0);
 		}
 		
 		

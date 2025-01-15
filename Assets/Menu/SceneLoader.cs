@@ -11,6 +11,7 @@ public class SceneLoader : MonoBehaviour
 {
     [SerializeField] private Animator transition;
     [SerializeField] private float transitionDuration = 1f;
+    [SerializeField] private float startMusic = 1f;
     public static string LoadParameter = "Level 1";
 	public void Awake()
     {
@@ -20,6 +21,8 @@ public class SceneLoader : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Menu", startMusic);
     }
 
     public void LoadNextScene(string sceneName, float menuValue)

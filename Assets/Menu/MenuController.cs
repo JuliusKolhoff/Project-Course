@@ -119,6 +119,7 @@ public class MenuController : MonoBehaviour
 		button.transform.localPosition = new(100, Mathf.Lerp(90, -120, 2.5f / 6f), 0);
 		button.name = "Electricity";
 		button.GetComponent<ButtonHandler>().sceneToLoad = "Electricity";
+		button.GetComponent<ButtonHandler>().menuValue = 2f;
 		button.GetComponentInChildren<TMP_Text>().text = "Electricity";
 		button.SetActive(false);
 

@@ -8,7 +8,7 @@ public class ButtonHandler : MonoBehaviour, IPointerClickHandler
 {
 
     [SerializeField] public string sceneToLoad;
-    [SerializeField] private float menuValue;
+    [SerializeField] public float menuValue;
     public void OnPointerClick(PointerEventData pointerEventData)
     {
 		SceneLoader sceneLoader = FindFirstObjectByType<SceneLoader>();
