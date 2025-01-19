@@ -37,8 +37,11 @@ public class BoardController : MonoBehaviour
 		//Needed Material for first Quest
 		Unlock(PlacableObject.Battery, 1);
 		Unlock(PlacableObject.Lamp, 1);
-		
-        objects = new();
+#if UNITY_EDITOR
+		Unlock(PlacableObject.Resistor, 100);
+		Unlock(PlacableObject.Switch, 100);
+#endif
+		objects = new();
 		wires = new();
 		_currentObjtext = GetComponent<TMP_Text>();
 		_currentObject = PlacableObject.Battery;

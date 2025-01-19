@@ -24,15 +24,15 @@ public class BoardObject : MonoBehaviour
 	}
 	public GameObject Plus, Minus;
 	private int visits = 0;
-	public bool IsLastVisit()
+	public void ResetVisits()
 	{
-		/*Debug.Log("Name: " + name);
-		Debug.Log("Visits: " + visits);
-		Debug.Log("Count: " + plusConnections.Count);*/
-		visits++;
-		if(visits == PlusConnections.Count)
+		visits = 0;
+	}
+	public bool IsFirstVisit()
+	{
+		if(visits == 0)
 		{
-			visits = 0;
+			visits++;
 			return true;
 		}
 		return false;

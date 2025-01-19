@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class BatteryController : MonoBehaviour
@@ -39,6 +41,15 @@ public class BatteryController : MonoBehaviour
 		{
 			Controller.RgesText.text = "RGes: " + Sum(Rges);
 		}
+		Controller.objects.ForEach(x =>
+		{
+			x.GetComponentInChildren<BoardObject>().ResetVisits();
+			if (x.GetComponent<SwitchController>() != null)
+			{
+				x.GetComponent<SwitchController>().ResetVisits();
+			}
+		});
+
 	}
 	//returns if follwing Circuit is connected to battery 
 	private bool CalculateRIU(GameObject obj)
@@ -138,12 +149,12 @@ public class BatteryController : MonoBehaviour
 	}
 	private void LogResistance(GameObject obj,(float,float) resistance)
 	{
-		/*
+		
 		if (obj.GetComponent<BatteryController>() == null)
 			Debug.Log($"{obj.transform.parent.name}: Resistance: {resistance.Item1} and OverflowResistance: {resistance.Item2}");
 		else
 			Debug.Log($"{obj.name}: Resistance: {resistance.Item1} and OverflowResistance: {resistance.Item2}");
-		*/
+		
 	}
 	public (float,float) FindRGesamt(GameObject obj, Wire origin)
 	{
@@ -175,7 +186,7 @@ public class BatteryController : MonoBehaviour
 				else
 				{
 					Rgesamt.Item1 += boardObject.Resistance;
-					if (!otherObject.transform.parent.GetComponent<BoardObject>()?.IsLastVisit() ?? !otherObject.transform.GetComponent<BoardObject>().IsLastVisit())
+					if (!otherObject.transform.parent.GetComponent<BoardObject>()?.IsFirstVisit() ?? !otherObject.transform.GetComponent<BoardObject>().IsFirstVisit())
 					{
 						Rgesamt.Item2 = 0;
 					}
@@ -202,19 +213,25 @@ public class BatteryController : MonoBehaviour
 			float inverseSum = 0;
 			float sum = 0;
 			bool oneNotNaN = false;
+			bool oneIsZero = false;
             foreach ((float,float) resistance in resitances)
             {
-				if (!float.IsNaN(resistance.Item1))
+				if (!float.IsNaN(resistance.Item1) && !oneIsZero)
 				{
 					oneNotNaN = true;
 					if(resistance.Item1 == 0)
 					{
-						return ReturnResisitances(obj, (boardObject.Resistance, 0), plusConnectionCount);
+						oneIsZero = true;
 					}
 					inverseSum += 1f / resistance.Item1;
-					sum += resistance.Item2;
+					
 				}
-            }
+				sum += resistance.Item2;
+			}
+			if (oneIsZero)
+			{
+				return ReturnResisitances(obj, (boardObject.Resistance + sum, 0), plusConnectionCount);
+			}
 			if (oneNotNaN)
 			{
 				float finalResistance = 1f / inverseSum + boardObject.Resistance;
@@ -235,8 +252,9 @@ public class BatteryController : MonoBehaviour
 			obj.GetComponentInParent<BoardObject>().Rges = values.Item1;
 
 		}
-		if (float.IsNaN(values.Item1) ||values.Item1 == 0)
+		if (float.IsNaN(values.Item1) || values.Item1 == 0)
 		{
+			LogResistance(obj, values);
 			return values;
 		}
 		if(plusConnectionCount < 2)

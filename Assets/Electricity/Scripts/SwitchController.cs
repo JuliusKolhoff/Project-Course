@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SwitchController : MonoBehaviour
 {
-    private BoardObject _bObj;
 	[SerializeField] private GameObject _leftConnector, _rightConnector;
 	[SerializeField] private GameObject _wirePrefab;
     private Wire _wire;
@@ -10,7 +10,6 @@ public class SwitchController : MonoBehaviour
     void Start()
     {
 		_isOn = true;
-        _bObj = GetComponent<BoardObject>();
 		GameObject obj = Instantiate(_wirePrefab);
 		_wire = obj.GetComponent<Wire>();
 		_wire.name = "SwitchConnection";
@@ -35,6 +34,14 @@ public class SwitchController : MonoBehaviour
 		}
 		_isOn = !_isOn;
 	}
+	public void ResetVisits()
+	{
+		BoardObject[] children = GetComponentsInChildren<BoardObject>();
+        foreach (var item in children)
+        {
+			item.ResetVisits();
+        }
+    }
 	private void OnDestroy()
 	{
 		Destroy(_wire.gameObject);
