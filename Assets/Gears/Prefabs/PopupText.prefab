@@ -37,7 +37,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 324.48053, y: 174.48053}
+  m_AnchoredPosition: {x: 323, y: 173.5}
   m_SizeDelta: {x: 51.0389, y: 51.0389}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8277412972942819137
@@ -297,7 +297,7 @@ RectTransform:
   m_GameObject: {fileID: 6482439189910238970}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.15, y: 1.1625, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6365965574034499964}
@@ -338,7 +338,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ' Waasdasd'
+  m_text: Wasser
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 35f99a646be6b0f47ae08a4e93a2f923, type: 2}
   m_sharedMaterial: {fileID: 8984439188955096686, guid: 35f99a646be6b0f47ae08a4e93a2f923, type: 2}
@@ -372,7 +372,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -401,7 +401,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 22.713684, z: 51.542847, w: 0}
+  m_margin: {x: 33.721863, y: 37.627533, z: 58.26416, w: 36.04747}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -497,7 +497,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 9ab6a57f9e75aa24e891f5f65cdc872e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a79b495bba132e341a49e26b471e7958, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

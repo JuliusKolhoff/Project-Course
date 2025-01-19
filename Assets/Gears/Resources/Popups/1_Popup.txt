@@ -1,1 +1,5 @@
-Hallo Level 1 Ist super
+Bewege das Ziel-Zahnrad um das Level abzuschließen.
+
+Linksklick = Zahnrad platzieren
+Rechtsklick = Zahnrad entfernen
+R = Motor anschalten
