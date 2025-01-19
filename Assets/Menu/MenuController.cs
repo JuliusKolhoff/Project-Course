@@ -84,7 +84,7 @@ public class MenuController : MonoBehaviour
 			}
 			button.name = level.name;
 			button.GetComponent<ButtonHandler>().sceneToLoad = "Gears";
-			button.GetComponentInChildren<TMP_Text>().text = level.name;
+			button.GetComponentInChildren<TMP_Text>().text = level.name.Split("_")[1];
 			button.SetActive(false);
 
 			chapter.pages[currentPage][index] = button;

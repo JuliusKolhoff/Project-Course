@@ -165,6 +165,19 @@ public class GridManager : MonoBehaviour
 	public void LoadState(string name)
 	{
 		Debug.Log(name);
+
+		string[] assetNames = AssetDatabase.FindAssets("", new[] { "Assets/Gears/Resources/Levels" });
+		
+		foreach (string SOName in assetNames)
+		{
+			var SOpath = AssetDatabase.GUIDToAssetPath(SOName).Split("/").Last();
+			if (int.Parse(SOpath.Split("_")[0]) == int.Parse(name.Split("_")[0]))
+			{
+				name = SOpath.Split(".")[0];
+				break;
+			}
+		}
+
 		Level level = Resources.Load<Level>($"Levels/{name}");
 		MotorPosition = level.MotorPosition;
 		GoalPositions = level.GoalPositions.ToList();
