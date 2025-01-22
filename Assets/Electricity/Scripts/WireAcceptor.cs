@@ -18,6 +18,10 @@ public class WireAcceptor : MonoBehaviour
 
 		}
 	}
+	public bool IsPositive()
+	{
+		return _isPositive;
+	}
 	public void RemoveWire(Wire wire)
 	{
 		if (_isPositive)

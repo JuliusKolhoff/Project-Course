@@ -41,8 +41,14 @@ public class GridManager : MonoBehaviour
 	private Dictionary<int, string> _popupTexts = new();
 	public void SetTilesVisible(bool value)
 	{
-		_level1Partent.SetActive(value);
-		_level2Partent.SetActive(value);
+		if(_level1Partent != null)
+		{
+			_level1Partent.SetActive(value);
+		}
+		if (_level2Partent != null)
+		{
+			_level2Partent.SetActive(value);
+		}
 	}
 	public void SetPopupEnabled(bool value)
 	{
@@ -164,20 +170,18 @@ public class GridManager : MonoBehaviour
 
 	public void LoadState(string name)
 	{
-		Debug.Log(name);
-
-		string[] assetNames = AssetDatabase.FindAssets("", new[] { "Assets/Gears/Resources/Levels" });
-		
-		foreach (string SOName in assetNames)
+		//Reformat level name
+		Level[] levels = Resources.LoadAll<Level>("Levels/");
+		foreach (Level levelInstance in levels)
 		{
-			var SOpath = AssetDatabase.GUIDToAssetPath(SOName).Split("/").Last();
-			if (int.Parse(SOpath.Split("_")[0]) == int.Parse(name.Split("_")[0]))
-			{
-				name = SOpath.Split(".")[0];
+			string levelName = levelInstance.name;
+			int index = int.Parse(levelName.Split("_")[0]);
+			if (index == int.Parse(name.Split("_")[0])){
+				name = levelName;
 				break;
 			}
 		}
-
+		//Load Level
 		Level level = Resources.Load<Level>($"Levels/{name}");
 		MotorPosition = level.MotorPosition;
 		GoalPositions = level.GoalPositions.ToList();

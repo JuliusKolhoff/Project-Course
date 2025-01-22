@@ -23,6 +23,7 @@ public class BoardController : MonoBehaviour
 	public TMP_Text RgesText;
 	private float _resistance;
 	private BatteryController _batteryController;
+	[SerializeField] private GameObject _noneButton, _resistorButton, _lampButton, _switchButton, _batteryButton;	
     void Start()
     {
 		int i = 0;
@@ -37,16 +38,12 @@ public class BoardController : MonoBehaviour
 		//Needed Material for first Quest
 		Unlock(PlacableObject.Battery, 1);
 		Unlock(PlacableObject.Lamp, 1);
-#if UNITY_EDITOR
-		Unlock(PlacableObject.Resistor, 100);
-		Unlock(PlacableObject.Switch, 100);
-#endif
 		objects = new();
 		wires = new();
 		_currentObjtext = GetComponent<TMP_Text>();
 		_currentObject = PlacableObject.Battery;
 		_calculateButton.interactable = false;
-		
+		CalculateButtonValues();
 	}
 	public enum PlacableObject
 	{
@@ -56,6 +53,11 @@ public class BoardController : MonoBehaviour
 		Switch,
 		Lamp
 	}
+	public void MakeNoneCurrentObj() => SelectPlaceable(PlacableObject.None);
+	public void MakeBatteryCurrentObj() => SelectPlaceable(PlacableObject.Battery);
+	public void MakeResistorCurrentObj() => SelectPlaceable(PlacableObject.Resistor);
+	public void MakeSwitchCurrentObj() => SelectPlaceable(PlacableObject.Switch);
+	public void MakeLampCurrentObj() => SelectPlaceable(PlacableObject.Lamp);
 	public BatteryController GetBattery()
 	{
 		return _batteryController;
@@ -68,6 +70,7 @@ public class BoardController : MonoBehaviour
 	public void Unlock(PlacableObject obj,int amount)
 	{
 		_unlockedObjects[obj] += amount;
+		CalculateButtonValues();
 		//throw new NotImplementedException("TODO: Unlock Methode muss noch Implementiert werden!!!");
 	}
 	public void ResetBoard()
@@ -89,6 +92,7 @@ public class BoardController : MonoBehaviour
 			Destroy(item);
 			wires.Remove(item);
 		}
+		CalculateButtonValues();
 	}
 	public void CalculateCircuit()
 	{
@@ -100,6 +104,11 @@ public class BoardController : MonoBehaviour
 		{
 			obj.GetComponentInChildren<BoardObject>().ResetValues();
 		}
+	}
+	private void SelectPlaceable(PlacableObject obj)
+	{
+		_currentObject = obj;
+		_currentObjtext.text = _currentObject.ToString();
 	}
 	private void SelectNextPlaceable()
 	{
@@ -137,13 +146,14 @@ public class BoardController : MonoBehaviour
 					switch(_currentObject)
 					{
 						case PlacableObject.Battery: PlaceBattery(position); break;
-						case PlacableObject.Resistor:  PlaceResistor(position); break;
+						case PlacableObject.Resistor: PlaceResistor(position); break;
 						case PlacableObject.Lamp: PlaceLamp(position); break;
 						case PlacableObject.Switch: PlaceSwitch(position); break;
 						case 0: throw new ArgumentOutOfRangeException($"Cannot Place Object{_currentObject}");
 					};
 				}
-				if(CalculateRemainingObjects(_currentObject) <= 0)
+				CalculateButtonValues();
+				if (CalculateRemainingObjects(_currentObject) <= 0)
 				{
 					SelectNextPlaceable();
 				}
@@ -166,7 +176,8 @@ public class BoardController : MonoBehaviour
 				if (CurrentObj != null)
 				{
 					GameObject hitObject = hit.collider.gameObject;
-					if (hitObject != CurrentObj)
+					//Cannot connect two ends of the same charge and the same object
+					if (hitObject != CurrentObj && hitObject.GetComponent<WireAcceptor>().IsPositive() != CurrentObj.GetComponent<WireAcceptor>().IsPositive())
 					{
 						GameObject obj = Instantiate(_wire);
 						Wire wire = obj.GetComponent<Wire>();
@@ -194,6 +205,25 @@ public class BoardController : MonoBehaviour
 	{
 		return _unlockedObjects[obj] - PlacedObjects[obj].Count;
 	}
+	private void CalculateButtonValues()
+	{
+		string text = _batteryButton.GetComponentInChildren<TMP_Text>().text;
+		_batteryButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Battery);
+		_batteryButton.SetActive(CalculateRemainingObjects(PlacableObject.Battery) > 0);
+
+		text = _resistorButton.GetComponentInChildren<TMP_Text>().text;
+		_resistorButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Resistor);
+		_resistorButton.SetActive(CalculateRemainingObjects(PlacableObject.Resistor) > 0);
+
+		text = _lampButton.GetComponentInChildren<TMP_Text>().text;
+		_lampButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Lamp);
+		_lampButton.SetActive(CalculateRemainingObjects(PlacableObject.Lamp) > 0);
+
+		text = _switchButton.GetComponentInChildren<TMP_Text>().text;
+		_switchButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Switch);
+		_switchButton.SetActive(CalculateRemainingObjects(PlacableObject.Switch) > 0);
+
+	}
 	private void PlaceBattery(Vector3 position)
 	{
 		if (_batteryController == null
@@ -208,6 +238,7 @@ public class BoardController : MonoBehaviour
 			_batteryController = obj.GetComponent<BatteryController>();
 			_calculateButton.interactable = true;
 			PlacedObjects[_currentObject].Add(obj);
+			
 		}
 	}
 	private void PlaceResistor(Vector3 position)
@@ -222,22 +253,23 @@ public class BoardController : MonoBehaviour
 			obj.name = objects.Count.ToString();
 			objects.Add(obj);
 			PlacedObjects[_currentObject].Add(obj);
+			
 		}
 	}
 	private void PlaceLamp(Vector3 position)
 	{
 		GameObject obj = Instantiate(_lamp, position, Quaternion.identity);
-		obj.GetComponent<BoardObject>().Resistance = _resistance;
+		obj.GetComponent<BoardObject>().Resistance = 2;
 		obj.name = objects.Count.ToString();
 		objects.Add(obj);
 		PlacedObjects[_currentObject].Add(obj);
-	}
+		}
 	private void PlaceSwitch(Vector3 position)
 	{
 		GameObject obj = Instantiate(_switch, position, Quaternion.identity);
 		obj.name = objects.Count.ToString();
 		objects.Add(obj);
 		PlacedObjects[_currentObject].Add(obj);
-	}
+		}
 
 }
