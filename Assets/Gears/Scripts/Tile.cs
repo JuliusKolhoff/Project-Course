@@ -218,7 +218,17 @@ public class Tile : MonoBehaviour
 					{
 						if (appliedRotation != tile.CurrentRotation)
 						{
-							_manager.StopRotation($"Breaking on Gear: {this.gameObject.name} in layer {Layer}");
+							//_manager.StopRotation($"Breaking on Gear: {this.gameObject.name} in layer {Layer}");
+							Debug.Log($"Breaking on Gear: {this.gameObject.name} in layer {Layer}");
+							if (_permanent)
+							{
+								Debug.Log($"Breaking on Gear: {this.gameObject.name} in layer {Layer}");
+								_manager.RestartLevel();
+							}
+							else
+							{
+								DeleteGear();
+							}
 							return false;
 						}
 					}

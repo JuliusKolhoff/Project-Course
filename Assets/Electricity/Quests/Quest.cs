@@ -56,7 +56,7 @@ public class Quest : MonoBehaviour
 			boardController,
 			x => { return x.IsGlowing(); },
 			x => { return x.Count >= 1; },
-			x => { x.Unlock(BoardController.PlacableObject.Lamp, 1); }
+			x => { x.Unlock(BoardController.PlacableObject.Lampe, 1); }
 			);
 	}
 	//Quest 2: Lasse zwei Lampen mit der Gleiche Ampere Anzahl wie die Batterie leucheten -> Nichts
@@ -105,7 +105,7 @@ public class Quest : MonoBehaviour
                 return true;
             }
         }
-        boardController.Unlock(BoardController.PlacableObject.Lamp, 1);
+        boardController.Unlock(BoardController.PlacableObject.Lampe, 1);
         return false;
     }
 	//Quest 2: Lasse zwei Lampen mit der Gleiche Ampere Anzahl leucheten -> 2 Lampen
@@ -132,7 +132,7 @@ public class Quest : MonoBehaviour
 					return false;
 				}
 			}
-			boardController.Unlock(BoardController.PlacableObject.Lamp, 2);
+			boardController.Unlock(BoardController.PlacableObject.Lampe, 2);
 			return true;
 		}
 		return false;
@@ -161,7 +161,7 @@ public class Quest : MonoBehaviour
 					return false;
 				}
 			}
-			boardController.Unlock(BoardController.PlacableObject.Lamp, 2);
+			boardController.Unlock(BoardController.PlacableObject.Lampe, 2);
 			return true;
 		}
 		return false;

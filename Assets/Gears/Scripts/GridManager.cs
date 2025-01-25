@@ -26,6 +26,7 @@ public class GridManager : MonoBehaviour
 	private int _exitTimer;
 	private int _exitTime = 50;
 	private bool _loading;
+	private string _currentLevel;
 
 	public Vector2 MotorPosition { get; set; } = new(0,0);
 	public float MotorTorque { get; set; } = 10f;
@@ -171,6 +172,7 @@ public class GridManager : MonoBehaviour
 	public void LoadState(string name)
 	{
 		//Reformat level name
+		_currentLevel = name;
 		Level[] levels = Resources.LoadAll<Level>("Levels/");
 		foreach (Level levelInstance in levels)
 		{
@@ -333,6 +335,10 @@ public class GridManager : MonoBehaviour
 		
 		
 		
+	}
+	public void RestartLevel()
+	{
+		LoadState(_currentLevel);
 	}
 	public void StopRotation(string Message)
 	{
