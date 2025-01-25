@@ -165,7 +165,7 @@ public class Tile : MonoBehaviour
 				break;
 			}
 		}
-		_infoTextObj = Instantiate(_infoObjPrefab, _gear.transform.position + new Vector3(0, 2.5f, 0), Quaternion.identity,transform);
+		_infoTextObj = Instantiate(_infoObjPrefab, _gear.transform.position + new Vector3(0, 1.75f, 0), Quaternion.identity,transform);
 		_infoTextObj.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
 		_infoTextObj.SetActive(false);
 		Teeth = teeth;
