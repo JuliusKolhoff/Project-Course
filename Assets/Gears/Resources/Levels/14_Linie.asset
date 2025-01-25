@@ -10,45 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d539ff9171167f047a80b1784a7780e7, type: 3}
-  m_Name: 13_Level
+  m_Name: 14_Linie
   m_EditorClassIdentifier: 
   Layer1Teeth:
-  - 4
-  - 8
-  - 0
-  - 0
   - 0
   - 0
   - 0
   - 0
   - 0
   - 8
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
   - 0
   - 0
   - 0
@@ -72,11 +42,7 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
+  - 8
   - 0
   - 0
   - 0
@@ -85,15 +51,6 @@ MonoBehaviour:
   - 0
   Layer1Torque:
   - 0
-  - 22
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 100
   - 0
   - 0
   - 0
@@ -124,6 +81,18 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  Layer1Rpm:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 4
   - 0
   - 0
   - 0
@@ -158,7 +127,13 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  - 4
   - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 8
   - 0
   - 0
   - 0
@@ -170,47 +145,7 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
+  - 8
   - 0
   - 0
   - 0
@@ -262,6 +197,7 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  Layer2Rpm:
   - 0
   - 0
   - 0
@@ -296,11 +232,13 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  MotorPosition: {x: 0, y: 0}
-  MotorTorque: 22
+  - 0
+  - 0
+  MotorPosition: {x: 0, y: 2}
+  MotorTorque: 0
   MotorTeeth: 4
   GoalPositions:
-  - {x: 9, y: 0}
-  - {x: 2, y: 4}
-  Width: 10
-  Height: 6
+  - {x: 5, y: 4}
+  - {x: 5, y: 0}
+  Width: 6
+  Height: 5

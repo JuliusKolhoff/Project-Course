@@ -1,4 +1,4 @@
-Bewege das Ziel-Zahnrad um das Level abzuschließen.
+Bewege das Ziel-Zahnrad, um das Level abzuschließen.
 
 Linksklick = Zahnrad platzieren
 Rechtsklick = Zahnrad entfernen
