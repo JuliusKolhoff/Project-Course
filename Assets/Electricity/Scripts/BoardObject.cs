@@ -22,6 +22,10 @@ public class BoardObject : MonoBehaviour
 			}
 		}
 	}
+	public void Update()
+	{
+		//transform.position = new(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y));
+	}
 	public GameObject Plus, Minus;
 	private int visits = 0;
 	public void ResetVisits()

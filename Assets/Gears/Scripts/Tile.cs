@@ -14,8 +14,10 @@ public class Tile : MonoBehaviour
 	private float _currentTorque;
 	private float _minTorque;
 	private float _minRpm;
+
+	public GameObject Gear { get { return _gear; }}
 	public float CurrentRotation { get { return _currentRotation; }  set { UpdateText(); _currentRotation = value; } }
-	public float CurrentTorque { get { return _currentTorque; } private set { UpdateText(); _currentTorque = value; } }
+	public float CurrentTorque { get { return _currentTorque; } set { UpdateText(); _currentTorque = value; } }
 	public float MinTorque { get { return _minTorque; } private set { UpdateText(); _minTorque = value; } }
 	public float MinRpm { get { return _minRpm; } private set { UpdateText(); _minRpm = value; } }
 	public int Layer { get; set; }
@@ -63,7 +65,22 @@ public class Tile : MonoBehaviour
 			_infoTextObj.SetActive(true);
 		}
 	}
-
+	public void ResetRotation()
+	{
+		if (HasGear())
+		{
+			float rotation;
+			if (Teeth == 4)
+			{
+				rotation = 45;
+			}
+			else
+			{
+				rotation = 0;
+			}
+			Gear.transform.eulerAngles = new(0, 0, rotation);
+		}
+	}
 	void OnMouseExit()
 	{
 		_highlight.SetActive(false);
@@ -181,13 +198,24 @@ public class Tile : MonoBehaviour
 		}
 		if(torque < MinTorque)
 		{
-			CurrentTorque = 0;
-			_manager.StopRotation($"Not Enough torque at gear: {this.gameObject.name} in layer {Layer};	   Only {torque}/{MinTorque} of required Torque");
+			CurrentTorque = torque;
+			RotatedTiles.Add(this);
+			foreach (Tile tile in RotatedTiles)
+			{
+				tile.ResetRotation();
+			}
+			//_manager.StopRotation($"Not Enough torque at gear: {this.gameObject.name} in layer {Layer};	   Only {torque}/{MinTorque} of required Torque");
 			return false;
 		}
 		if (Mathf.Abs(degrees) < MinRpm)
 		{
-			_manager.StopRotation($"Not Enough Rpm at gear: {this.gameObject.name} in layer {Layer};	   Only {Mathf.Abs(degrees)}/{MinRpm} of required Rpm");
+			CurrentRotation = degrees;
+			RotatedTiles.Add(this);
+			foreach (Tile tile in RotatedTiles)
+			{
+				tile.ResetRotation();
+			}
+			//_manager.StopRotation($"Not Enough Rpm at gear: {this.gameObject.name} in layer {Layer};	   Only {Mathf.Abs(degrees)}/{MinRpm} of required Rpm");
 			return false;
 		}
 		if (HasGear())
@@ -236,6 +264,7 @@ public class Tile : MonoBehaviour
 					{
 						if(!tile.Rotate(appliedRotation,appliedTorque))
 						{
+							
 							return false;
 						}
 					}

@@ -263,6 +263,7 @@ public class GridManager : MonoBehaviour
 	}
 	private void Update()
 	{
+		
 		if (_won)
 		{
 			_exitTimer++;
@@ -295,6 +296,14 @@ public class GridManager : MonoBehaviour
 
 						}
 					}
+					foreach (Tile tile in Tile.RotatedTiles)
+					{
+						if (tile.HasGear())
+						{
+							tile.CurrentRotation = 0;
+							tile.CurrentTorque = 0;
+						}
+					}
 					Tile.RotatedTiles.Clear();
 					GetTileAtPosition(MotorPosition, 0).Rotate(startRotationSpeed, MotorTorque);
 					if (GoalPositions?.Count != 0)
@@ -307,7 +316,9 @@ public class GridManager : MonoBehaviour
 								continue;
 							}
 							Debug.Log("Position: " + position + "CurrentRotation: " + GetTileAtPosition(position, 0).CurrentRotation);
-							if (GetTileAtPosition(position, 0).CurrentRotation == 0)
+							if (GetTileAtPosition(position, 0).CurrentRotation < GetTileAtPosition(position, 0).MinRpm || 
+								GetTileAtPosition(position, 0).CurrentTorque < GetTileAtPosition(position, 0).MinTorque ||
+								GetTileAtPosition(position, 0).CurrentRotation == 0)
 							{
 								allGoalsRotating = false;
 							}
@@ -321,6 +332,13 @@ public class GridManager : MonoBehaviour
 					}
 				}
 
+			}
+			else
+			{
+				foreach (Tile tile in Tile.RotatedTiles)
+				{
+					tile.ResetRotation();
+				}
 			}
 		}
 		else if(!_loading)

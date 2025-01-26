@@ -268,6 +268,11 @@ public class BoardController : MonoBehaviour
 					if (Input.GetKeyDown("r"))
 					{
 						movingObj.transform.Rotate(new(0, 0, -90));
+						if (movingObj.transform.rotation.z == 360 || movingObj.transform.rotation.z == -360)
+						{
+							movingObj.transform.eulerAngles = new(0, 0, 0);
+						}
+
 					}
 					movingObj.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 					movingObj.transform.position = new(movingObj.transform.position.x, movingObj.transform.position.y, 0);
