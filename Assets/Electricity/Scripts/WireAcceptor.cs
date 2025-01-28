@@ -22,6 +22,10 @@ public class WireAcceptor : MonoBehaviour
 	{
 		return _isPositive;
 	}
+	public BoardObject GetParent()
+	{
+		return parent;
+	}
 	public void RemoveWire(Wire wire)
 	{
 		if (_isPositive)

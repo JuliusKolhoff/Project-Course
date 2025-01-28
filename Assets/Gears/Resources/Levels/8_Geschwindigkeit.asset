@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d539ff9171167f047a80b1784a7780e7, type: 3}
-  m_Name: 8_Level
+  m_Name: 8_Geschwindigkeit
   m_EditorClassIdentifier: 
   Layer1Teeth:
   - 4
@@ -21,15 +21,7 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  - 0
-  - 0
-  - 0
-  - 0
   - 4
-  - 0
-  - 0
-  - 0
-  - 0
   - 0
   - 0
   - 0
@@ -58,6 +50,17 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  Layer1Rpm:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 8
+  - 0
   - 0
   - 0
   - 0
@@ -73,14 +76,6 @@ MonoBehaviour:
   - 4
   - 8
   - 4
-  - 0
-  - 0
-  - 8
-  - 4
-  - 8
-  - 4
-  - 0
-  - 0
   - 0
   - 0
   - 0
@@ -112,6 +107,17 @@ MonoBehaviour:
   - 0
   - 0
   - 0
+  Layer2Rpm:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
   - 0
   - 0
   - 0
@@ -121,9 +127,9 @@ MonoBehaviour:
   - 0
   - 0
   MotorPosition: {x: 0, y: 0}
+  MotorTorque: 0
   MotorTeeth: 4
   GoalPositions:
-  - {x: 12, y: 0}
-  - {x: 12, y: 0}
-  Width: 13
+  - {x: 8, y: 0}
+  Width: 9
   Height: 1
