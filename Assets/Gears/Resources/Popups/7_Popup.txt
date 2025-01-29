@@ -1,0 +1,2 @@
+Schließt du nun die Zahnräder nicht über die Zähne an, sondern “klebst” die Zahnräder aufeinander, kannst du zwei Zahnräder über den sogenannten “Shaft” verbinden. Da die Zahnräder verklebt sind, können die Zahnräder nicht unterschiedlich schnell drehen. Geschwindigkeit und Torque ändern sich nicht, nur die Anzahl der Zähne. 
+Klicke 1 oder 2 um die Schicht zu ändern
