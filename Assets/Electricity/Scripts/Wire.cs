@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Wire : MonoBehaviour
@@ -30,35 +31,135 @@ public class Wire : MonoBehaviour
 
 		Vector3 intermediate1Pos = start + obj1direction * .5f;
 		Vector3 intermediate2Pos = end + obj2direction * .5f;
-		
-        Vector3 newIntermediate1Pos = intermediate1Pos + obj1direction * 0.05f;
-		Vector3 newIntermediate2Pos = intermediate2Pos + obj2direction * 0.05f;
-        while (Vector3.Distance(intermediate1Pos, intermediate2Pos) > Vector3.Distance(newIntermediate1Pos, intermediate2Pos) || Vector3.Distance(intermediate2Pos, intermediate1Pos) > Vector3.Distance(newIntermediate2Pos, intermediate1Pos))
+		if(obj1direction == obj2direction)
         {
-            if (Vector3.Distance(intermediate1Pos, intermediate2Pos) > Vector3.Distance(newIntermediate1Pos, intermediate2Pos))
+			Vector3 newIntermediate1Pos = intermediate1Pos + obj1direction * 0.05f;
+			Vector3 newIntermediate2Pos = intermediate2Pos + obj2direction * 0.05f;
+			while (Vector3.Distance(intermediate1Pos, intermediate2Pos) > Vector3.Distance(newIntermediate1Pos, intermediate2Pos) || Vector3.Distance(intermediate2Pos, intermediate1Pos) > Vector3.Distance(newIntermediate2Pos, intermediate1Pos))
+			{
+				if (Vector3.Distance(intermediate1Pos, intermediate2Pos) > Vector3.Distance(newIntermediate1Pos, intermediate2Pos))
+				{
+					intermediate1Pos = newIntermediate1Pos;
+					newIntermediate1Pos = intermediate1Pos + obj1direction * 0.05f;
+				}
+				if (Vector3.Distance(intermediate2Pos, intermediate1Pos) > Vector3.Distance(newIntermediate2Pos, intermediate1Pos))
+				{
+					intermediate2Pos = newIntermediate2Pos;
+					newIntermediate2Pos = intermediate2Pos + obj2direction * 0.05f;
+				}
+			}
+		}else if (obj1direction == -obj2direction)
+        {
+            //Connection "look" at each other
+            if(Vector3.Distance(intermediate1Pos, intermediate2Pos) > Vector3.Distance(intermediate1Pos + obj1direction * 0.0005f, intermediate2Pos))
             {
-                intermediate1Pos = newIntermediate1Pos;
-                newIntermediate1Pos = intermediate1Pos + obj1direction * 0.05f;
-            }
-            if (Vector3.Distance(intermediate2Pos, intermediate1Pos) > Vector3.Distance(newIntermediate2Pos, intermediate1Pos))
+				Vector3 newIntermediate1Pos = intermediate1Pos + obj1direction * 0.05f;
+				Vector3 newIntermediate2Pos = intermediate2Pos + obj2direction * 0.05f;
+				while (Vector3.Distance(intermediate1Pos, intermediate2Pos) > Vector3.Distance(newIntermediate1Pos, intermediate2Pos) || Vector3.Distance(intermediate2Pos, intermediate1Pos) > Vector3.Distance(newIntermediate2Pos, intermediate1Pos))
+				{
+					if (Vector3.Distance(intermediate1Pos, intermediate2Pos) > Vector3.Distance(newIntermediate1Pos, intermediate2Pos))
+					{
+						intermediate1Pos = newIntermediate1Pos;
+						newIntermediate1Pos = intermediate1Pos + obj1direction * 0.05f;
+					}
+					if (Vector3.Distance(intermediate2Pos, intermediate1Pos) > Vector3.Distance(newIntermediate2Pos, intermediate1Pos))
+					{
+						intermediate2Pos = newIntermediate2Pos;
+						newIntermediate2Pos = intermediate2Pos + obj2direction * 0.05f;
+					}
+				}
+				SetLinePositions(start, intermediate1Pos, intermediate2Pos, end);
+			}
+            else // Look away from eachother
             {
-                intermediate2Pos = newIntermediate2Pos;
-                newIntermediate2Pos = intermediate2Pos + obj2direction * 0.05f;
-            }
+				//TODO ANDereres Verhalten falls der Anfang zwischen Ende und anderem pol des 2. Objektes ist
+				Vector3 intermediateHalfPos;
+				Vector3 intermediateHalf2Pos;
+				Vector3 offsetDirection = RotationToDirection(obj1Rotation + 90) * (startAcceptor.IsPositive() ? 1 : -1);
+                //obj2 is in offset direction from obj1 -> offset from obj1 to obj 2
+                if(Vector3.Distance(start, end) > Vector3.Distance(start + offsetDirection * 0.0001f, end))
+                {
+					intermediateHalfPos = intermediate1Pos + offsetDirection * 0.75f;
+					intermediateHalf2Pos = intermediate2Pos + offsetDirection * 0.75f;
+					Vector3 newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
+					while (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+					{
+						if (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+						{
+							intermediateHalfPos = newIntermediateHalfPos;
+							newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
+						}
+
+					}
+					SetLinePositions(start, intermediate1Pos, intermediateHalfPos, intermediateHalf2Pos, intermediate2Pos, end);
+				}
+                else
+                {
+					intermediateHalfPos = intermediate2Pos + offsetDirection * 0.75f;
+					intermediateHalf2Pos = intermediate1Pos + offsetDirection * 0.75f;
+					Vector3 newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
+					while (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+					{
+						if (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+						{
+							intermediateHalfPos = newIntermediateHalfPos;
+							newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
+						}
+					}
+					SetLinePositions(start, intermediate1Pos, intermediateHalf2Pos, intermediateHalfPos, intermediate2Pos, end);
+				}
+			}
+            
         }
+        else//Komplett andere Rotation oben und rechts oder so
+        {
+			Vector3 newIntermediate1Pos = intermediate1Pos + obj1direction * 0.05f;
+			Vector3 newIntermediate2Pos = intermediate2Pos + obj2direction * 0.05f;
+			while (Vector3.Distance(intermediate1Pos, intermediate2Pos) > Vector3.Distance(newIntermediate1Pos, intermediate2Pos) || Vector3.Distance(intermediate2Pos, intermediate1Pos) > Vector3.Distance(newIntermediate2Pos, intermediate1Pos))
+			{
+				if (Vector3.Distance(intermediate1Pos, intermediate2Pos) > Vector3.Distance(newIntermediate1Pos, intermediate2Pos))
+				{
+					intermediate1Pos = newIntermediate1Pos;
+					newIntermediate1Pos = intermediate1Pos + obj1direction * 0.05f;
+				}
+				if (Vector3.Distance(intermediate2Pos, intermediate1Pos) > Vector3.Distance(newIntermediate2Pos, intermediate1Pos))
+				{
+					intermediate2Pos = newIntermediate2Pos;
+					newIntermediate2Pos = intermediate2Pos + obj2direction * 0.05f;
+				}
+			}
+			SetLinePositions(start, intermediate1Pos, intermediate2Pos, end);
+		}
+       
 		
 
-        if(Vector3.Distance(intermediate1Pos, intermediate2Pos) < 0.1f)
-        {
-            intermediate2Pos = intermediate1Pos;
-        }
-		// Set the line points
-		lineRenderer.SetPosition(0, start);
-        lineRenderer.SetPosition(1, intermediate1Pos);
-        lineRenderer.SetPosition(2, intermediate2Pos);
-        lineRenderer.SetPosition(3, end);
+       
     }
-    public GameObject TravelThrough(GameObject current, Energy energy)
+    private void SetLinePositions(Vector3 start, Vector3 intermediate1Pos, Vector3 intermediate2Pos, Vector3 end)
+    {
+		if (Vector3.Distance(intermediate1Pos, intermediate2Pos) < 0.1f)
+		{
+			intermediate2Pos = intermediate1Pos;
+		}
+		// Set the line points
+		lineRenderer.positionCount = 4;
+		lineRenderer.SetPosition(0, start);
+		lineRenderer.SetPosition(1, intermediate1Pos);
+		lineRenderer.SetPosition(2, intermediate2Pos);
+		lineRenderer.SetPosition(3, end);
+	}
+	private void SetLinePositions(Vector3 start, Vector3 intermediate1Pos, Vector3 intermediate2Pos,Vector3 intermediate3Pos, Vector3 intermediate4Pos, Vector3 end)
+	{
+		// Set the line points
+		lineRenderer.positionCount = 6;
+		lineRenderer.SetPosition(0, start);
+		lineRenderer.SetPosition(1, intermediate1Pos);
+		lineRenderer.SetPosition(2, intermediate2Pos);
+		lineRenderer.SetPosition(3, intermediate3Pos);
+		lineRenderer.SetPosition(4, intermediate4Pos);
+		lineRenderer.SetPosition(5, end);
+	}
+	public GameObject TravelThrough(GameObject current, Energy energy)
     {
         if (current == Obj1)
         {
