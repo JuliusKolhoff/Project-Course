@@ -1,0 +1,1 @@
+Schließt du mehrere Zahnräder an einem an, wird jedes der Zahnräder wie einzeln behandelt. Würde es sich doppelt so schnell drehen, dann dreht es sich auch doppelt so schnell, unabhängig davon, wie viele andere Zahnräder angeschlossen sind.

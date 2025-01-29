@@ -1,0 +1,1 @@
+Drehst du nun ein großes Zahnrad, aber schließt ein kleineres Zahnrad an, dann dreht sich das kleine Zahnrad schneller. Ist das angeschlossene Zahnrad doppelt so klein, dreht es sich doppelt so schnell.
