@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Wire : MonoBehaviour
 {
@@ -73,28 +74,55 @@ public class Wire : MonoBehaviour
             else // Look away from eachother
             {
 				//TODO ANDereres Verhalten falls der Anfang zwischen Ende und anderem pol des 2. Objektes ist
+				GameObject otherObject;
 				Vector3 intermediateHalfPos;
 				Vector3 intermediateHalf2Pos;
 				Vector3 offsetDirection = RotationToDirection(obj1Rotation + 90) * (startAcceptor.IsPositive() ? 1 : -1);
                 //obj2 is in offset direction from obj1 -> offset from obj1 to obj 2
                 if(Vector3.Distance(start, end) > Vector3.Distance(start + offsetDirection * 0.0001f, end))
-                {
-					intermediateHalfPos = intermediate1Pos + offsetDirection * 0.75f;
-					intermediateHalf2Pos = intermediate2Pos + offsetDirection * 0.75f;
-					Vector3 newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
-					while (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+				{
+					Vector3 obj1pos = start + obj1direction * 0.5f;
+					otherObject = endAcceptor.IsPositive() ? endAcceptor.GetParent().GetComponent<BoardObject>().Minus : endAcceptor.GetParent().GetComponent<BoardObject>().Plus;
+					// Other object y must be between the two ends
+					if(offsetDirection.x != 0)
 					{
-						if (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+						if((obj1pos.y < otherObject.transform.position.y && obj1pos.y > end.y) || (obj1pos.y > otherObject.transform.position.y && obj1pos.y < end.y))
 						{
-							intermediateHalfPos = newIntermediateHalfPos;
-							newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
+							Debug.Log("Case x");
 						}
-
 					}
-					SetLinePositions(start, intermediate1Pos, intermediateHalfPos, intermediateHalf2Pos, intermediate2Pos, end);
+					else if(offsetDirection.y != 0)
+					{
+						if ((obj1pos.x < otherObject.transform.position.x && obj1pos.x > end.x) || (obj1pos.x > otherObject.transform.position.x && obj1pos.x < end.x))
+						{
+							Debug.Log("Case y");
+						}
+					}
+					else
+					{
+						intermediateHalfPos = intermediate1Pos + offsetDirection * 0.75f;
+						intermediateHalf2Pos = intermediate2Pos + offsetDirection * 0.75f;
+						Vector3 newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
+						while (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+						{
+							if (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+							{
+								intermediateHalfPos = newIntermediateHalfPos;
+								newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
+							}
+
+						}
+						SetLinePositions(start, intermediate1Pos, intermediateHalfPos, intermediateHalf2Pos, intermediate2Pos, end);
+					}
+
+
+
+					
 				}
                 else
                 {
+					otherObject = startAcceptor.IsPositive() ? startAcceptor.GetParent().GetComponent<BoardObject>().Minus : startAcceptor.GetParent().GetComponent<BoardObject>().Plus;
+
 					intermediateHalfPos = intermediate2Pos + offsetDirection * 0.75f;
 					intermediateHalf2Pos = intermediate1Pos + offsetDirection * 0.75f;
 					Vector3 newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
