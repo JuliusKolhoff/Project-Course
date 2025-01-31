@@ -149,11 +149,12 @@ public class BatteryController : MonoBehaviour
 	}
 	private void LogResistance(GameObject obj,(float,float) resistance)
 	{
-		
+		/*
 		if (obj.GetComponent<BatteryController>() == null)
 			Debug.Log($"{obj.transform.parent.name}: Resistance: {resistance.Item1} and OverflowResistance: {resistance.Item2}");
 		else
 			Debug.Log($"{obj.name}: Resistance: {resistance.Item1} and OverflowResistance: {resistance.Item2}");
+		*/
 		
 	}
 	public (float,float) FindRGesamt(GameObject obj, Wire origin)
