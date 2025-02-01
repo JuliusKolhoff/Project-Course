@@ -49,7 +49,9 @@ public class Wire : MonoBehaviour
 					newIntermediate2Pos = intermediate2Pos + obj2direction * 0.05f;
 				}
 			}
-		}else if (obj1direction == -obj2direction)
+			SetLinePositions(start, intermediate1Pos, intermediate2Pos, end);
+		}
+		else if (obj1direction == -obj2direction)
         {
             //Connection "look" at each other
             if(Vector3.Distance(intermediate1Pos, intermediate2Pos) > Vector3.Distance(intermediate1Pos + obj1direction * 0.0005f, intermediate2Pos))
@@ -88,11 +90,29 @@ public class Wire : MonoBehaviour
 					// Other object y must be between the two ends
 					if (offsetDirection.x != 0 && ((obj1pos.y < otherObjPosition.y && obj1pos.y > endPos.y) || (obj1pos.y > otherObjPosition.y && obj1pos.y < endPos.y)))
 					{
-						Debug.Log("Case x");
+						
 					}
 					else if (offsetDirection.y != 0 && ((obj1pos.x < otherObjPosition.x && obj1pos.x > endPos.x) || (obj1pos.x > otherObjPosition.x && obj1pos.x < endPos.x)))
 					{
-						Debug.Log("Case y: " + obj1pos.x + "; right End: " + otherObjPosition.x + ";Left End: " + endPos.x);
+						intermediateHalfPos = intermediate1Pos + offsetDirection * 0.05f;
+						intermediateHalf2Pos = intermediate2Pos - offsetDirection * 0.05f;
+						Vector3 newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
+						Vector3 newIntermediateHalf2Pos = intermediateHalf2Pos - offsetDirection * 0.05f;
+						while (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+						{
+							if (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+							{
+								intermediateHalfPos = newIntermediateHalfPos;
+								newIntermediateHalfPos = intermediateHalfPos + offsetDirection * 0.05f;
+							}
+							if (Vector3.Distance(intermediateHalf2Pos, intermediateHalfPos) > Vector3.Distance(newIntermediateHalf2Pos, intermediateHalfPos))
+							{
+								intermediateHalf2Pos = newIntermediateHalf2Pos;
+								newIntermediateHalf2Pos = intermediateHalf2Pos - offsetDirection * 0.05f;
+							}
+
+						}
+						SetLinePositions(start, intermediate1Pos, intermediateHalfPos, intermediateHalf2Pos, intermediate2Pos, end);
 					}
 					else
 					{
@@ -124,12 +144,31 @@ public class Wire : MonoBehaviour
 					// Other object y must be between the two ends
 					if (offsetDirection.x != 0 && ((obj1pos.y < otherObjPosition.y && obj1pos.y > endPos.y) || (obj1pos.y > otherObjPosition.y && obj1pos.y < endPos.y)))
 					{
-						Debug.Log("Case x");
+						
 					}
 					else if (offsetDirection.y != 0 && ((obj1pos.x < otherObjPosition.x && obj1pos.x > endPos.x) || (obj1pos.x > otherObjPosition.x && obj1pos.x < endPos.x)))
 					{
-						Debug.Log("Case y: " + obj1pos.x + "; right End: " + otherObjPosition.x + ";Left End: " + endPos.x);
+						intermediateHalfPos = intermediate1Pos - offsetDirection * 0.05f;
+						intermediateHalf2Pos = intermediate2Pos + offsetDirection * 0.05f;
+						Vector3 newIntermediateHalfPos = intermediateHalfPos - offsetDirection * 0.05f;
+						Vector3 newIntermediateHalf2Pos = intermediateHalf2Pos + offsetDirection * 0.05f;
+						while (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+						{
+							if (Vector3.Distance(intermediateHalfPos, intermediateHalf2Pos) > Vector3.Distance(newIntermediateHalfPos, intermediateHalf2Pos))
+							{
+								intermediateHalfPos = newIntermediateHalfPos;
+								newIntermediateHalfPos = intermediateHalfPos - offsetDirection * 0.05f;
+							}
+							if (Vector3.Distance(intermediateHalf2Pos, intermediateHalfPos) > Vector3.Distance(newIntermediateHalf2Pos, intermediateHalfPos))
+							{
+								intermediateHalf2Pos = newIntermediateHalf2Pos;
+								newIntermediateHalf2Pos = intermediateHalf2Pos + offsetDirection * 0.05f;
+							}
+
+						}
+						SetLinePositions(start, intermediate1Pos, intermediateHalfPos, intermediateHalf2Pos, intermediate2Pos, end);
 					}
+						
 					else
 					{
 						intermediateHalfPos = intermediate2Pos + offsetDirection * 0.75f;
