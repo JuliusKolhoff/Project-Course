@@ -29,7 +29,9 @@ public class Quest : MonoBehaviour
     {
         x => {return x.Q1(x.boardController); },
 		x => {return x.Q2(x.boardController); },
-		x => {return x.Q3(x.boardController); }
+		x => {return x.Q3(x.boardController); },
+		x => {return x.Q4(x.boardController); },
+		x => {return x.Q5(x.boardController); }
 	};
     public BoardController boardController;
 	private int currentQuest = 0;
@@ -91,6 +93,34 @@ public class Quest : MonoBehaviour
 				return false;
 			},
 			x => { x.Unlock(BoardController.PlacableObject.Resistor, 1); }
+			);
+	}
+	//Quest 4:  Lasse eine Lampe mit halber Volt Zahl Leuchten \n ->	Schaltet einen Schalter frei,
+	private bool Q4(BoardController boardController)
+	{
+		return CheckQuest<LampController>(
+			boardController,
+			x => { return x.IsGlowing(); },
+			x => {
+				if (x.Count == 1)
+				{
+					return x[0].gameObject.GetComponent<BoardObject>().Vuse == boardController.GetBattery().gameObject.GetComponent<BoardObject>().Vin / 2;
+				}
+				return false;
+			},
+			x => { x.Unlock(BoardController.PlacableObject.Schalter, 1); }
+			);
+	}
+	//Quest 5:  Lasse Lampe leuchten und nicht leuchten \n -> Schaltet neue Informationen frei
+	private bool Q5(BoardController boardController)
+	{
+		return CheckQuest<LampController>(
+			boardController,
+			x => { return x.IsGlowing(); },
+			x => {
+				return false;
+			},
+			x => { x.Unlock(BoardController.PlacableObject.Schalter, 1); }
 			);
 	}
 	//Quest 1: Lasse eine Lampe leuchten -> 2 Lampen

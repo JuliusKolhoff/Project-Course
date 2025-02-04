@@ -17,14 +17,15 @@ public class BoardController : MonoBehaviour
 	private List<GameObject> wires;
 	[SerializeField] private GameObject _battery, _wire, _resistor, _lamp, _switch;
 	[SerializeField] private GameObject _board;
-	[SerializeField] private Button _calculateButton;
 	[SerializeField] private LayerMask mask,uiMask;
 	public GameObject CurrentObj { get; set; }
+	[SerializeField] private TMP_Text _resistanceTextObj;
+	[SerializeField] private Slider _resistanceSlider;
 	private PlacableObject _currentObject;
 	private Dictionary<PlacableObject, int> _unlockedObjects = new();
 	private TMP_Text _currentObjtext;
 	public TMP_Text RgesText;
-	private float _resistance;
+	private float _resistance = 1;
 	private BatteryController _batteryController;
 	private GameObject movingObj = null;
 	private Vector3 movingObjOriginalPos;
@@ -47,7 +48,6 @@ public class BoardController : MonoBehaviour
 		wires = new();
 		_currentObjtext = GetComponent<TMP_Text>();
 		_currentObject = PlacableObject.Batterie;
-		_calculateButton.interactable = false;
 		CalculateButtonValues();
 	}
 	public enum PlacableObject
@@ -67,10 +67,14 @@ public class BoardController : MonoBehaviour
 	{
 		return _batteryController;
 	}
-	public void ChangeResistance(string value)
+	public void OnResistanceSliderChange()
 	{
-		if (value.Replace(" ", "") != "")
-			_resistance = int.Parse(value.Replace(" ", ""));
+		ChangeResistance((int)_resistanceSlider.value);
+	}
+	public void ChangeResistance(int value)
+	{
+		_resistanceTextObj.text = "Resistenz: " + value;
+		_resistance = value;
 	}
 	public void Unlock(PlacableObject obj, int amount)
 	{
@@ -81,7 +85,6 @@ public class BoardController : MonoBehaviour
 	public void ResetBoard()
 	{
 		_batteryController = null;
-		_calculateButton.interactable = false;
 		foreach (PlacableObject key in PlacedObjects.Keys)
 		{
 			PlacedObjects[key].Clear();
@@ -322,7 +325,6 @@ public class BoardController : MonoBehaviour
 			obj.GetComponent<BatteryController>().Controller = this;
 			objects.Add(obj);
 			_batteryController = obj.GetComponent<BatteryController>();
-			_calculateButton.interactable = true;
 			PlacedObjects[_currentObject].Add(obj);
 
 		}
