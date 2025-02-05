@@ -1,1 +1,1 @@
-Die “Torque” beschreibt, wie viel Energie das Zahnrad aufwenden kann. Hast du viel Torque, lassen sich schwere Gewichte bewegen. Mit wenig Torque nicht. Stell dir Schraubenschlüssel vor. Lange Schraubenschlüssel drehen Muttern viel leichter als kleinere Schraubenschlüssel.
+Die “Torque” beschreibt die Stärke des Zahnrades. Hat es viel Torque und ist somit stark, lassen sich schwere Vorgänge leicht bewältigen, während es mit wenig Torque nur leichte Vorgänge bewältigen kann.
