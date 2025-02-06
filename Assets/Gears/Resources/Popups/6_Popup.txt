@@ -1,1 +1,1 @@
-Die Torque lässt sich berechnen aus der Formel T = F * r, wobei F die Kraft ist und r der Radius bzw Länge. Willst du die Torque vergrößern, musst du den Radius r erhöhen, da die Kraft bei einer Übertragung gleich bleibt. Schließt du also ein großes Zahnrad an ein kleines, vergrößert sich die Torque.
+Die Formel T = F * r beschreibt die Torque, wobei F die Kraft r der Radius ist. Beim drehen bleibt die Kraft auf beide Zahnräder gleich, nur der Radius ändert sich, und somit auch die Torque. Vergrößerst du den Radius, wird die Torque größer.
