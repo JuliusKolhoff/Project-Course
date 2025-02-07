@@ -113,17 +113,27 @@ public class MenuController : MonoBehaviour
 			start = startOfNextChapter
 		};
 		currentPage = chapter.start;
-		chapter.pages.Add(new GameObject[1]);
+		chapter.pages.Add(new GameObject[2]);
 
 		GameObject button = Instantiate(_buttonPrefab, new Vector3(0, 0, 0), Quaternion.identity, _canvas);
 		button.transform.localPosition = new(100, Mathf.Lerp(90, -120, 2.5f / 6f), 0);
 		button.name = "Electricity";
 		button.GetComponent<ButtonHandler>().sceneToLoad = "Electricity";
 		button.GetComponent<ButtonHandler>().menuValue = 2f;
-		button.GetComponentInChildren<TMP_Text>().text = "Electricity";
+		button.GetComponentInChildren<TMP_Text>().text = "Spielen!";
 		button.SetActive(false);
 
 		chapter.pages[0][0] = button;
+
+		GameObject textObj = Instantiate(_textPrefab, new Vector3(0, 0, 0), Quaternion.identity, _canvas);
+		textObj.GetComponent<TMP_Text>().text = "Klicke auf den Knopf rechts, um in die Welt der Elekritzität abzutauchen!";
+		textObj.SetActive(false);
+		
+		textObj.transform.localPosition = new Vector3(-100, 0, 0);
+		chapter.pages[0][1] = textObj;
+
+
+
 		chapter.end = chapter.start + chapter.pages.Count - 1;
 
 		return chapter;

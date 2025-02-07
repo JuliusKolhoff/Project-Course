@@ -316,7 +316,7 @@ public class GridManager : MonoBehaviour
 								continue;
 							}
 							Debug.Log("Position: " + position + "CurrentRotation: " + GetTileAtPosition(position, 0).CurrentRotation);
-							if (GetTileAtPosition(position, 0).CurrentRotation < GetTileAtPosition(position, 0).MinRpm || 
+							if (Mathf.Abs(GetTileAtPosition(position, 0).CurrentRotation) < GetTileAtPosition(position, 0).MinRpm || 
 								GetTileAtPosition(position, 0).CurrentTorque < GetTileAtPosition(position, 0).MinTorque ||
 								GetTileAtPosition(position, 0).CurrentRotation == 0)
 							{
@@ -337,7 +337,7 @@ public class GridManager : MonoBehaviour
 			{
 				foreach (Tile tile in Tile.RotatedTiles)
 				{
-					tile.ResetRotation();
+					tile.ResetRotationGradient(Time.deltaTime);
 				}
 			}
 		}

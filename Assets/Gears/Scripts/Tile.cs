@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -39,6 +42,7 @@ public class Tile : MonoBehaviour
 	private GridManager _manager;
 	private GameObject _infoTextObj;
 
+	float lastRotation = 0;
 
 	public void Init(bool IsOffset, GridManager Manager)
 	{
@@ -79,6 +83,25 @@ public class Tile : MonoBehaviour
 				rotation = 0;
 			}
 			Gear.transform.eulerAngles = new(0, 0, rotation);
+		}
+	}
+	private void Update()
+	{
+		if (HasGear())
+		{
+			Debug.DrawRay(transform.position, DegreeToVector2(Gear.transform.rotation.eulerAngles.z, 17f), Color.green, 1);
+			//Debug.DrawLine(transform.position, transform.position + (Quaternion.Euler(transform.rotation.eulerAngles) * new Vector3(1,1,1) * 10));
+			float z = Gear.transform.eulerAngles.z;
+			float rotation;
+			if (Teeth == 4)
+			{
+				rotation = (Mathf.Round((z - 45) / 90f) * 90) + 45;
+			}
+			else
+			{
+				rotation = Mathf.Round(z / 45f) * 45f;
+			}
+			Debug.DrawRay(transform.position, DegreeToVector2(rotation, 17f), Color.red, 1);
 		}
 	}
 	void OnMouseExit()
@@ -222,6 +245,7 @@ public class Tile : MonoBehaviour
 		{
 			RotatedTiles.Add(this);
 			_gear.transform.Rotate(new Vector3(0, 0, degrees));
+			lastRotation = Mathf.Round(degrees);
 			CurrentRotation = degrees;
 			CurrentTorque = torque;
 			foreach (Tile tile in AdjacentTiles)
@@ -329,5 +353,49 @@ public class Tile : MonoBehaviour
 			
 		}
 	}
-	
+
+	public void ResetRotationGradient(float dt)
+	{
+		if (HasGear())
+		{
+			int desiredRotation;
+			int z = Mathf.RoundToInt(Gear.transform.eulerAngles.z);
+			if (Teeth == 4)
+			{
+				desiredRotation = (int) (Mathf.Round((z - 45) / 90f) * 90) + 45;
+				//if((z-(45 * Mathf.Sign(z)))%90 == 0)
+				//{
+				//	return;
+				//}
+				//rotation = (Mathf.Round((z - 45) / 90f) * 90) + 45;
+			}
+			else
+			{
+				desiredRotation = (int) Mathf.Round(z / 90f) * 90;
+				
+				//if(Mathf.Abs(z)%45 == 0)
+				//{
+				//	return;
+				//}
+				//rotation = Mathf.Round(z / 90f) * 90;
+			}
+			desiredRotation = (int)(Mathf.Round((z - 45) / 90f) * 90) + 45;
+			//Debug.Log($" Z: {z}     Desired: {desiredRotation}      Achieved: {z.Equals(desiredRotation)}");
+			if (z.Equals(desiredRotation))
+			{
+				return;
+			}
+			Gear.transform.eulerAngles = new(0, 0, Mathf.Round(Gear.transform.eulerAngles.z));
+			Gear.transform.Rotate(new(0, 0, -lastRotation));
+		}
+	}
+	public Vector2 DegreeToVector2(float degree, float length)
+	{
+		return RadianToVector2(degree * Mathf.Deg2Rad) * length;
+	}
+	public static Vector2 RadianToVector2(float radian)
+	{
+		return new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
+	}
 }
+
