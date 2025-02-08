@@ -13,6 +13,7 @@ public class MenuController : MonoBehaviour
         public int end;
         public List<GameObject[]> pages;
         public GameObject bookmark;
+		public Sprite sprite;
 	}
    
     [SerializeField] private GameObject _buttonPrefab;
@@ -20,7 +21,7 @@ public class MenuController : MonoBehaviour
 	[SerializeField] private GameObject _textPrefab;
 	[SerializeField] private Transform _canvas;
     [SerializeField] private GameObject _nextPageButton,_previousPageButton;
-	[SerializeField] private Sprite gears, electricity, exp_gears, exp_electricity;
+	[SerializeField] private Sprite _gearsSprite, _electricitySprite, _gearPagesSprite, _electricityPagesSprite;
 
 	private readonly List<BookChapter> _chapters = new();
 	private readonly List<GameObject[]> _allPages = new();
@@ -31,7 +32,7 @@ public class MenuController : MonoBehaviour
     {
         ChangePage(chapter.start);
     }
-    private BookChapter GenerateGearChapter(string path)
+    private BookChapter GenerateGearChapter(string path, Sprite sprite)
     {
 		int startOfNextChapter;
 		if(_chapters.Count == 0)
@@ -46,7 +47,8 @@ public class MenuController : MonoBehaviour
 		{
 			pages = new(),
 			name = "Gears",
-			start = startOfNextChapter
+			start = startOfNextChapter,
+			sprite = sprite
 		};
 		chapter.pages.Add(new GameObject[12]);
 		currentPage = chapter.start;
@@ -96,7 +98,7 @@ public class MenuController : MonoBehaviour
 		currentPage = 0;
 		return chapter;
 	}
-	private BookChapter GenerateElectricityChapter()
+	private BookChapter GenerateElectricityChapter(Sprite sprite)
 	{
 		int startOfNextChapter;
 		if (_chapters.Count == 0)
@@ -111,7 +113,8 @@ public class MenuController : MonoBehaviour
 		{
 			pages = new(),
 			name = "Electricity",
-			start = startOfNextChapter
+			start = startOfNextChapter,
+			sprite = sprite
 		};
 		currentPage = chapter.start;
 		chapter.pages.Add(new GameObject[2]);
@@ -139,7 +142,7 @@ public class MenuController : MonoBehaviour
 
 		return chapter;
 	}
-	BookChapter GenerateExplenationChapter(string path,string name)
+	BookChapter GenerateExplenationChapter(string path,string name,Sprite sprite)
 	{
 		int startOfNextChapter;
 		if (_chapters.Count == 0)
@@ -154,7 +157,8 @@ public class MenuController : MonoBehaviour
 		{
 			pages = new(),
 			name = name,
-			start = startOfNextChapter
+			start = startOfNextChapter,
+			sprite = sprite
 		};
 		TextAsset[] texts = Resources.LoadAll<TextAsset>(path + "/Texts");
 		chapter.pages.Add(new GameObject[2]);
@@ -188,10 +192,10 @@ public class MenuController : MonoBehaviour
 	}
 	void Start()
     {
-		_chapters.Add(GenerateGearChapter("Levels/"));
-		_chapters.Add(GenerateElectricityChapter());
-		_chapters.Add(GenerateExplenationChapter("Pages/Gears","Gear-\nExplanations"));
-		_chapters.Add(GenerateExplenationChapter("Pages/Electricity","Electricity-\nExplanations"));
+		_chapters.Add(GenerateGearChapter("Levels/",_gearsSprite));
+		_chapters.Add(GenerateElectricityChapter(_electricitySprite));
+		_chapters.Add(GenerateExplenationChapter("Pages/Gears","Gear-\nExplanations",_gearPagesSprite));
+		_chapters.Add(GenerateExplenationChapter("Pages/Electricity","Electricity-\nExplanations", _electricityPagesSprite));
 		for (int i = 0;i<_chapters.Count;i++)
 		{
 			BookChapter chapter = _chapters[i];
@@ -215,7 +219,8 @@ public class MenuController : MonoBehaviour
 		bookmarkObj.transform.localPosition = new Vector3(40 + index * (bookmarkWidth + distanceBetweenBookmarks), 135, 0);
 		Bookmark bookmark = bookmarkObj.GetComponent<Bookmark>();
 		bookmark.ToPage = (x) => { x.ChangePage(chapter.start); };
-		bookmarkObj.GetComponentInChildren<TMP_Text>().text = chapter.name;
+		//bookmarkObj.GetComponentInChildren<TMP_Text>().text = chapter.name; 
+		bookmarkObj.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = chapter.sprite;
 		bookmark.Controller = this;
 		return bookmarkObj;
 	}
