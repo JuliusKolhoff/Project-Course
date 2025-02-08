@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -20,6 +20,7 @@ public class MenuController : MonoBehaviour
 	[SerializeField] private GameObject _textPrefab;
 	[SerializeField] private Transform _canvas;
     [SerializeField] private GameObject _nextPageButton,_previousPageButton;
+	[SerializeField] private Sprite gears, electricity, exp_gears, exp_electricity;
 
 	private readonly List<BookChapter> _chapters = new();
 	private readonly List<GameObject[]> _allPages = new();
@@ -126,7 +127,7 @@ public class MenuController : MonoBehaviour
 		chapter.pages[0][0] = button;
 
 		GameObject textObj = Instantiate(_textPrefab, new Vector3(0, 0, 0), Quaternion.identity, _canvas);
-		textObj.GetComponent<TMP_Text>().text = "Klicke auf den Knopf rechts, um in die Welt der Elekritzit�t abzutauchen!";
+		textObj.GetComponent<TMP_Text>().text = "Klicke auf den Knopf rechts, um in die Welt der Elekritzität abzutauchen!";
 		textObj.SetActive(false);
 		
 		textObj.transform.localPosition = new Vector3(-100, 0, 0);
