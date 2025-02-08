@@ -208,10 +208,6 @@ public class Wire : MonoBehaviour
 			}
 			SetLinePositions(start, intermediate1Pos, intermediate2Pos, end);
 		}
-       
-		
-
-       
     }
     private void SetLinePositions(Vector3 start, Vector3 intermediate1Pos, Vector3 intermediate2Pos, Vector3 end)
     {
