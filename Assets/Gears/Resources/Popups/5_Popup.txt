@@ -1,1 +1,1 @@
-Die “Torque” beschreibt die Stärke des Zahnrades. Hat es viel Torque und ist somit stark, lassen sich schwere Vorgänge leicht bewältigen, während es mit wenig Torque nur leichte Vorgänge bewältigen kann.
+Viel Torque = Stark, wenig Torque = Schwach

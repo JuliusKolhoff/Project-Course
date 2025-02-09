@@ -1,2 +1,1 @@
-Schließt man Zahnräder aneinander an, dann rasten die einzelnen Zähne beider Zahnräder ein, dreht man nun eines der Zahnräder, dreht sich das zweite mit. 
-So kann man viele Zahnräder nebeneinander platzieren und eine Drehung von Punkt A zu Punkt B transportieren. 
+Hier findest du alle Erklärungen zu den Zahnrädern 
