@@ -51,6 +51,10 @@ public class GridManager : MonoBehaviour
 			_level2Partent.SetActive(value);
 		}
 	}
+	public bool HasEnabledPopup()
+	{
+		return _popup != null && _popup.activeSelf;
+	}
 	public void SetPopupEnabled(bool value)
 	{
 		_popup.SetActive(value);
@@ -58,6 +62,10 @@ public class GridManager : MonoBehaviour
 	public void SetPopupButtonEnabled(bool value)
 	{
 		_popupButton.SetActive(value);
+	}
+	public bool IsPopupButtonEnabled()
+	{
+		return _popupButton.activeSelf;
 	}
 	void Start()
 	{
@@ -280,7 +288,7 @@ public class GridManager : MonoBehaviour
 			}
 
 
-			if (Input.GetKey(KeyCode.R))
+			if (Input.GetKey(KeyCode.R) && _level1Partent.activeSelf && _level2Partent.activeSelf)
 			{
 				if (GetTileAtPosition(MotorPosition, 0) && GetTileAtPosition(MotorPosition, 0).Teeth != 0)
 				{
@@ -305,6 +313,10 @@ public class GridManager : MonoBehaviour
 						}
 					}
 					Tile.RotatedTiles.Clear();
+					if (MotorTorque == 0)
+					{
+						MotorTorque = 1;
+					}
 					GetTileAtPosition(MotorPosition, 0).Rotate(startRotationSpeed, MotorTorque);
 					if (GoalPositions?.Count != 0)
 					{
@@ -315,7 +327,6 @@ public class GridManager : MonoBehaviour
 							{
 								continue;
 							}
-							Debug.Log("Position: " + position + "CurrentRotation: " + GetTileAtPosition(position, 0).CurrentRotation);
 							if (Mathf.Abs(GetTileAtPosition(position, 0).CurrentRotation) < GetTileAtPosition(position, 0).MinRpm || 
 								GetTileAtPosition(position, 0).CurrentTorque < GetTileAtPosition(position, 0).MinTorque ||
 								GetTileAtPosition(position, 0).CurrentRotation == 0)
@@ -436,6 +447,7 @@ public class GridManager : MonoBehaviour
 				var spawnedTile = Instantiate(_tilePrefab, new Vector3(x, y), Quaternion.identity,parent);
 				spawnedTile.name = $"Tile {x} {y}";
 				spawnedTile.Layer = layer;
+				spawnedTile.Canvas = _canvas;
 				
 				var isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
 				if (layer == 1)

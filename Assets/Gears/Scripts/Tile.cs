@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using TMPro;
 using Unity.VisualScripting;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -19,10 +18,10 @@ public class Tile : MonoBehaviour
 	private float _minRpm;
 
 	public GameObject Gear { get { return _gear; }}
-	public float CurrentRotation { get { return _currentRotation; }  set { UpdateText(); _currentRotation = value; } }
-	public float CurrentTorque { get { return _currentTorque; } set { UpdateText(); _currentTorque = value; } }
-	public float MinTorque { get { return _minTorque; } private set { UpdateText(); _minTorque = value; } }
-	public float MinRpm { get { return _minRpm; } private set { UpdateText(); _minRpm = value; } }
+	public float CurrentRotation { get { return _currentRotation; }  set { _currentRotation = value; UpdateText(); } }
+	public float CurrentTorque { get { return _currentTorque; } set {  _currentTorque = value; UpdateText(); } }
+	public float MinTorque { get { return _minTorque; } private set { _minTorque = value; UpdateText(); } }
+	public float MinRpm { get { return _minRpm; } private set {  _minRpm = value; UpdateText(); } }
 	public int Layer { get; set; }
 
 
@@ -34,6 +33,10 @@ public class Tile : MonoBehaviour
 	[SerializeField] private GameObject _enginePrefab;
 	[SerializeField] private GameObject _smallEnginePrefab;
 	[SerializeField] private GameObject _infoObjPrefab;
+	[SerializeField] private GameObject _infoPopupPrefab;
+
+	public Transform Canvas { get; set; }
+
 
 	public bool _isOffset;
 	private bool _permanent = false;
@@ -222,23 +225,27 @@ public class Tile : MonoBehaviour
 		if(torque < MinTorque)
 		{
 			CurrentTorque = torque;
-			RotatedTiles.Add(this);
-			foreach (Tile tile in RotatedTiles)
-			{
-				tile.ResetRotation();
-			}
-			//_manager.StopRotation($"Not Enough torque at gear: {this.gameObject.name} in layer {Layer};	   Only {torque}/{MinTorque} of required Torque");
-			return false;
-		}
-		if (Mathf.Abs(degrees) < MinRpm)
-		{
 			CurrentRotation = degrees;
 			RotatedTiles.Add(this);
 			foreach (Tile tile in RotatedTiles)
 			{
 				tile.ResetRotation();
 			}
+			//_manager.StopRotation($"Not Enough torque at gear: {this.gameObject.name} in layer {Layer};	   Only {torque}/{MinTorque} of required Torque");
+			NewInfoPopup($"Not Enough torque at gear: {this.gameObject.name} in layer {Layer};	   Only {torque}/{MinTorque} of required Torque");
+			return false;
+		}
+		if (Mathf.Abs(degrees) < MinRpm)
+		{
+			CurrentRotation = degrees;
+			CurrentTorque = torque;
+			RotatedTiles.Add(this);
+			foreach (Tile tile in RotatedTiles)
+			{
+				tile.ResetRotation();
+			}
 			//_manager.StopRotation($"Not Enough Rpm at gear: {this.gameObject.name} in layer {Layer};	   Only {Mathf.Abs(degrees)}/{MinRpm} of required Rpm");
+			NewInfoPopup($"Not Enough Rpm at gear: {this.gameObject.name} in layer {Layer};	   Only {Mathf.Abs(degrees)}/{MinRpm} of required Rpm");
 			return false;
 		}
 		if (HasGear())
@@ -271,14 +278,14 @@ public class Tile : MonoBehaviour
 						if (appliedRotation != tile.CurrentRotation)
 						{
 							//_manager.StopRotation($"Breaking on Gear: {this.gameObject.name} in layer {Layer}");
-							Debug.Log($"Breaking on Gear: {this.gameObject.name} in layer {Layer}");
 							if (_permanent)
 							{
-								Debug.Log($"Breaking on Gear: {this.gameObject.name} in layer {Layer}");
+								NewInfoPopup($"Breaking on permanent Gear: {this.gameObject.name} in layer {Layer} : \n Restarting Level");
 								_manager.RestartLevel();
 							}
 							else
 							{
+								NewInfoPopup($"Breaking on Gear: {this.gameObject.name} in layer {Layer}: \n Gear removed");
 								DeleteGear();
 							}
 							return false;
@@ -356,38 +363,39 @@ public class Tile : MonoBehaviour
 
 	public void ResetRotationGradient(float dt)
 	{
-		if (HasGear())
-		{
-			int desiredRotation;
-			int z = Mathf.RoundToInt(Gear.transform.eulerAngles.z);
-			if (Teeth == 4)
-			{
-				desiredRotation = (int) (Mathf.Round((z - 45) / 90f) * 90) + 45;
-				//if((z-(45 * Mathf.Sign(z)))%90 == 0)
-				//{
-				//	return;
-				//}
-				//rotation = (Mathf.Round((z - 45) / 90f) * 90) + 45;
-			}
-			else
-			{
-				desiredRotation = (int) Mathf.Round(z / 90f) * 90;
-				
-				//if(Mathf.Abs(z)%45 == 0)
-				//{
-				//	return;
-				//}
-				//rotation = Mathf.Round(z / 90f) * 90;
-			}
-			desiredRotation = (int)(Mathf.Round((z - 45) / 90f) * 90) + 45;
-			//Debug.Log($" Z: {z}     Desired: {desiredRotation}      Achieved: {z.Equals(desiredRotation)}");
-			if (z.Equals(desiredRotation))
-			{
-				return;
-			}
-			Gear.transform.eulerAngles = new(0, 0, Mathf.Round(Gear.transform.eulerAngles.z));
-			Gear.transform.Rotate(new(0, 0, -lastRotation));
-		}
+		ResetRotation();
+		//if (HasGear())
+		//{
+		//	int desiredRotation;
+		//	int z = Mathf.RoundToInt(Gear.transform.eulerAngles.z);
+		//	if (Teeth == 4)
+		//	{
+		//		desiredRotation = (int)(Mathf.Round((z - 45) / 90f) * 90) + 45;
+		//		//if((z-(45 * Mathf.Sign(z)))%90 == 0)
+		//		//{
+		//		//	return;
+		//		//}
+		//		//rotation = (Mathf.Round((z - 45) / 90f) * 90) + 45;
+		//	}
+		//	else
+		//	{
+		//		desiredRotation = (int)Mathf.Round(z / 90f) * 90;
+
+		//		//if(Mathf.Abs(z)%45 == 0)
+		//		//{
+		//		//	return;
+		//		//}
+		//		//rotation = Mathf.Round(z / 90f) * 90;
+		//	}
+		//	desiredRotation = (int)(Mathf.Round((z - 45) / 90f) * 90) + 45;
+		//	//Debug.Log($" Z: {z}     Desired: {desiredRotation}      Achieved: {z.Equals(desiredRotation)}");
+		//	if (z.Equals(desiredRotation))
+		//	{
+		//		return;
+		//	}
+		//	Gear.transform.eulerAngles = new(0, 0, Mathf.Round(Gear.transform.eulerAngles.z));
+		//	Gear.transform.Rotate(new(0, 0, -lastRotation));
+		//}
 	}
 	public Vector2 DegreeToVector2(float degree, float length)
 	{
@@ -396,6 +404,22 @@ public class Tile : MonoBehaviour
 	public static Vector2 RadianToVector2(float radian)
 	{
 		return new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
+	}
+	private void NewInfoPopup(string message)
+	{
+		GameObject obj = Instantiate(_infoPopupPrefab,Canvas);
+		obj.GetComponent<InfoPopup>().SetText(message);
+		obj.GetComponent<InfoPopup>().Manager = _manager;
+		if (_manager.HasEnabledPopup())
+		{
+			_manager.SetPopupEnabled(false);
+		}
+		if (_manager.IsPopupButtonEnabled())
+		{
+			_manager.SetPopupButtonEnabled(false);
+			obj.GetComponent<InfoPopup>().disabledButton = true;
+		}
+		_manager.SetTilesVisible(false);
 	}
 }
 

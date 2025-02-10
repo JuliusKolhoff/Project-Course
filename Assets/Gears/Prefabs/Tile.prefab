@@ -111,8 +111,8 @@ MonoBehaviour:
   _enginePrefab: {fileID: 4378253914205909190, guid: 2dc342efd1a07284fb15c30e4053b9e3, type: 3}
   _smallEnginePrefab: {fileID: 3033382271455811271, guid: 54f9c57c02cb2ff4aa309061da701472, type: 3}
   _infoObjPrefab: {fileID: 3519203859575789170, guid: 2db1ee3ae2322a04aa2dc926dd61d282, type: 3}
+  _infoPopupPrefab: {fileID: 6482439189910238970, guid: 58818bb18fc9006499c5634c258eb2c7, type: 3}
   _isOffset: 0
-  _infoTextObj: {fileID: 0}
 --- !u!61 &8399478509942410959
 BoxCollider2D:
   m_ObjectHideFlags: 0
