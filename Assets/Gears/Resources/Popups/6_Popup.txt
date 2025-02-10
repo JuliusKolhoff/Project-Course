@@ -1,1 +1,1 @@
-Die Formel T = F * r beschreibt die Torque, wobei F die Kraft r der Radius ist. Beim drehen bleibt die Kraft auf beide Zahnräder gleich, nur der Radius ändert sich, und somit auch die Torque. Vergrößerst du den Radius, wird die Torque größer.
+Kleines Zahnrad = wenig Torque, großes Zahnrad = viel Torque

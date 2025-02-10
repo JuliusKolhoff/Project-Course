@@ -1,1 +1,1 @@
-Genau wie bei der Geschwindigkeit, lässt sich die Torque vergrößern, ohne die Anzahl der Zähne zu verändern. Dafür musst du genau das Gegenteil wie bei der Geschwindigkeit machen. Zuerst vergrößert du die Torque, indem du ein großes Zahnrad an ein kleines anschließt. Dann “klebst” du ein kleines Zahnrad darauf und vergrößert die Torque weiter.
+Achte auf die minimale Torque
