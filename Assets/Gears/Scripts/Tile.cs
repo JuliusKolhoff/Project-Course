@@ -123,7 +123,7 @@ public class Tile : MonoBehaviour
         }
         foreach (Vector2 position in _manager.GoalPositions)
         {
-			if (transform.position.Equals(position))
+			if (transform.position.Equals(position) && Layer == 0)
 			{
 				_manager.GoalPositions.Remove(position);
 				break;
@@ -352,7 +352,7 @@ public class Tile : MonoBehaviour
 			if( _gear != null)
 			{
 				DeleteGear();
-				if (_manager.MotorPosition.Equals(transform.position))
+				if (_manager.MotorPosition.Equals(transform.position) && Layer == 0)
 				{
 					DeleteMotor();
 				}

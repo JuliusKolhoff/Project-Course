@@ -27,6 +27,7 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadNextScene(string sceneName, float menuValue)
     {
+        GameObject.Find("EventSystem").SetActive(false);
 		StartCoroutine(LoadScene(sceneName));
         StartCoroutine(ChangeValue(menuValue));
         DontDestroyOnLoad(this);
