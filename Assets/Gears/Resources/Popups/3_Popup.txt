@@ -1,0 +1,5 @@
+
+RPM = Speed
+Torque = Stärke
+
+

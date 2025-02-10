@@ -1,0 +1,5 @@
+1 RPM → 2 RPM 
+  ↑       ↓
+4 RPM ← 2 RPM
+→ oder ← = Speed wird größer
+↑ oder ↓  = Speed muss gleich bleiben

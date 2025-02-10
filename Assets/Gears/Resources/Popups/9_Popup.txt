@@ -1,1 +1,1 @@
-Schließe ein großes Zahnrad an ein kleines, klebe nun ein kleines auf das große Zahnrad
+Achte auf die minimale Torque

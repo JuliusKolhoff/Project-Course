@@ -1,1 +1,1 @@
-Du kannst mit dieser Aufteilung auch unterschiedliche Endgeschwindigkeiten erreichen. Dafür musst du die Zahnräder unsymmetrisch aneinander schalten.
+Schließt du Zahnräder aneinander an, dann klicken die einzelnen Zähne beider Zahnräder ein. Drehst du nun eines der beiden Zahnräder einmal, dreht sich das zweite auch einmal. So kannst du weit entfernte Zahnräder drehen, indem du diese verbindest.
