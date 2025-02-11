@@ -230,14 +230,26 @@ public class BoardController : MonoBehaviour
 					//Cannot connect two ends of the same charge and the same object
 					if (hitObject != CurrentObj && hitObject.transform.parent != CurrentObj.transform.parent && hitObject.GetComponent<WireAcceptor>().IsPositive() != CurrentObj.GetComponent<WireAcceptor>().IsPositive())
 					{
-						GameObject obj = Instantiate(_wire);
-						Wire wire = obj.GetComponent<Wire>();
-						wire.Obj1 = CurrentObj;
-						wire.Obj2 = hitObject;
-						hitObject.GetComponent<WireAcceptor>().AddWire(wire);
-						CurrentObj.GetComponent<WireAcceptor>().AddWire(wire);
-						CurrentObj = null;
-						wires.Add(obj);
+						bool wireExists = false;
+						foreach(GameObject wireObj in wires)
+						{
+							if (wireObj.GetComponent<Wire>().ConnectedToObjects(CurrentObj, hitObject))
+							{
+								wireExists = true;
+								break;
+							}
+						}
+						if (!wireExists)
+						{
+							GameObject obj = Instantiate(_wire);
+							Wire wire = obj.GetComponent<Wire>();
+							wire.Obj1 = CurrentObj;
+							wire.Obj2 = hitObject;
+							hitObject.GetComponent<WireAcceptor>().AddWire(wire);
+							CurrentObj.GetComponent<WireAcceptor>().AddWire(wire);
+							CurrentObj = null;
+							wires.Add(obj);
+						}
 					}
 
 				}
