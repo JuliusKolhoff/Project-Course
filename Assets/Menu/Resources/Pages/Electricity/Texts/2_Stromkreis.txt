@@ -1,0 +1,1 @@
+Um einen Stromkreis zu schließen, muss ein Weg vom Minuspol der Batterie zum Pluspol der Batterie führen, dabei kann es durch verschiedenste Strukturen gehen. 

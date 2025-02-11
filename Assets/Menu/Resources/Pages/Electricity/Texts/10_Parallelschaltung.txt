@@ -1,0 +1,1 @@
+Du kannst Verbraucher auch parallel schalten. Dafür hat jeder Verbraucher eine Art eigenen Stromkreis. Elektronen können entscheiden, zu welchem Verbraucher sie fließen, gehen und treffen sich aber alle an der gleichen Batterie. Die Spannung ist bei jedem Verbraucher gleich, die Stromstärke teilt sich aber proportional zum Widerstand der Verbraucher auf.

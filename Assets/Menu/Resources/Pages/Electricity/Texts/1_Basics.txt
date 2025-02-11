@@ -1,0 +1,3 @@
+Schließt du eine Batterie an eine Lampe, dann leuchtet sie. 
+
+Elektronen fließen vom Minus Pol zum Plus Pol. Deshalb musst du immer die Drähte von minus zu plus schließen.

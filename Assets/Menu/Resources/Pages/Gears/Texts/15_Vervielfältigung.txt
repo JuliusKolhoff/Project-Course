@@ -1,0 +1,1 @@
+Es lassen sich mehrere Zahnräder an einem Zahnrad anschließen. Dreht sich das Hauptzahnrad, drehen sich alle angeschlossenen Zahnräder mit. Dabei wird jedes angeschlossene Zahnrad gleich behandelt. Speed oder Torque teilt sich nicht auf.

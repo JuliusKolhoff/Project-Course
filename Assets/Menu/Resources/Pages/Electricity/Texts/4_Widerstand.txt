@@ -1,0 +1,1 @@
+Ein Widerstand ist eine Barriere für die Elektronen, bei denen die Elektronen ihre Energie verbrauchen müssen, um vorbei zu kommen. Dies kann in Form eines Verbrauchers sein. Ein Widerstand ist bei einem Stromkreis essentiell, ohne einen Widerstand entsteht der sogenannte Kurzschluss.

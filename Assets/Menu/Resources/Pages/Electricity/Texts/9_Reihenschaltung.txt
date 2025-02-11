@@ -1,0 +1,1 @@
+Um mehrere Verbraucher anzuschließen, kannst du die sogenannte Reihenschaltung benutzen, welche die Verbraucher nach der Reihe aneinander schließt. Der Strom muss durch jeden Verbraucher fließen. Geht eins kaputt, bricht der Stromkreis ab. Die Spannung teilt sich auf die Verbraucher auf, proportional zum Widerstand der einzelnen Verbrauchern, die Stromstärke bleibt immer gleich.

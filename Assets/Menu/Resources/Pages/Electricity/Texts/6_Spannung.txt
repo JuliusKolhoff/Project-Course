@@ -1,0 +1,1 @@
+Die Spannung U ,in Volt[V], beschreibt wie stark die Elektronen sind. Bei viel Volt kann ein Elektron mehr bewirken als ein Elektronen bei wenig Volt. 

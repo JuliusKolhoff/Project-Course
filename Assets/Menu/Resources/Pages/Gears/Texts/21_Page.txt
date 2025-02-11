@@ -1,1 +1,0 @@
-Die Torque wird genauso behandelt wie die Geschwindigkeit, wenn du mehrere Zahnräder an eins anschließt. Unabhängig von den anderen Zahnrädern ändert sich die Torque. Torque und Geschwindigkeit werden also nicht aufgeteilt auf Zahnräder, sondern sind bei jedem Zahnrad gleich.

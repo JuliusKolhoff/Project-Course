@@ -1,0 +1,1 @@
+Die Stromstärke I ,in Ampere [A], beschreibt wie schnell der Strom ist. Je schneller Elektronen durch den Draht fließen, desto höher ist die Stromstärke. 
