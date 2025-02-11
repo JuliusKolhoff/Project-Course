@@ -359,7 +359,6 @@ MonoBehaviour:
   MotorTeeth: 8
   GoalPositions:
   - {x: 2, y: 3}
-  - {x: 6, y: 4}
   - {x: 6, y: 6}
   - {x: 6, y: 1}
   Width: 7
