@@ -7,7 +7,7 @@
 [LOG] OutputWASAPI::init                       : Output buffer size: 4096 samples, latency: 0.00ms, period: 10.00ms, DSP buffer: 1024 * 4
 [LOG] Thread::initThread                       : Init FMOD stream thread. Affinity: 0x4000000000000003, Priority: 0xFFFF7FFB, Stack Size: 98304, Semaphore: No, Sleep Time: 10, Looping: Yes.
 [LOG] Thread::initThread                       : Init FMOD mixer thread. Affinity: 0x4000000000000001, Priority: 0xFFFF7FFA, Stack Size: 81920, Semaphore: No, Sleep Time: 0, Looping: Yes.
-[LOG] AsyncManager::init                       : manager 0000023593EB6BF8 isAsync 0 updatePeriod 0.02
+[LOG] AsyncManager::init                       : manager 00000140BAD90C08 isAsync 0 updatePeriod 0.02
 [LOG] AsyncManager::init                       : done
 [LOG] PlaybackSystem::init                     : 
 [LOG] Thread::initThread                       : Init FMOD Studio sample load thread. Affinity: 0x4000000000000003, Priority: 0xFFFF7FFD, Stack Size: 98304, Semaphore: No, Sleep Time: 1, Looping: No.
@@ -18,15 +18,15 @@
 [LOG] Manager::readBank                        : fileversion = 142, compatVersion = 140 (oldest = 44, newest = 142)
 [LOG] Manager::readBank                        : fileversion = 142, compatVersion = 140 (oldest = 44, newest = 142)
 [LOG] PlaybackSystem::acquireMasterBus         : Setting master channel group format to 6
-[LOG] SoundI::release                          : base (0000023645E2F688)
-[LOG] SoundI::release                          :     base (0000023646762608)
-[LOG] SoundI::release                          :     base (0000023645E2FD48)
-[LOG] SoundI::release                          : var2 (0000023645E2F4D8)
-[LOG] SoundI::release                          :     var2 (0000023646761AA8)
-[LOG] SoundI::release                          :     var2 (0000023645E2FB98)
-[LOG] SoundI::release                          : var1 (0000023645E2EFC8)
-[LOG] SoundI::release                          :     var1 (0000023646761768)
-[LOG] SoundI::release                          :     var1 (0000023645E2F838)
+[LOG] SoundI::release                          : base (0000013FEA39F368)
+[LOG] SoundI::release                          :     base (0000013FE026AE68)
+[LOG] SoundI::release                          :     base (0000013FEA3A07A8)
+[LOG] SoundI::release                          : var2 (0000013FEA39F1B8)
+[LOG] SoundI::release                          :     var2 (0000013FE026CA08)
+[LOG] SoundI::release                          :     var2 (0000013FEA39C278)
+[LOG] SoundI::release                          : var1 (0000013FEA39E948)
+[LOG] SoundI::release                          :     var1 (0000013FE026C388)
+[LOG] SoundI::release                          :     var1 (0000013FEA3A0298)
 [LOG] Thread::callback                         : FMOD Studio update thread finished.
 [LOG] Thread::callback                         : FMOD Studio bank load thread finished.
 [LOG] Profile::disconnectAll                   : Profiler disconnecting all clients

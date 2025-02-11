@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -21,6 +22,7 @@ public class MenuController : MonoBehaviour
 	[SerializeField] private GameObject _textPrefab;
 	[SerializeField] private Transform _canvas;
     [SerializeField] private GameObject _nextPageButton,_previousPageButton;
+	[SerializeField] private GameObject _inhaltsverzeichnisButton,_captionPrefab;
 	[SerializeField] private Sprite _gearsSprite, _electricitySprite, _gearPagesSprite, _electricityPagesSprite;
 
 	private readonly List<BookChapter> _chapters = new();
@@ -160,15 +162,50 @@ public class MenuController : MonoBehaviour
 			start = startOfNextChapter,
 			sprite = sprite
 		};
-		TextAsset[] texts = Resources.LoadAll<TextAsset>(path + "/Texts");
+		List<TextAsset> texts = Resources.LoadAll<TextAsset>(path + "/Texts").ToList();
+		texts.Sort(delegate (TextAsset x1, TextAsset x2) {
+			int num1 = int.Parse(x1.name.Split("_")[0]);
+			int num2 = int.Parse(x2.name.Split("_")[0]);
+			return num1.CompareTo(num2);
+		});
+		chapter.pages.Add(new GameObject[14]);
 		chapter.pages.Add(new GameObject[2]);
 		int i = 0;
-		currentPage = 0;
+		GameObject caption = Instantiate(_captionPrefab, new Vector3(0, 0, 0), Quaternion.identity, _canvas);
+		caption.transform.localPosition = new(-100, 90, 0);
+		caption.SetActive(false);
+		chapter.pages[0][0] = caption;
+		int yIndex = 1;
+		int index = 1;
+		currentPage = 1;
 		foreach (TextAsset textAsset in texts)
 		{
 			GameObject textObj = Instantiate(_textPrefab, new Vector3(0, 0, 0), Quaternion.identity, _canvas);
 			textObj.GetComponent<TMP_Text>().text = textAsset.text;
+			textObj.transform.GetChild(0).GetComponentInChildren<TMP_Text>().text = textAsset.name.Split("_")[1] + ": ";
 			textObj.SetActive(false);
+			if (yIndex > 6)
+			{
+				yIndex = 0;
+			}
+			GameObject button = Instantiate(_inhaltsverzeichnisButton, new Vector3(0, 0, 0), Quaternion.identity, _canvas);
+			if (index < 7)
+			{
+				button.transform.localPosition = new(-100, Mathf.Lerp(90, -120, yIndex / 7f), 0);
+			}
+			else
+			{
+				button.transform.localPosition = new(100, Mathf.Lerp(90, -120, yIndex / 7f), 0);
+			}
+			button.GetComponent<InhaltsverzeichnisButtonHandler>().Page = currentPage + chapter.start;
+			button.GetComponent<InhaltsverzeichnisButtonHandler>().Controller = this;
+			button.name = textAsset.name;
+			button.GetComponentInChildren<TMP_Text>().text = textAsset.name.Split("_")[1];
+			button.SetActive(false);
+			chapter.pages[0][index] = button;
+			index++;
+			yIndex++;
+
 			chapter.pages[currentPage][i] = textObj;
 			if (i == 0)
 			{
