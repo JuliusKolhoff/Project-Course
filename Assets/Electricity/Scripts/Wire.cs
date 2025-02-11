@@ -260,6 +260,10 @@ public class Wire : MonoBehaviour
             return null;
         }
     }
+	public bool ConnectedToObjects(GameObject obj1,GameObject obj2)
+	{
+		return (Obj1 == obj1 && Obj2 == obj2) || (Obj1 == obj2 && Obj2 == obj1);
+	}
     public Vector3 RotationToDirection(float rotation) => (Mathf.Abs(rotation) % 360) switch
     {
         0 => Vector3.left,
