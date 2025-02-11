@@ -193,52 +193,66 @@ public class GridManager : MonoBehaviour
 		}
 		//Load Level
 		Level level = Resources.Load<Level>($"Levels/{name}");
-		MotorPosition = level.MotorPosition;
-		GoalPositions = level.GoalPositions.ToList();
-		ResizeGrid(level.Width,level.Height);
-		for (int x = 0; x < Width; x++)
+		if(level == null)
 		{
-			for (int y = 0; y < Height; y++)
+			if (!_loading)
 			{
-				if (new Vector2(x, y).Equals(level.MotorPosition) && level.MotorTeeth != 0)
+				_loading = true;
+				SceneLoader sceneLoader = FindFirstObjectByType<SceneLoader>();
+				sceneLoader.LoadNextScene("Main Menu", 0);
+				return;
+			}
+		}
+		else
+		{
+			MotorPosition = level.MotorPosition;
+			GoalPositions = level.GoalPositions.ToList();
+			ResizeGrid(level.Width, level.Height);
+			for (int x = 0; x < Width; x++)
+			{
+				for (int y = 0; y < Height; y++)
 				{
-					GetTileAtIndex(x, y, 0).NewMotor(level.MotorTeeth);
-				}
-				else
-				{
-					if (level.Layer1Teeth[x + Width * y] != 0)
+					if (new Vector2(x, y).Equals(level.MotorPosition) && level.MotorTeeth != 0)
 					{
-						if (level.Layer1Rpm == null || level.Layer1Rpm.Length == 0)
-						{
-							GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], 0, true);
-
-						}
-						else
-						{
-							GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], level.Layer1Rpm[x + Width * y], true);
-
-						}
+						GetTileAtIndex(x, y, 0).NewMotor(level.MotorTeeth);
 					}
-					if (level.Layer2Teeth[x + Width * y] != 0)
+					else
 					{
-						if(level.Layer2Rpm == null || level.Layer2Rpm.Length == 0)
+						if (level.Layer1Teeth[x + Width * y] != 0)
 						{
-							GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], 0, true);
+							if (level.Layer1Rpm == null || level.Layer1Rpm.Length == 0)
+							{
+								GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], 0, true);
 
+							}
+							else
+							{
+								GetTileAtIndex(x, y, 0).NewGear(level.Layer1Teeth[x + Width * y], level.Layer1Torque[x + Width * y], level.Layer1Rpm[x + Width * y], true);
+
+							}
 						}
-						else
+						if (level.Layer2Teeth[x + Width * y] != 0)
 						{
-							GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], level.Layer2Rpm[x + Width * y], true);
+							if (level.Layer2Rpm == null || level.Layer2Rpm.Length == 0)
+							{
+								GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], 0, true);
 
+							}
+							else
+							{
+								GetTileAtIndex(x, y, 1).NewGear(level.Layer2Teeth[x + Width * y], level.Layer2Torque[x + Width * y], level.Layer2Rpm[x + Width * y], true);
+
+							}
 						}
 					}
 				}
 			}
+			MotorPosition = level.MotorPosition;
+			MotorTorque = level.MotorTorque;
+			GoalPositions = level.GoalPositions?.ToList();
+			EnableLayer(0);
 		}
-		MotorPosition = level.MotorPosition;
-		MotorTorque = level.MotorTorque;
-		GoalPositions = level.GoalPositions?.ToList();
-		EnableLayer(0);
+		
 	}
 	private void ResizeGrid(int width, int height)
 	{
