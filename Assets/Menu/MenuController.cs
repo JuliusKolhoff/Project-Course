@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class MenuController : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] private GameObject _buttonPrefab;
     [SerializeField] private GameObject _bookmarkPrefab;
 	[SerializeField] private GameObject _textPrefab;
+	[SerializeField] private GameObject _videoPlayerPrefab;
 	[SerializeField] private Transform _canvas;
     [SerializeField] private GameObject _nextPageButton,_previousPageButton;
 	[SerializeField] private GameObject _inhaltsverzeichnisButton,_captionPrefab;
@@ -162,12 +164,19 @@ public class MenuController : MonoBehaviour
 			start = startOfNextChapter,
 			sprite = sprite
 		};
+		List<VideoClip> videos = Resources.LoadAll<VideoClip>(path + "/Videos").ToList();
 		List<TextAsset> texts = Resources.LoadAll<TextAsset>(path + "/Texts").ToList();
 		texts.Sort(delegate (TextAsset x1, TextAsset x2) {
 			int num1 = int.Parse(x1.name.Split("_")[0]);
 			int num2 = int.Parse(x2.name.Split("_")[0]);
 			return num1.CompareTo(num2);
 		});
+		videos.Sort(delegate (VideoClip x1, VideoClip x2) {
+			int num1 = int.Parse(x1.name.Split("_")[0]);
+			int num2 = int.Parse(x2.name.Split("_")[0]);
+			return num1.CompareTo(num2);
+		});
+		int videoCount = 0;
 		chapter.pages.Add(new GameObject[14]);
 		chapter.pages.Add(new GameObject[2]);
 		int i = 0;
@@ -210,7 +219,21 @@ public class MenuController : MonoBehaviour
 			if (i == 0)
 			{
 				textObj.transform.localPosition = new Vector3(-100, 0, 0);
-				i++;
+				if (videoCount < videos.Count)
+				{
+					chapter.pages[currentPage][1] = Instantiate(_videoPlayerPrefab, new(0, 0, 0), Quaternion.identity, _canvas);
+					chapter.pages[currentPage][1].transform.localPosition = new Vector3(100, 0, 0);
+					chapter.pages[currentPage][1].GetComponentInChildren<VideoPlayer>().clip = videos[videoCount];
+					chapter.pages[currentPage][1].SetActive(false);
+					chapter.pages.Add(new GameObject[2]);
+					currentPage++;
+					videoCount++;
+					i = 0;
+				}
+				else
+				{
+					i++;
+				}
 			}
 			else
 			{
