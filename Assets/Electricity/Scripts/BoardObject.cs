@@ -7,7 +7,11 @@ public class BoardObject : MonoBehaviour
 {
 	public List<Wire> PlusConnections = new();
 	public List<Wire> MinusConnections = new();
+	public GameObject Plus, Minus;
+	private int visits = 0;
+	private bool marked = false;
 	private float _resistance;
+	public bool GetsElectricity { get; set; } = false;
 	public float Vin,Vuse;
 	public float Ampere;
 	public float Rges;
@@ -26,9 +30,7 @@ public class BoardObject : MonoBehaviour
 	{
 		//transform.position = new(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y));
 	}
-	public GameObject Plus, Minus;
-	private int visits = 0;
-	private bool marked = false;
+
 	public void SetMark(bool value)
 	{
 		marked = value;

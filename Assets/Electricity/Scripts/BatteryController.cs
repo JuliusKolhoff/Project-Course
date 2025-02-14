@@ -54,7 +54,11 @@ public class BatteryController : MonoBehaviour
 	//returns if follwing Circuit is connected to battery 
 	private bool CalculateRIU(GameObject obj)
 	{
-		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? obj.GetComponent<BoardObject>(); 
+		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? obj.GetComponent<BoardObject>();
+		if (float.IsNaN(boardObject.Rges))
+		{
+			return false;
+		}
 		List<Wire> minusConnections = boardObject.MinusConnections;
 		GameObject minusConnector = boardObject.Minus;
 		if(minusConnections.Count == 1)
@@ -160,7 +164,6 @@ public class BatteryController : MonoBehaviour
 	public (float,float) FindRGesamt(GameObject obj, Wire origin)
 	{
 		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? GetComponent<BoardObject>();
-		Debug.Log(boardObject.gameObject.name);
 		List<Wire> minusConnections = boardObject.MinusConnections;
 		List<Wire> plusConnections = boardObject.PlusConnections;
 		int plusConnectionCount = plusConnections.Count;
@@ -187,8 +190,13 @@ public class BatteryController : MonoBehaviour
 				}
 				else
 				{
+					BoardObject otherBoardObject = otherObject.GetComponent<BoardObject>() ?? otherObject.GetComponentInParent<BoardObject>();
+					if (otherBoardObject.IsMarked())
+					{
+						return ReturnResisitances(obj, (float.NaN, 0), plusConnectionCount);
+					}
 					Rgesamt.Item1 += boardObject.Resistance;
-					if (!otherObject.transform.parent.GetComponent<BoardObject>()?.IsFirstVisit() ?? !otherObject.transform.GetComponent<BoardObject>().IsFirstVisit())
+					if (!otherBoardObject.IsFirstVisit())
 					{
 						Rgesamt.Item2 = 0;
 					}
@@ -269,8 +277,8 @@ public class BatteryController : MonoBehaviour
 	{
 		if(obj.GetComponentInParent<BoardObject>() != null)
 		{
+			//Debug.Log(obj.GetComponentInParent<BoardObject>().gameObject.transform.name + ";" + values.Item1);
 			obj.GetComponentInParent<BoardObject>().Rges = values.Item1;
-
 		}
 		if (float.IsNaN(values.Item1) || values.Item1 == 0)
 		{

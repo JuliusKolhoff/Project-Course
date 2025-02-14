@@ -281,7 +281,7 @@ public class BoardController : MonoBehaviour
 				{
 					if (Input.GetKeyDown("r"))
 					{
-						movingObj.transform.Rotate(new(0, 0, -90));
+						movingObj.transform.Rotate(new(0, 0, -180));
 						if (movingObj.transform.rotation.z == 360 || movingObj.transform.rotation.z == -360)
 						{
 							movingObj.transform.eulerAngles = new(0, 0, 0);
