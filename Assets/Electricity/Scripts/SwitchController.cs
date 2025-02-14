@@ -51,6 +51,10 @@ public class SwitchController : MonoBehaviour
     {
         
     }
+	public bool IsOn()
+	{
+		return _isOn;
+	}
 	private void OnMouseOver()
 	{
 		if (Input.GetMouseButtonDown(1))

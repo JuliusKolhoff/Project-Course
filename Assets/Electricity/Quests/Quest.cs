@@ -22,8 +22,7 @@ public class Quest : MonoBehaviour
 		"Quest 2:  Lasse zwei Lampen mit der Gleiche Ampere Anzahl leucheten \n	-> Schaltet neue Informationen frei",
 		"Quest 3:  Lasse zwei Lampen mit gleicher Volt Anzahl\n	-> Schaltet einen Resistor frei",
 		"Quest 4:  Lasse eine Lampe mit halber Volt Zahl Leuchten \n ->	Schaltet einen Schalter frei",
-		"Quest 5:  Lasse Lampe leuchten und nicht leuchten \n -> Schaltet neue Informationen frei",
-		"Quest 6:  Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon \n	-> infinite alles"
+		"Quest 5:  Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon \n	-> Alle Komponenten unendlich oft"
 	};
     public Func<Quest,bool>[] quests =
     {
@@ -34,6 +33,7 @@ public class Quest : MonoBehaviour
 		x => {return x.Q5(x.boardController); }
 	};
     public BoardController boardController;
+	List<LampController> glowingLamps = new();
 	private int currentQuest = 0;
 	[SerializeField] private TMP_Text _questTextField;  
 	public void Start()
@@ -114,14 +114,46 @@ public class Quest : MonoBehaviour
 	//Quest 5:  Lasse Lampe leuchten und nicht leuchten \n -> Schaltet neue Informationen frei
 	private bool Q5(BoardController boardController)
 	{
-		return CheckQuest<LampController>(
-			boardController,
-			x => { return x.IsGlowing(); },
-			x => {
-				return false;
-			},
-			x => { x.Unlock(BoardController.PlacableObject.Schalter, 1); }
-			);
+		List<LampController> lamps = new();
+		SwitchController switchController = null;
+		foreach (var item in boardController.objects)
+		{
+			LampController lampComp = item.GetComponent<LampController>();
+			SwitchController switchComp = item.GetComponent<SwitchController>();
+			if(lampComp != null)
+			{
+				lamps.Add(lampComp);
+			}
+			if(switchComp != null)
+			{
+				switchController = switchComp;
+			}
+		}
+		if(switchController == null)
+		{
+			return false;
+		}
+		if (switchController.IsOn())
+		{
+			glowingLamps = new();
+			foreach (LampController lamp in lamps)
+			{
+				if (lamp.IsGlowing())
+				{
+					glowingLamps.Add(lamp);
+				}
+			}
+		}else if (!switchController.IsOn())
+		{
+			foreach (LampController lamp in glowingLamps)
+			{
+				if (!lamp.IsGlowing())
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	//Quest 1: Lasse eine Lampe leuchten -> 2 Lampen
 	private bool Quest1(BoardController boardController)

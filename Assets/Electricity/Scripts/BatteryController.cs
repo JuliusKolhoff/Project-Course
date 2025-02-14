@@ -160,6 +160,7 @@ public class BatteryController : MonoBehaviour
 	public (float,float) FindRGesamt(GameObject obj, Wire origin)
 	{
 		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? GetComponent<BoardObject>();
+		Debug.Log(boardObject.gameObject.name);
 		List<Wire> minusConnections = boardObject.MinusConnections;
 		List<Wire> plusConnections = boardObject.PlusConnections;
 		int plusConnectionCount = plusConnections.Count;
@@ -200,17 +201,35 @@ public class BatteryController : MonoBehaviour
 		{
 			(float,float)[] resitances = new (float, float)[minusConnections.Count];
 			int i = 0;
-			
-            foreach (Wire connection in minusConnections)
-            {
-				//Debug.Log(connection);
+			foreach (Wire connection in minusConnections)
+			{
 				GameObject otherObject = connection.GetOtherObject(minusConnector);
-				//Debug.Log("i: " + i);
-				//Debug.Log("Other Obj: " + otherObject.transform.parent.name);
+				BoardObject bObj = otherObject.GetComponent<BoardObject>() ?? otherObject.GetComponentInParent<BoardObject>();
+				if (otherObject == _plus)
+				{
+					return ReturnResisitances(obj, (boardObject.Resistance, 0), plusConnectionCount);
+				}
+				if (bObj.IsMarked())
+				{
+					return ReturnResisitances(obj, (float.NaN, 0), plusConnectionCount);
+				}
+				bObj.SetMark(true);
+			}
+			foreach (Wire connection in minusConnections)
+            {
+				GameObject otherObject = connection.GetOtherObject(minusConnector);
+				BoardObject bObj = otherObject.GetComponent<BoardObject>() ?? otherObject.GetComponentInParent<BoardObject>();
+				
 				(float,float) resitance = FindRGesamt(otherObject, connection);
 				resitances[i] = resitance;
 				i++;
             }
+			foreach (Wire connection in minusConnections)
+			{
+				GameObject otherObject = connection.GetOtherObject(minusConnector);
+				BoardObject bObj = otherObject.GetComponent<BoardObject>() ?? otherObject.GetComponentInParent<BoardObject>();
+				bObj.SetMark(false);
+			}
 			float inverseSum = 0;
 			float sum = 0;
 			bool oneNotNaN = false;

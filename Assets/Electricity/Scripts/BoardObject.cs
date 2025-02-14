@@ -28,6 +28,15 @@ public class BoardObject : MonoBehaviour
 	}
 	public GameObject Plus, Minus;
 	private int visits = 0;
+	private bool marked = false;
+	public void SetMark(bool value)
+	{
+		marked = value;
+	}
+	public bool IsMarked()
+	{
+		return marked;
+	}
 	public void ResetVisits()
 	{
 		visits = 0;
