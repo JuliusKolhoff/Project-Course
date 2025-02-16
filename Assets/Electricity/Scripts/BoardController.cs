@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +29,7 @@ public class BoardController : MonoBehaviour
 	private GameObject movingObj = null;
 	private Vector3 movingObjOriginalPos;
 	[SerializeField] private GameObject _noneButton, _resistorButton, _lampButton, _switchButton, _batteryButton;
+	[SerializeField] private Transform _boardObjectParent;
 	void Start()
 	{
 		int i = 0;
@@ -48,6 +49,10 @@ public class BoardController : MonoBehaviour
 		_currentObjtext = GetComponent<TMP_Text>();
 		_currentObject = PlacableObject.Batterie;
 		CalculateButtonValues();
+	}
+	public void SetBoardObjectsActive(bool value)
+	{
+		_boardObjectParent.gameObject.SetActive(value);
 	}
 	public enum PlacableObject
 	{
@@ -74,6 +79,17 @@ public class BoardController : MonoBehaviour
 	{
 		_resistanceTextObj.text = "Resistenz: " + value;
 		_resistance = value;
+	}
+	public void UnlockEverything()
+	{
+		_unlockedObjects[PlacableObject.Schalter] = int.MaxValue;
+		_unlockedObjects[PlacableObject.Lampe] = int.MaxValue;
+		_unlockedObjects[PlacableObject.Resistor] = int.MaxValue;
+		_switchButton.GetComponentInChildren<TMP_Text>().text = "Schalter: ∞";
+		_lampButton.GetComponentInChildren<TMP_Text>().text = "Lampe: ∞";
+		_resistorButton.GetComponentInChildren<TMP_Text>().text = "Resistor: ∞";
+		CalculateButtonValues();
+
 	}
 	public void Unlock(PlacableObject obj, int amount)
 	{
@@ -139,75 +155,79 @@ public class BoardController : MonoBehaviour
 		}
 		if (Input.GetMouseButtonDown(0))
 		{
-			if (_currentObject != PlacableObject.Bewegen)
+			if (!gameObject.GetComponent<Quest>().PopupText.activeSelf)
 			{
-				Vector3 position = Camera.allCameras[0].ScreenToWorldPoint(Input.mousePosition);
-				position.z = 0;
-				// Create a ray from the camera through the mouse position in 2D space
-				Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				Vector2 rayDirection = Vector2.zero; // In 2D, usually a direction isn't needed if you're just checking a point
 
-				RaycastHit2D hit = Physics2D.Raycast(mousePosition, rayDirection, 100f, mask);
-				if (hit.collider != null && hit.collider.gameObject == _board)
+				if (_currentObject != PlacableObject.Bewegen)
 				{
-					switch (_currentObject)
+					Vector3 position = Camera.allCameras[0].ScreenToWorldPoint(Input.mousePosition);
+					position.z = 0;
+					// Create a ray from the camera through the mouse position in 2D space
+					Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+					Vector2 rayDirection = Vector2.zero; // In 2D, usually a direction isn't needed if you're just checking a point
+
+					RaycastHit2D hit = Physics2D.Raycast(mousePosition, rayDirection, 100f, mask);
+					if (hit.collider != null && hit.collider.gameObject == _board)
 					{
-						case PlacableObject.Batterie: PlaceBattery(position); break;
-						case PlacableObject.Resistor: PlaceResistor(position); break;
-						case PlacableObject.Lampe: PlaceLamp(position); break;
-						case PlacableObject.Schalter: PlaceSwitch(position); break;
-						case 0: throw new ArgumentOutOfRangeException($"Cannot Place Object{_currentObject}");
-					};
+						switch (_currentObject)
+						{
+							case PlacableObject.Batterie: PlaceBattery(position); break;
+							case PlacableObject.Resistor: PlaceResistor(position); break;
+							case PlacableObject.Lampe: PlaceLamp(position); break;
+							case PlacableObject.Schalter: PlaceSwitch(position); break;
+							case 0: throw new ArgumentOutOfRangeException($"Cannot Place Object{_currentObject}");
+						};
+					}
+					CalculateButtonValues();
+					if (CalculateRemainingObjects(_currentObject) <= 0)
+					{
+						SelectNextPlaceable();
+					}
 				}
-				CalculateButtonValues();
-				if (CalculateRemainingObjects(_currentObject) <= 0)
+				else
 				{
-					SelectNextPlaceable();
-				}
-			}
-			else
-			{
-				// Create a ray from the camera through the mouse position in 2D space
-				Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				Vector2 rayDirection = Vector2.zero; // In 2D, usually a direction isn't needed if you're just checking a point
+					// Create a ray from the camera through the mouse position in 2D space
+					Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+					Vector2 rayDirection = Vector2.zero; // In 2D, usually a direction isn't needed if you're just checking a point
 
-				RaycastHit2D hit = Physics2D.Raycast(mousePosition, rayDirection, 100f, mask);
-				if (hit.collider != null)
-				{
-					GameObject hitObject = hit.collider.gameObject;
-					hit = Physics2D.Raycast(mousePosition, rayDirection, 100f, uiMask);
-					GameObject uiObject = null;
+					RaycastHit2D hit = Physics2D.Raycast(mousePosition, rayDirection, 100f, mask);
 					if (hit.collider != null)
 					{
-						uiObject = hit.collider.gameObject;
-					}
-					
-					if (movingObj != null && hitObject == _board && uiObject?.transform.parent?.name != "Quest")
-					{
-						SetLayerAllChildren(movingObj.transform, LayerMask.NameToLayer("Default"));
-						movingObj = null;
-					}
-					else if (movingObj == null && (hitObject.GetComponentInChildren<BoardObject>() != null || hitObject.GetComponentsInParent<BoardObject>() != null ) && hitObject != _board)
-					{
+						GameObject hitObject = hit.collider.gameObject;
+						hit = Physics2D.Raycast(mousePosition, rayDirection, 100f, uiMask);
+						GameObject uiObject = null;
+						if (hit.collider != null)
+						{
+							uiObject = hit.collider.gameObject;
+						}
+
+						if (movingObj != null && hitObject == _board && uiObject?.transform.parent?.name != "Quest")
+						{
+							SetLayerAllChildren(movingObj.transform, LayerMask.NameToLayer("Default"));
+							movingObj = null;
+						}
+						else if (movingObj == null && (hitObject.GetComponentInChildren<BoardObject>() != null || hitObject.GetComponentsInParent<BoardObject>() != null) && hitObject != _board)
+						{
 							movingObj = hitObject;
-							while (movingObj.transform.parent != null)
+							while (movingObj.transform.parent != null && movingObj.transform.parent != _boardObjectParent)
 							{
 								movingObj = hitObject.transform.parent.gameObject;
 							}
 							movingObjOriginalPos = hitObject.transform.position;
-						
-						
-						SetLayerAllChildren(movingObj.transform, LayerMask.NameToLayer("Ignore Raycast"));
+
+
+							SetLayerAllChildren(movingObj.transform, LayerMask.NameToLayer("Ignore Raycast"));
+						}
+						else if ((hitObject != _board || uiObject?.transform.parent?.name == "Quest") && movingObj != null)
+						{
+							movingObj.transform.position = movingObjOriginalPos;
+							SetLayerAllChildren(movingObj.transform, LayerMask.NameToLayer("Default"));
+							movingObj = null;
+						}
 					}
-					else if((hitObject != _board || uiObject?.transform.parent?.name == "Quest") && movingObj != null)
-					{
-						movingObj.transform.position = movingObjOriginalPos;
-						SetLayerAllChildren(movingObj.transform, LayerMask.NameToLayer("Default"));
-						movingObj = null;
-					}
+
+
 				}
-
-
 			}
 
 
@@ -241,7 +261,7 @@ public class BoardController : MonoBehaviour
 						}
 						if (!wireExists)
 						{
-							GameObject obj = Instantiate(_wire);
+							GameObject obj = Instantiate(_wire,_boardObjectParent);
 							Wire wire = obj.GetComponent<Wire>();
 							wire.Obj1 = CurrentObj;
 							wire.Obj2 = hitObject;
@@ -303,7 +323,11 @@ public class BoardController : MonoBehaviour
 	}
 	private int CalculateRemainingObjects(PlacableObject obj)
 	{
-		return _unlockedObjects[obj] - PlacedObjects[obj].Count;
+		if(_unlockedObjects[obj] != int.MaxValue)
+		{
+			return _unlockedObjects[obj] - PlacedObjects[obj].Count;
+		}
+		return int.MaxValue;
 	}
 	private void CalculateButtonValues()
 	{
@@ -311,18 +335,36 @@ public class BoardController : MonoBehaviour
 		_batteryButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Batterie);
 		_batteryButton.SetActive(CalculateRemainingObjects(PlacableObject.Batterie) > 0);
 
-		text = _resistorButton.GetComponentInChildren<TMP_Text>().text;
-		_resistorButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Resistor);
-		_resistorButton.SetActive(CalculateRemainingObjects(PlacableObject.Resistor) > 0);
-
-		text = _lampButton.GetComponentInChildren<TMP_Text>().text;
-		_lampButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Lampe);
-		_lampButton.SetActive(CalculateRemainingObjects(PlacableObject.Lampe) > 0);
-
-		text = _switchButton.GetComponentInChildren<TMP_Text>().text;
-		_switchButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Schalter);
-		_switchButton.SetActive(CalculateRemainingObjects(PlacableObject.Schalter) > 0);
-
+		if (_unlockedObjects[PlacableObject.Resistor] != int.MaxValue)
+		{
+			text = _resistorButton.GetComponentInChildren<TMP_Text>().text;
+			_resistorButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Resistor);
+			_resistorButton.SetActive(CalculateRemainingObjects(PlacableObject.Resistor) > 0);
+		}
+		else
+		{
+			_resistorButton.SetActive(true);
+		}
+		if (_unlockedObjects[PlacableObject.Lampe] != int.MaxValue)
+		{
+			text = _lampButton.GetComponentInChildren<TMP_Text>().text;
+			_lampButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Lampe);
+			_lampButton.SetActive(CalculateRemainingObjects(PlacableObject.Lampe) > 0);
+		}
+		else
+		{
+			_lampButton.SetActive(true);
+		}
+		if (_unlockedObjects[PlacableObject.Schalter] != int.MaxValue)
+		{
+			text = _switchButton.GetComponentInChildren<TMP_Text>().text;
+			_switchButton.GetComponentInChildren<TMP_Text>().text = text.Remove(text.IndexOf(":")) + ": " + CalculateRemainingObjects(PlacableObject.Schalter);
+			_switchButton.SetActive(CalculateRemainingObjects(PlacableObject.Schalter) > 0);
+		}
+		else
+		{
+			_switchButton.SetActive(true);
+		}
 	}
 	private void PlaceBattery(Vector3 position)
 	{
@@ -332,7 +374,7 @@ public class BoardController : MonoBehaviour
 							&& position.y - _battery.transform.localScale.y / 2 > _board.transform.position.y - _board.transform.localScale.y / 2
 							&& position.y + _battery.transform.localScale.y / 2 < _board.transform.position.y + _board.transform.localScale.y / 2)
 		{
-			GameObject obj = Instantiate(_battery, position, Quaternion.identity);
+			GameObject obj = Instantiate(_battery, position, Quaternion.identity,_boardObjectParent);
 			obj.GetComponent<BatteryController>().Controller = this;
 			objects.Add(obj);
 			_batteryController = obj.GetComponent<BatteryController>();
@@ -347,7 +389,7 @@ public class BoardController : MonoBehaviour
 			&& position.y - _resistor.transform.localScale.y / 2 > _board.transform.position.y - _board.transform.localScale.y / 2
 			&& position.y + _resistor.transform.localScale.y / 2 < _board.transform.position.y + _board.transform.localScale.y / 2)
 		{
-			GameObject obj = Instantiate(_resistor, position, Quaternion.identity);
+			GameObject obj = Instantiate(_resistor, position, Quaternion.identity, _boardObjectParent);
 			obj.GetComponent<BoardObject>().Resistance = _resistance;
 			obj.name = objects.Count.ToString();
 			objects.Add(obj);
@@ -357,7 +399,7 @@ public class BoardController : MonoBehaviour
 	}
 	private void PlaceLamp(Vector3 position)
 	{
-		GameObject obj = Instantiate(_lamp, position, Quaternion.identity);
+		GameObject obj = Instantiate(_lamp, position, Quaternion.identity, _boardObjectParent);
 		obj.GetComponent<BoardObject>().Resistance = 2;
 		obj.name = objects.Count.ToString();
 		objects.Add(obj);
@@ -365,7 +407,7 @@ public class BoardController : MonoBehaviour
 	}
 	private void PlaceSwitch(Vector3 position)
 	{
-		GameObject obj = Instantiate(_switch, position, Quaternion.identity);
+		GameObject obj = Instantiate(_switch, position, Quaternion.identity, _boardObjectParent);
 		obj.name = objects.Count.ToString();
 		objects.Add(obj);
 		PlacedObjects[_currentObject].Add(obj);

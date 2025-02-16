@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -22,23 +23,60 @@ public class Quest : MonoBehaviour
 		"Quest 2:  Lasse zwei Lampen mit der Gleiche Ampere Anzahl leucheten \n	-> Schaltet neue Informationen frei",
 		"Quest 3:  Lasse zwei Lampen mit gleicher Volt Anzahl\n	-> Schaltet einen Resistor frei",
 		"Quest 4:  Lasse eine Lampe mit halber Volt Zahl Leuchten \n ->	Schaltet einen Schalter frei",
-		"Quest 5:  Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon \n	-> Alle Komponenten unendlich oft"
+		"Quest 5:  Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon \n	-> Alle Komponenten unendlich oft",
+		"Von jetzt an bist du auf dich alleine gestellt! \n Falls du aber ein Thema nicht verstanden hast kannst du es erneut im Buch nachlesen."
 	};
-    public Func<Quest,bool>[] quests =
+	private string[] QuestPopups =
+	{
+		"Quest 1:  Lasse eine Lampe leuchten \n	-> Schaltet die 2.Lampe frei",
+		"Quest 2:  Lasse zwei Lampen mit der Gleiche Ampere Anzahl leucheten \n	-> Schaltet neue Informationen frei",
+		"Quest 3:  Lasse zwei Lampen mit gleicher Volt Anzahl\n	-> Schaltet einen Resistor frei",
+		"Quest 4:  Lasse eine Lampe mit halber Volt Zahl Leuchten \n ->	Schaltet einen Schalter frei",
+		"Quest 5:  Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon \n	-> Alle Komponenten unendlich oft",
+		"Keine Aufgaben mehr zu erledigen \n -> Lass deiner Kreativität freien Lauf!!!"
+	};
+	public Func<Quest,bool>[] quests =
     {
         x => {return x.Q1(x.boardController); },
 		x => {return x.Q2(x.boardController); },
 		x => {return x.Q3(x.boardController); },
 		x => {return x.Q4(x.boardController); },
-		x => {return x.Q5(x.boardController); }
+		x => {return x.Q5(x.boardController); },
+		x => {return false; }
 	};
+
     public BoardController boardController;
-	List<LampController> glowingLamps = new();
+	private List<LampController> glowingLamps = new();
 	private int currentQuest = 0;
-	[SerializeField] private TMP_Text _questTextField;  
+	[SerializeField] private TMP_Text _questTextField;
+	public GameObject PopupText;
 	public void Start()
 	{
+		currentQuest = SceneLoader.currentLevel;
+		PopupText.SetActive(true);
+		PopupText.GetComponent<TMP_Text>().text = QuestPopups[currentQuest];
 		_questTextField.text = QuestDescription[currentQuest];
+		Action<BoardController>[] unlocks =
+		{
+			x => {x.Unlock(BoardController.PlacableObject.Lampe, 1); },
+			x => {},
+			x => { x.Unlock(BoardController.PlacableObject.Resistor, 1); },
+			x => { x.Unlock(BoardController.PlacableObject.Schalter, 1); },
+			x => {boardController.UnlockEverything(); },
+			x => {}
+		};
+		for (int i = 0; i < currentQuest; i++)
+		{
+			unlocks[i]?.Invoke(boardController);
+		}
+	}
+	public void ResetCurrentLevel()
+	{
+		boardController.ResetBoard();
+	}
+	public void TogglePopup()
+	{
+		PopupText.SetActive(!PopupText.activeSelf);
 	}
 	public void Update()
 	{
@@ -48,7 +86,11 @@ public class Quest : MonoBehaviour
 			Debug.Log(QuestDescription[currentQuest]);
 			quests[currentQuest] = null;
 			currentQuest++;
+			SceneLoader.currentLevel = currentQuest;
 			_questTextField.text = QuestDescription[currentQuest];
+			PopupText.SetActive(true);
+			boardController.SetBoardObjectsActive(false);
+			PopupText.GetComponent<TMP_Text>().text = QuestPopups[currentQuest];
 		}
 	}
 
@@ -149,6 +191,7 @@ public class Quest : MonoBehaviour
 			{
 				if (!lamp.IsGlowing())
 				{
+					boardController.UnlockEverything();
 					return true;
 				}
 			}

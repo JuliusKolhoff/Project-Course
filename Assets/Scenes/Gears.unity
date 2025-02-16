@@ -12136,6 +12136,7 @@ MonoBehaviour:
   startRotationSpeed: 2
   applyMachineEfficiency: 0
   _popupButton: {fileID: 861241258}
+  _nextLevelButton: {fileID: 1195851493}
 --- !u!4 &1316411346
 Transform:
   m_ObjectHideFlags: 0

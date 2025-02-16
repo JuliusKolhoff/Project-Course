@@ -13,6 +13,8 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private float transitionDuration = 1f;
     [SerializeField] private float startMusic = 1f;
     public static string LoadParameter = "Level 1";
+    public static int currentLevel = 0;
+    public static int CurrentGearUnlock = 1;
 	public void Awake()
     {
         GameObject[] objs = GameObject.FindGameObjectsWithTag("SceneLoader");

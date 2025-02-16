@@ -66,9 +66,12 @@ public class BatteryController : MonoBehaviour
 			GameObject otherObject = minusConnections[0].GetOtherObject(minusConnector);
 			if(otherObject != _plus)
 			{
-				BoardObject otherBoardObject = otherObject.GetComponentInParent<BoardObject>();
+				BoardObject otherBoardObject = otherObject.GetComponentInParent<BoardObject>() ?? otherObject.GetComponent<BoardObject>();
 				if (float.IsNaN(otherBoardObject.Rges))
 				{
+					otherBoardObject.Vin = 0;
+					otherBoardObject.Vuse = 0;
+					otherBoardObject.Ampere = 0;
 					return false;
 				}
 				otherBoardObject.Ampere = boardObject.Ampere;
@@ -125,7 +128,15 @@ public class BatteryController : MonoBehaviour
 			{
 				foreach (GameObject otherObject in otherObjs)
 				{
+					GameObject nextObj = otherObject;
 					BoardObject otherBoardObject = otherObject.GetComponentInParent<BoardObject>();
+					//if(otherBoardObject.Resistance == 0) 
+					//{
+					//	while (GetNextSingleObject(otherBoardObject) == null || GetNextSingleObject(otherBoardObject).Resistance == 0)
+					//	{
+					//		otherBoardObject = GetNextSingleObject(otherBoardObject);
+					//	}
+					//}
 					float ResistanceSum = otherBoardObject.Rges;
 					otherBoardObject.Vin = boardObject.Vin - boardObject.Vuse;
 					otherBoardObject.Vuse = otherBoardObject.Vin * (otherBoardObject.Resistance / ResistanceSum);
@@ -142,6 +153,14 @@ public class BatteryController : MonoBehaviour
 				return true;
 			}
 		}
+	}
+	private BoardObject GetNextSingleObject(BoardObject obj)
+	{
+		if(obj.MinusConnections.Count == 0 || obj.MinusConnections.Count > 1)
+		{
+			return null;
+		}
+		return obj.MinusConnections[0].GetComponent<BoardObject>() ?? obj.MinusConnections[0].GetComponentInParent<BoardObject>();
 	}
 	private float Sum((float,float) value)
 	{

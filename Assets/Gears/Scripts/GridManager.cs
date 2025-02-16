@@ -36,6 +36,7 @@ public class GridManager : MonoBehaviour
 
 	private GameObject _popup;
 	[SerializeField] private GameObject _popupButton;
+	[SerializeField] private GameObject _nextLevelButton;
 
 	private Dictionary<Vector2, Tile>[] _tiles = new Dictionary<Vector2, Tile>[2];
 	private TextAsset[] _textAssets;
@@ -86,6 +87,7 @@ public class GridManager : MonoBehaviour
 			_popup.GetComponent<TMP_Text>().text = text;
 			SetTilesVisible(false);
 		}
+		_nextLevelButton.SetActive(index < SceneLoader.CurrentGearUnlock);
 	}
 	public void SetRpmFromSlider(Slider slider)
 	{
@@ -371,6 +373,7 @@ public class GridManager : MonoBehaviour
 			_loading = true;
 			SceneLoader sceneLoader = FindFirstObjectByType<SceneLoader>();
 			string[] level = SceneLoader.LoadParameter.Split("_");
+			SceneLoader.CurrentGearUnlock = Mathf.Max(int.Parse(level[0]) + 1, SceneLoader.CurrentGearUnlock);
 			string nextLevel = (int.Parse(level[0]) + 1) + "_" + level[1];
 			SceneLoader.LoadParameter = nextLevel;
 			sceneLoader.LoadNextScene("Gears", 0);

@@ -68,7 +68,7 @@ public class MenuController : MonoBehaviour
 		});
 		foreach (Level level in levels)
 		{
-			if(yIndex > 5)
+			if (yIndex > 5)
 			{
 				yIndex = 0;
 			}
@@ -81,17 +81,36 @@ public class MenuController : MonoBehaviour
 			}
 
 			button = Instantiate(_buttonPrefab, new Vector3(0, 0, 0), Quaternion.identity, _canvas);
-			if(index < 6)
+			if (index < 6)
 			{
-				button.transform.localPosition = new(-100, Mathf.Lerp(90, -120, yIndex / 6f), 0);
+				button.transform.localPosition = new(-110, Mathf.Lerp(90, -120, yIndex / 6f), 0);
 			}
 			else
 			{
-				button.transform.localPosition = new(100, Mathf.Lerp(90, -120, yIndex / 6f), 0);
+				button.transform.localPosition = new(90, Mathf.Lerp(90, -120, yIndex / 6f), 0);
 			}
 			button.name = level.name;
 			button.GetComponent<ButtonHandler>().sceneToLoad = "Gears";
 			button.GetComponentInChildren<TMP_Text>().text = level.name.Split("_")[1];
+			if(int.Parse(level.name.Split("_")[0]) <= SceneLoader.CurrentGearUnlock)
+			{
+				button.GetComponent<Button>().enabled = true;
+				button.GetComponent<ButtonHandler>().enabled = true;
+			}
+			else
+			{
+				button.GetComponent<Button>().enabled = false;
+				button.GetComponent<ButtonHandler>().enabled = false;
+			}
+			if (int.Parse(level.name.Split("_")[0]) < SceneLoader.CurrentGearUnlock)
+			{
+				button.transform.GetChild(1).gameObject.SetActive(true);
+			}
+			else
+			{
+				button.transform.GetChild(1).gameObject.SetActive(false);
+			}
+
 			button.SetActive(false);
 
 			chapter.pages[currentPage][index] = button;
@@ -129,6 +148,7 @@ public class MenuController : MonoBehaviour
 		button.GetComponent<ButtonHandler>().sceneToLoad = "Electricity";
 		button.GetComponent<ButtonHandler>().menuValue = 2f;
 		button.GetComponentInChildren<TMP_Text>().text = "Spielen!";
+		button.transform.GetChild(1).gameObject.SetActive(false);
 		button.SetActive(false);
 
 		chapter.pages[0][0] = button;
