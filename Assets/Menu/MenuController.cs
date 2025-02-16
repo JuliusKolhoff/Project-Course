@@ -155,6 +155,7 @@ public class MenuController : MonoBehaviour
 
 		GameObject textObj = Instantiate(_textPrefab, new Vector3(0, 0, 0), Quaternion.identity, _canvas);
 		textObj.GetComponent<TMP_Text>().text = "Klicke auf den Knopf rechts, um in die Welt der Elekritzität abzutauchen!";
+		textObj.transform.GetChild(0).GetComponentInChildren<TMP_Text>().text = "Elektrizität:";
 		textObj.SetActive(false);
 		
 		textObj.transform.localPosition = new Vector3(-100, 0, 0);

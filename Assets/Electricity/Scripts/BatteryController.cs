@@ -59,11 +59,10 @@ public class BatteryController : MonoBehaviour
 		{
 			return false;
 		}
-		List<Wire> minusConnections = boardObject.MinusConnections;
-		GameObject minusConnector = boardObject.Minus;
-		if(minusConnections.Count == 1)
+		List<GameObject> otherObjs = FilterConnections(obj);
+		if (otherObjs.Count == 1)
 		{
-			GameObject otherObject = minusConnections[0].GetOtherObject(minusConnector);
+			GameObject otherObject = otherObjs[0];
 			if(otherObject != _plus)
 			{
 				BoardObject otherBoardObject = otherObject.GetComponentInParent<BoardObject>() ?? otherObject.GetComponent<BoardObject>();
@@ -97,16 +96,6 @@ public class BatteryController : MonoBehaviour
 		}
 		else
 		{
-			List<GameObject> otherObjs = new();
-			foreach (Wire connection in minusConnections)
-			{
-				GameObject otherObject = connection.GetOtherObject(minusConnector);
-				if (otherObject != _plus && !float.IsNaN(otherObject.GetComponentInParent<BoardObject>().Rges))
-				{
-					otherObjs.Add(otherObject);
-				}
-				//TODO dont return false when reaching Battery
-			}
 			//otherObjs.ForEach(x => Debug.Log(x.name));
 			otherObjs.Sort(delegate (GameObject x1, GameObject x2)
 			{
@@ -153,6 +142,27 @@ public class BatteryController : MonoBehaviour
 				return true;
 			}
 		}
+	}
+	private List<GameObject> FilterConnections(GameObject obj)
+	{
+		List<GameObject> otherObjs = new();
+		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? obj.GetComponent<BoardObject>();
+		GameObject minusConnector = boardObject.Minus;
+		List<Wire> minusConnections = boardObject.MinusConnections;
+		foreach (Wire connection in minusConnections)
+		{
+			GameObject otherObject = connection.GetOtherObject(minusConnector);
+			if (otherObject.GetComponentInParent<BoardObject>().Resistance == 0 && otherObject != _plus)
+			{
+				otherObjs.AddRange(FilterConnections(otherObject));
+			}
+			else if (otherObject != _plus && !float.IsNaN(otherObject.GetComponentInParent<BoardObject>().Rges))
+			{
+				otherObjs.Add(otherObject);
+			}
+			
+		}
+		return otherObjs;
 	}
 	private BoardObject GetNextSingleObject(BoardObject obj)
 	{
