@@ -7,8 +7,8 @@ using UnityEngine.EventSystems;
 public class ButtonHandler : MonoBehaviour, IPointerClickHandler
 {
 
-    [SerializeField] public string sceneToLoad;
-    [SerializeField] public float menuValue;
+    public string sceneToLoad;
+    public float menuValue;
     public void OnPointerClick(PointerEventData pointerEventData)
     {
 		SceneLoader sceneLoader = FindFirstObjectByType<SceneLoader>();

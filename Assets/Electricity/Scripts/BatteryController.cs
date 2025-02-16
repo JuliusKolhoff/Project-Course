@@ -24,7 +24,7 @@ public class BatteryController : MonoBehaviour
 	public void CalculateValues()
 	{
 		ClearValues();
-		(float, float) Rges = FindRGesamt(gameObject, null);
+		(float, float) Rges = FindRGesamt(gameObject);
 		//Debug.Log($"Rgesamt: {Rges.Item1 + Rges.Item2}");
 		BoardObject obj = GetComponent<BoardObject>();
 		obj.Vin = _volt;
@@ -154,6 +154,9 @@ public class BatteryController : MonoBehaviour
 			GameObject otherObject = connection.GetOtherObject(minusConnector);
 			if (otherObject.GetComponentInParent<BoardObject>().Resistance == 0 && otherObject != _plus)
 			{
+				boardObject.Vin = 0;
+				boardObject.Vuse = 0;
+				boardObject.Ampere = 0;
 				otherObjs.AddRange(FilterConnections(otherObject));
 			}
 			else if (otherObject != _plus && !float.IsNaN(otherObject.GetComponentInParent<BoardObject>().Rges))
@@ -190,29 +193,51 @@ public class BatteryController : MonoBehaviour
 		*/
 		
 	}
-	public (float,float) FindRGesamt(GameObject obj, Wire origin)
+	private List<GameObject> GetFollowingConnections(GameObject obj)
+	{
+		List<GameObject> otherObjs = new();
+		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? obj.GetComponent<BoardObject>();
+		GameObject minusConnector = boardObject.Minus;
+		List<Wire> minusConnections = boardObject.MinusConnections;
+		foreach (Wire connection in minusConnections)
+		{
+			GameObject otherObject = connection.GetOtherObject(minusConnector);
+			if (otherObject.GetComponentInParent<BoardObject>().Resistance == 0 && otherObject != _plus)
+			{
+				otherObjs.AddRange(GetFollowingConnections(otherObject));
+			}
+			else
+			{
+				otherObjs.Add(otherObject);
+			}
+
+		}
+		return otherObjs;
+	}
+	public (float,float) FindRGesamt(GameObject obj)
 	{
 		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? GetComponent<BoardObject>();
 		List<Wire> minusConnections = boardObject.MinusConnections;
 		List<Wire> plusConnections = boardObject.PlusConnections;
 		int plusConnectionCount = plusConnections.Count;
 		GameObject minusConnector = boardObject.Minus;
-		if (minusConnections.Count == 0)
+		List<GameObject> followingObjs = GetFollowingConnections(obj);
+		if (followingObjs.Count == 0)
 		{
 			string name = obj.transform.parent?.name ?? obj.transform.name;
 			Debug.Log($"Nicht im Kreislauf: {name}");
 			return ReturnResisitances(obj, (float.NaN, 0), plusConnectionCount);
 		}
-		else if (minusConnections.Count == 1)
+		else if (followingObjs.Count == 1)
 		{
-			GameObject otherObject = minusConnections[0].GetOtherObject(minusConnector);
+			GameObject otherObject = followingObjs[0];
 			if (otherObject == _plus)
 			{
 				return ReturnResisitances(obj, (boardObject.Resistance,0),plusConnectionCount);
 			}
 			else
 			{
-				(float, float) Rgesamt = FindRGesamt(otherObject, minusConnections[0]);
+				(float, float) Rgesamt = FindRGesamt(otherObject);
 				if (float.IsNaN(Rgesamt.Item1))
 				{
 					return ReturnResisitances(obj, (float.NaN, 0), plusConnectionCount);
@@ -236,11 +261,10 @@ public class BatteryController : MonoBehaviour
 		}
 		else
 		{
-			(float,float)[] resitances = new (float, float)[minusConnections.Count];
+			(float,float)[] resitances = new (float, float)[followingObjs.Count];
 			int i = 0;
-			foreach (Wire connection in minusConnections)
+			foreach (GameObject otherObject in followingObjs)
 			{
-				GameObject otherObject = connection.GetOtherObject(minusConnector);
 				BoardObject bObj = otherObject.GetComponent<BoardObject>() ?? otherObject.GetComponentInParent<BoardObject>();
 				if (otherObject == _plus)
 				{
@@ -252,18 +276,16 @@ public class BatteryController : MonoBehaviour
 				}
 				bObj.SetMark(true);
 			}
-			foreach (Wire connection in minusConnections)
-            {
-				GameObject otherObject = connection.GetOtherObject(minusConnector);
+			foreach (GameObject otherObject in followingObjs)
+			{
 				BoardObject bObj = otherObject.GetComponent<BoardObject>() ?? otherObject.GetComponentInParent<BoardObject>();
 				
-				(float,float) resitance = FindRGesamt(otherObject, connection);
+				(float,float) resitance = FindRGesamt(otherObject);
 				resitances[i] = resitance;
 				i++;
             }
-			foreach (Wire connection in minusConnections)
+			foreach (GameObject otherObject in followingObjs)
 			{
-				GameObject otherObject = connection.GetOtherObject(minusConnector);
 				BoardObject bObj = otherObject.GetComponent<BoardObject>() ?? otherObject.GetComponentInParent<BoardObject>();
 				bObj.SetMark(false);
 			}
