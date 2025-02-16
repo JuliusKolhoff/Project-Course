@@ -214,13 +214,32 @@ public class BatteryController : MonoBehaviour
 		}
 		return otherObjs;
 	}
+	private List<GameObject> GetPreviousConnections(GameObject obj)
+	{
+		List<GameObject> otherObjs = new();
+		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? obj.GetComponent<BoardObject>();
+		GameObject plusConnector = boardObject.Plus;
+		List<Wire> plusConnections = boardObject.PlusConnections;
+		foreach (Wire connection in plusConnections)
+		{
+			GameObject otherObject = connection.GetOtherObject(plusConnector);
+			if (otherObject.GetComponentInParent<BoardObject>().Resistance == 0 && otherObject != _minus)
+			{
+				otherObjs.AddRange(GetPreviousConnections(otherObject));
+			}
+			else
+			{
+				otherObjs.Add(otherObject);
+			}
+
+		}
+		return otherObjs;
+	}
 	public (float,float) FindRGesamt(GameObject obj)
 	{
 		BoardObject boardObject = obj.GetComponentInParent<BoardObject>() ?? GetComponent<BoardObject>();
-		List<Wire> minusConnections = boardObject.MinusConnections;
-		List<Wire> plusConnections = boardObject.PlusConnections;
-		int plusConnectionCount = plusConnections.Count;
-		GameObject minusConnector = boardObject.Minus;
+		List<GameObject> previousObjects = GetPreviousConnections(obj);
+		int plusConnectionCount = previousObjects.Count;
 		List<GameObject> followingObjs = GetFollowingConnections(obj);
 		if (followingObjs.Count == 0)
 		{
