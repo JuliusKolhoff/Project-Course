@@ -18,6 +18,7 @@ public class GridManager : MonoBehaviour
 	[SerializeField] private GameObject _popupTextPrefab;
 	[SerializeField] private float startRotationSpeed = 2f;
 	[SerializeField] private bool applyMachineEfficiency = false;
+	[SerializeField] private GameObject _layer1Display, _layer2Display;
 
 	public bool PlaceMotor { get; set; } = false;
 	public bool PlaceGoal { get; set; } = false;
@@ -400,13 +401,25 @@ public class GridManager : MonoBehaviour
 		{
 			SetChildTransperency(_level1Partent, 1);
 			SetChildTransperency(_level2Partent, .5f);
+			SetLayerDisplayAlpha(_layer1Display, 1);
+			SetLayerDisplayAlpha(_layer2Display, .5f);
 		}
 		else if(layer == 1)
 		{
 			SetChildTransperency(_level1Partent, .5f);
 			SetChildTransperency(_level2Partent, 1);
+			SetLayerDisplayAlpha(_layer1Display, .5f);
+			SetLayerDisplayAlpha(_layer2Display, 1);
 		}
 		
+	}
+	private void SetLayerDisplayAlpha(GameObject obj,float alpha)
+	{
+		Image renderer = obj.GetComponent<Image>();
+		renderer.color = new(renderer.color.r, renderer.color.g, renderer.color.b, alpha);
+		TMP_Text text = obj.GetComponentInChildren<TMP_Text>();
+		text.color = new(text.color.r, text.color.g, text.color.b, alpha);
+
 	}
 	private void SetChildTransperency(GameObject parent,float alpha)
 	{
