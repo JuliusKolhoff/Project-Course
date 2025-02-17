@@ -211,7 +211,7 @@ public class BoardController : MonoBehaviour
 							movingObj = hitObject;
 							while (movingObj.transform.parent != null && movingObj.transform.parent != _boardObjectParent)
 							{
-								movingObj = hitObject.transform.parent.gameObject;
+								movingObj = movingObj.transform.parent.gameObject;
 							}
 							movingObjOriginalPos = hitObject.transform.position;
 

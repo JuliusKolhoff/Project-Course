@@ -57,5 +57,6 @@ public class BoardObject : MonoBehaviour
 		Vin = 0;
 		Vuse = 0;
 		Ampere = 0;
+		marked = false;
 	}
 }
