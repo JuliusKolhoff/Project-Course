@@ -26,6 +26,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] private GameObject _nextPageButton,_previousPageButton;
 	[SerializeField] private GameObject _inhaltsverzeichnisButton,_captionPrefab;
 	[SerializeField] private Sprite _gearsSprite, _electricitySprite, _gearPagesSprite, _electricityPagesSprite;
+	[SerializeField] private GameObject _secretCodePrefab;
 
 	private readonly List<BookChapter> _chapters = new();
 	private readonly List<GameObject[]> _allPages = new();
@@ -240,7 +241,7 @@ public class MenuController : MonoBehaviour
 			if (i == 0)
 			{
 				textObj.transform.localPosition = new Vector3(-100, 0, 0);
-				if (videoCount < videos.Count)
+				if (videoCount < videos.Count && currentPage != 1)
 				{
 					chapter.pages[currentPage][1] = Instantiate(_videoPlayerPrefab, new(0, 0, 0), Quaternion.identity, _canvas);
 					chapter.pages[currentPage][1].transform.localPosition = new Vector3(100, 0, 0);
@@ -286,6 +287,16 @@ public class MenuController : MonoBehaviour
 		//texts = Resources.LoadAll<TextAsset>("Pages/");
 		//      _text.text = texts[currentPage].text;
 		_chapters.ForEach(x => _allPages.AddRange(x.pages));
+		if (_allPages.Last()[0] == null)
+		{
+			_allPages.Last()[0] = Instantiate(_secretCodePrefab, _canvas);
+			_allPages.Last()[0].SetActive(false);
+		}
+		else
+		{
+			_allPages.Add(new GameObject[]{ Instantiate(_secretCodePrefab, _canvas),null});
+			_allPages.Last()[0].SetActive(false);
+		}
 
 		_previousPageButton.SetActive(false);
         ToggleActivatedButtons(0, true);

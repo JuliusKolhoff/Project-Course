@@ -121,14 +121,14 @@ public class Tile : MonoBehaviour
         {
 			return;
         }
-        foreach (Vector2 position in _manager.GoalPositions)
-        {
-			if (transform.position.Equals(position) && Layer == 0)
-			{
-				_manager.GoalPositions.Remove(position);
-				break;
-			}
-		}
+  //      foreach (Vector2 position in _manager.GoalPositions)
+  //      {
+		//	if (transform.position.Equals(position) && Layer == 0)
+		//	{
+		//		_manager.GoalPositions.Remove(position);
+		//		break;
+		//	}
+		//}
 		Teeth = 0;
 		MinTorque = 0;
 		MinRpm = 0;
@@ -232,7 +232,7 @@ public class Tile : MonoBehaviour
 				tile.ResetRotation();
 			}
 			//_manager.StopRotation($"Not Enough torque at gear: {this.gameObject.name} in layer {Layer};	   Only {torque}/{MinTorque} of required Torque");
-			NewInfoPopup($"Not Enough torque at gear: {this.gameObject.name} in layer {Layer};	   Only {torque}/{MinTorque} of required Torque");
+			NewInfoPopup($"Nicht genug Torque(Drehmoment) bei dem Zahnrad: {this.gameObject.name} im Layer {Layer + 1};	   Nur {torque}/{MinTorque} der min. Torque");
 			return false;
 		}
 		if (Mathf.Abs(degrees) < MinRpm)
@@ -245,7 +245,7 @@ public class Tile : MonoBehaviour
 				tile.ResetRotation();
 			}
 			//_manager.StopRotation($"Not Enough Rpm at gear: {this.gameObject.name} in layer {Layer};	   Only {Mathf.Abs(degrees)}/{MinRpm} of required Rpm");
-			NewInfoPopup($"Not Enough Rpm at gear: {this.gameObject.name} in layer {Layer};	   Only {Mathf.Abs(degrees)}/{MinRpm} of required Rpm");
+			NewInfoPopup($"Nicht genug RPM(Geschwindigkeit) bei dem Zahnrad: {this.gameObject.name} im Layer {Layer + 1};	   Nur {Mathf.Abs(degrees)}/{MinRpm} der min. Rpm");
 			return false;
 		}
 		if (HasGear())
@@ -280,12 +280,12 @@ public class Tile : MonoBehaviour
 							//_manager.StopRotation($"Breaking on Gear: {this.gameObject.name} in layer {Layer}");
 							if (_permanent)
 							{
-								NewInfoPopup($"Breaking on permanent Gear: {this.gameObject.name} in layer {Layer} : \n Restarting Level");
+								NewInfoPopup($"Das permanente Zahnrad an der Stelle: {this.gameObject.name} im Layer {Layer + 1} ist zerbrochen: \n Level wird neugestartet");
 								_manager.RestartLevel();
 							}
 							else
 							{
-								NewInfoPopup($"Breaking on Gear: {this.gameObject.name} in layer {Layer}: \n Gear removed");
+								NewInfoPopup($"Das Zahnrad an der Stelle: {this.gameObject.name} im Layer {Layer + 1} ist zerbrochen: \n Zahnrad wurde entfernt");
 								DeleteGear();
 							}
 							return false;

@@ -59,7 +59,10 @@ public class GridManager : MonoBehaviour
 	}
 	public void SetPopupEnabled(bool value)
 	{
-		_popup.SetActive(value);
+		if(_popup != null)
+		{
+			_popup.SetActive(value);
+		}
 	}
 	public void SetPopupButtonEnabled(bool value)
 	{
@@ -344,9 +347,7 @@ public class GridManager : MonoBehaviour
 							{
 								continue;
 							}
-							if (Mathf.Abs(GetTileAtPosition(position, 0).CurrentRotation) < GetTileAtPosition(position, 0).MinRpm || 
-								GetTileAtPosition(position, 0).CurrentTorque < GetTileAtPosition(position, 0).MinTorque ||
-								GetTileAtPosition(position, 0).CurrentRotation == 0)
+							if (!GoalRotating(position,0) && !GoalRotating(position, 1))
 							{
 								allGoalsRotating = false;
 							}
@@ -383,9 +384,18 @@ public class GridManager : MonoBehaviour
 		
 		
 	}
+	private bool GoalRotating(Vector2 position,int layer)
+	{
+		return !(Mathf.Abs(GetTileAtPosition(position, layer).CurrentRotation) < GetTileAtPosition(position, layer).MinRpm ||
+								GetTileAtPosition(position, layer).CurrentTorque < GetTileAtPosition(position, layer).MinTorque ||
+								GetTileAtPosition(position, layer).CurrentRotation == 0);
+	}
 	public void RestartLevel()
 	{
 		LoadState(_currentLevel);
+		SetPopupEnabled(false);
+		SetTilesVisible(false);
+		
 	}
 	public void StopRotation(string Message)
 	{

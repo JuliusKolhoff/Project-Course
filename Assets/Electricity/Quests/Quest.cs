@@ -53,9 +53,6 @@ public class Quest : MonoBehaviour
 	public void Start()
 	{
 		currentQuest = SceneLoader.currentLevel;
-#if UNITY_EDITOR
-		currentQuest = 5;
-#endif
 		PopupText.SetActive(true);
 		PopupText.GetComponent<TMP_Text>().text = QuestPopups[currentQuest];
 		_questTextField.text = QuestDescription[currentQuest];
