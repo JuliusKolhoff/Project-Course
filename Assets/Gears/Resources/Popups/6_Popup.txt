@@ -1,1 +1,1 @@
-Kleines Zahnrad = wenig Torque, großes Zahnrad = viel Torque
+Verdoppelt sich die Geschwindigkeit, halbiert sich die Torque

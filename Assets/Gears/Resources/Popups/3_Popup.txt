@@ -1,5 +1,5 @@
 
-RPM = Speed
-Torque = Stärke
+RPM = Geschwindigkeit
+Torque(Drehmoment) = Stärke
 
 

@@ -1,0 +1,1 @@
+RPM steht für Rotationen pro Minute. Es ist die Basiseinheit für Rotationen. Bei uns ist 1 RPM aber nicht wirklich eine Drehung pro Minute.
