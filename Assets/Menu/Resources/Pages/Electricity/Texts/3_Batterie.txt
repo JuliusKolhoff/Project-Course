@@ -1,1 +1,1 @@
-Eine Batterie speichert Energie. Schließt du einen Stromkreis, entlädt die Batterie sich, indem die Elektronen vom Minuspol zum Pluspol wandern, dabei durch eine Lampe fließen und diese zum Leuchten bringt. Ein Stromkreis ohne Batterie funktioniert nicht.
+Eine Batterie speichert Energie. Schließt du einen Stromkreis, entlädt die Batterie sich, indem die Elektronen vom Minuspol zum Pluspol wandern. Wenn sie dabei durch eine Lampe fließen bringen sie diese zum Leuchten. Ein Stromkreis ohne Batterie funktioniert nicht.

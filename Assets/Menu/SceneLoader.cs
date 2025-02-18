@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -15,10 +16,11 @@ public class SceneLoader : MonoBehaviour
     public static string LoadParameter = "Level 1";
     public static int currentLevel = 0;
     public static int CurrentGearUnlock = 1;
+    private AudioSource source;
 	public void Awake()
     {
         GameObject[] objs = GameObject.FindGameObjectsWithTag("SceneLoader");
-
+        source = GetComponent<AudioSource>();
         if (objs.Length > 1)
         {
             Destroy(this.gameObject);
@@ -26,7 +28,11 @@ public class SceneLoader : MonoBehaviour
 
         FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Menu", startMusic);
     }
-
+    public IEnumerator PlayWinSound()
+    {
+        source.Play();
+        yield return new WaitForSeconds(source.clip.length);
+    }
     public void LoadNextScene(string sceneName, float menuValue)
     {
         GameObject.Find("EventSystem").SetActive(false);

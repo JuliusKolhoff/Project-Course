@@ -19,6 +19,7 @@ public class GridManager : MonoBehaviour
 	[SerializeField] private float startRotationSpeed = 2f;
 	[SerializeField] private bool applyMachineEfficiency = false;
 	[SerializeField] private GameObject _layer1Display, _layer2Display;
+	[SerializeField] private AudioClip _winSound;
 
 	public bool PlaceMotor { get; set; } = false;
 	public bool PlaceGoal { get; set; } = false;
@@ -355,7 +356,8 @@ public class GridManager : MonoBehaviour
 						if (allGoalsRotating)
 						{
 							Debug.Log("Won");
-							
+							SceneLoader sceneLoader = FindFirstObjectByType<SceneLoader>();
+							StartCoroutine(sceneLoader.PlayWinSound());
 							_won = true;
 						}
 					}

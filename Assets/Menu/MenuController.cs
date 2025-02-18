@@ -245,7 +245,8 @@ public class MenuController : MonoBehaviour
 				{
 					chapter.pages[currentPage][1] = Instantiate(_videoPlayerPrefab, new(0, 0, 0), Quaternion.identity, _canvas);
 					chapter.pages[currentPage][1].transform.localPosition = new Vector3(100, 0, 0);
-					chapter.pages[currentPage][1].GetComponentInChildren<VideoPlayer>().clip = videos[videoCount];
+					//chapter.pages[currentPage][1].GetComponentInChildren<VideoPlayer>().clip = videos[videoCount];
+					chapter.pages[currentPage][1].GetComponentInChildren<VideoPlayer>().url = System.IO.Path.Combine(Application.streamingAssetsPath, videos[videoCount].name + ".mp4").Replace("\\","/");
 					chapter.pages[currentPage][1].SetActive(false);
 					chapter.pages.Add(new GameObject[2]);
 					currentPage++;

@@ -20,19 +20,19 @@ public class Quest : MonoBehaviour
 	private string[] QuestDescription =
 	{
 		"Quest 1:  Lasse eine Lampe leuchten \n	-> Schaltet die 2.Lampe frei",
-		"Quest 2:  Lasse zwei Lampen mit der Gleiche Ampere Anzahl leucheten \n	-> Schaltet neue Informationen frei",
-		"Quest 3:  Lasse zwei Lampen mit gleicher Volt Anzahl\n	-> Schaltet einen Resistor frei",
-		"Quest 4:  Lasse eine Lampe mit halber Volt Zahl Leuchten \n ->	Schaltet einen Schalter frei",
-		"Quest 5:  Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon \n	-> Alle Komponenten unendlich oft",
+		"Quest 2:  Lasse zwei Lampen mit dem gleichen Ampere-Wert leucheten \n	-> Schaltet neue Informationen frei",
+		"Quest 3:  Lasse zwei Lampen mit dem gleichen Volt-Wert leucheten\n	-> Schaltet einen Resistor frei",
+		"Quest 4:  Lasse eine Lampe mit halber Volt Zahl, der Batterie, leuchten \n ->	Schaltet einen Schalter frei",
+		"Quest 5:  Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon \n	-> Unendlich viele Resistoren,Schalter und Lampen",
 		"Von jetzt an bist du auf dich alleine gestellt! \n Falls du aber ein Thema nicht verstanden hast kannst du es erneut im Buch nachlesen."
 	};
 	private string[] QuestPopups =
 	{
-		"Quest 1:  Lasse eine Lampe leuchten \n	-> Schaltet die 2.Lampe frei",
-		"Quest 2:  Lasse zwei Lampen mit der Gleiche Ampere Anzahl leucheten \n	-> Schaltet neue Informationen frei",
-		"Quest 3:  Lasse zwei Lampen mit gleicher Volt Anzahl\n	-> Schaltet einen Resistor frei",
-		"Quest 4:  Lasse eine Lampe mit halber Volt Zahl Leuchten \n ->	Schaltet einen Schalter frei",
-		"Quest 5:  Lasse Lampe bei eingeschaltetem Schalter nicht leuchten bei ausgeschaltetem schon \n	-> Alle Komponenten unendlich oft",
+		"Schließe den Stromkreis. Dafür verbindest du deine Objekte mit Kabeln. Plus zu Minus, Minus zu Plus! \n Rechtsklicke beide Enden, um diese zu verbinden, Linksklick um die Objekte zu platzieren/bewegen.",
+		"Erinnerung: \n Bei einer Reihenschaltung bleibt die Stromstärke für jeden Komponenten gleich.",
+		"Erinnerung: \n Bei einer Parallelschaltung bleibt die Stromspannung für jeden Komponenten gleich.",
+		"Erinnerung: \n Die Lampe hat eine Resistenz von 2 Ohm,\n die Resistenz des Resistors lässt sich unten links einstellen. \n Die Batterie gibt eine Spannung von 10V aus.\n In einer Reihenschaltung teilt sich die gesamte Spannung(V) proportional zu den Wiederständen der einzelnen Komponenten auf.",
+		"Ein Schalter kann einen Stromkreis schließen und öffnen.",
 		"Keine Aufgaben mehr zu erledigen \n -> Lass deiner Kreativität freien Lauf!!!"
 	};
 	public Func<Quest,bool>[] quests =
@@ -84,6 +84,8 @@ public class Quest : MonoBehaviour
 		if (completed)
 		{
 			Debug.Log(QuestDescription[currentQuest]);
+			SceneLoader sceneLoader = FindFirstObjectByType<SceneLoader>();
+			StartCoroutine(sceneLoader.PlayWinSound());
 			quests[currentQuest] = null;
 			currentQuest++;
 			SceneLoader.currentLevel = currentQuest;

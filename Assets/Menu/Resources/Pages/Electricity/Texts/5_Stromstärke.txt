@@ -1,1 +1,1 @@
-Die Stromstärke I ,in Ampere [A], beschreibt wie schnell der Strom ist. Je schneller Elektronen durch den Draht fließen, desto höher ist die Stromstärke. 
+Die Stromstärke I ,in Ampere [A], ist die Menge an elektrischer Ladung die pro Skunde durch einen Leiter fließt. Je höher die Stromstärke, desto mehr elektrische Ladung bewegt sich durch den Leiter. 

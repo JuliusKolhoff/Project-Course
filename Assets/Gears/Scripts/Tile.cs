@@ -278,14 +278,15 @@ public class Tile : MonoBehaviour
 						if (appliedRotation != tile.CurrentRotation)
 						{
 							//_manager.StopRotation($"Breaking on Gear: {this.gameObject.name} in layer {Layer}");
+							string[] parts = gameObject.name.Split(" ");
 							if (_permanent)
 							{
-								NewInfoPopup($"Das permanente Zahnrad an der Stelle: {this.gameObject.name} im Layer {Layer + 1} ist zerbrochen: \n Level wird neugestartet");
+								NewInfoPopup($"Das permanente Zahnrad an der Stelle: ({int.Parse(parts[1]) + 1}|{int.Parse(parts[2]) + 1}) im Layer {Layer + 1} ist zerbrochen: \n Level wird neugestartet");
 								_manager.RestartLevel();
 							}
 							else
 							{
-								NewInfoPopup($"Das Zahnrad an der Stelle: {this.gameObject.name} im Layer {Layer + 1} ist zerbrochen: \n Zahnrad wurde entfernt");
+								NewInfoPopup($"Das Zahnrad an der Stelle: ({int.Parse(parts[1]) + 1}|{int.Parse(parts[2]) + 1}) im Layer {Layer + 1} ist zerbrochen: \n Zahnrad wurde entfernt");
 								DeleteGear();
 							}
 							return false;
